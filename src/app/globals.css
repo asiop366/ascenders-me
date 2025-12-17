@@ -1,159 +1,23 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  * {
-    box-sizing: border-box;
-  }
-  
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    @apply bg-asc-bg text-asc-text;
-  }
-  
-  ::selection {
-    @apply bg-asc-text/20;
-  }
+/* Scrollbar - Version compatible */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #2A2A2A transparent;
 }
 
-@layer components {
-  /* Buttons */
-  .btn-primary {
-    @apply px-4 py-2 bg-asc-text text-asc-bg font-medium rounded-asc 
-           hover:bg-asc-text/90 transition-all duration-180 
-           focus:outline-none focus:ring-2 focus:ring-asc-text/50
-           disabled:opacity-50 disabled:cursor-not-allowed;
-  }
-  
-  .btn-secondary {
-    @apply px-4 py-2 bg-asc-surface border border-asc-border text-asc-text 
-           font-medium rounded-asc hover:bg-asc-hover transition-all duration-180
-           focus:outline-none focus:ring-2 focus:ring-asc-border
-           disabled:opacity-50 disabled:cursor-not-allowed;
-  }
-  
-  .btn-ghost {
-    @apply px-3 py-2 text-asc-secondary hover:text-asc-text 
-           hover:bg-asc-hover rounded-asc transition-all duration-180;
-  }
-  
-  .btn-danger {
-    @apply px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400
-           font-medium rounded-asc hover:bg-red-500/20 transition-all duration-180;
-  }
-
-  /* Inputs */
-  .input {
-    @apply w-full px-4 py-2.5 bg-asc-surface border border-asc-border rounded-asc 
-           text-asc-text placeholder:text-asc-muted transition-all duration-180
-           focus:outline-none focus:ring-2 focus:ring-asc-text/20 focus:border-asc-text/30
-           hover:border-asc-muted;
-  }
-  
-  .input-error {
-    @apply border-red-500/50 focus:ring-red-500/20 focus:border-red-500/50;
-  }
-
-  /* Cards */
-  .card {
-    @apply bg-asc-surface border border-asc-border rounded-asc-lg p-4 
-           hover:border-asc-muted/50 transition-all duration-180;
-  }
-  
-  .card-interactive {
-    @apply card cursor-pointer hover:bg-asc-hover;
-  }
-
-  /* Skeleton loading */
-  .skeleton {
-    @apply bg-asc-surface animate-pulse rounded-asc;
-  }
-
-  /* Scrollbar */
-  .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: theme('colors.asc.border') transparent;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: theme('colors.asc.border');
-    border-radius: 3px;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: theme('colors.asc.mute');
-  }
-
-  /* Links */
-  .link {
-    @apply text-asc-text hover:underline underline-offset-2;
-  }
-  
-  .link-muted {
-    @apply text-asc-secondary hover:text-asc-text transition-colors;
-  }
-
-  /* Prose (for content) */
-  .prose-dark {
-    @apply text-asc-secondary;
-  }
-  
-  .prose-dark h1, .prose-dark h2, .prose-dark h3 {
-    @apply text-asc-text;
-  }
-  
-  .prose-dark a {
-    @apply text-asc-text underline underline-offset-2;
-  }
-  
-  .prose-dark code {
-    @apply bg-asc-surface px-1.5 py-0.5 rounded text-sm;
-  }
-  
-  .prose-dark pre {
-    @apply bg-asc-surface border border-asc-border rounded-asc p-4 overflow-x-auto;
-  }
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-  
-  .animate-in {
-    animation: animateIn 180ms ease-out;
-  }
-  
-  .slide-in-from-right {
-    --tw-enter-translate-x: 100%;
-  }
-  
-  .slide-in-from-bottom {
-    --tw-enter-translate-y: 100%;
-  }
-  
-  @keyframes animateIn {
-    from {
-      opacity: 0;
-      transform: translateX(var(--tw-enter-translate-x, 0)) 
-                 translateY(var(--tw-enter-translate-y, 0));
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0) translateY(0);
-    }
-  }
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #2A2A2A;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #8A8A8A;
 }
