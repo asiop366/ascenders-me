@@ -27,4 +27,35 @@ export default function ProfileSettingsPage() {
           <label className="block text-sm font-medium mb-2">Display Name</label>
           <input
             type="text"
-            placeholder="Your
+            placeholder="Your display name"
+            className="w-full px-4 py-2 bg-black border border-zinc-700 rounded-lg focus:outline-none focus:border-white transition-colors"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Bio</label>
+          <textarea
+            placeholder="Tell us about yourself"
+            rows={4}
+            className="w-full px-4 py-2 bg-black border border-zinc-700 rounded-lg focus:outline-none focus:border-white transition-colors resize-none"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Avatar URL</label>
+          <input
+            type="url"
+            placeholder="https://..."
+            className="w-full px-4 py-2 bg-black border border-zinc-700 rounded-lg focus:outline-none focus:border-white transition-colors"
+          />
+        </div>
+
+        <div className="pt-4">
+          <button className="px-6 py-2 bg-white text-black rounded-lg hover:bg-gray-200 transition-colors font-medium">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
