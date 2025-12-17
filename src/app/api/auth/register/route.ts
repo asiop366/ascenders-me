@@ -1,58 +1,59 @@
-import { NextResponse } from 'next/server'
-import bcrypt from 'bcryptjs'
+import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { registerSchema } from '@/lib/validations'
+import bcrypt from 'bcryptjs'
 
-export async function POST(req: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const body = await req.json()
-    const validated = registerSchema.parse(body)
+    const body = await request.json()
+    const { email, username, password } = body
 
-    // Check if user exists
+    if (!email || !username || !password) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      )
+    }
+
+    // Check if user already exists
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [
-          { email: validated.email },
-          { username: validated.username },
-        ],
-      },
+          { email: email.toLowerCase() },
+          { username: username.toLowerCase() }
+        ]
+      }
     })
 
     if (existingUser) {
       return NextResponse.json(
-        { error: 'User with this email or username already exists' },
+        { error: 'User already exists' },
         { status: 400 }
       )
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(validated.password, 10)
-
-    // Get default (Free) grade
-    const freeGrade = await prisma.grade.findFirst({
-      where: { slug: 'free' },
-    })
+    const hashedPassword = await bcrypt.hash(password, 12)
 
     // Create user
     const user = await prisma.user.create({
       data: {
-        email: validated.email,
-        username: validated.username,
+        email: email.toLowerCase(),
+        username: username.toLowerCase(),
         hashedPassword,
-        gradeId: freeGrade?.id,
       },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+      }
     })
 
-    return NextResponse.json(
-      { message: 'User created successfully', userId: user.id },
-      { status: 201 }
-    )
+    return NextResponse.json(user, { status: 201 })
   } catch (error: any) {
     console.error('Registration error:', error)
     return NextResponse.json(
-      { error: error.message || 'Something went wrong' },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }
 }
-
