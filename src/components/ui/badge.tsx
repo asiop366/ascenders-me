@@ -1,13 +1,15 @@
 import { clsx } from 'clsx'
+import { CSSProperties } from 'react'
 
 interface BadgeProps {
   children: React.ReactNode
   variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error'
   size?: 'sm' | 'md'
   className?: string
+  style?: CSSProperties
 }
 
-export function Badge({ children, variant = 'primary', size = 'sm', className }: BadgeProps) {
+export function Badge({ children, variant = 'primary', size = 'sm', className, style }: BadgeProps) {
   const variants = {
     primary: 'bg-accent-primary/20 text-accent-primary border-accent-primary/30',
     secondary: 'bg-accent-secondary/20 text-accent-secondary border-accent-secondary/30',
@@ -25,13 +27,13 @@ export function Badge({ children, variant = 'primary', size = 'sm', className }:
     <span
       className={clsx(
         'inline-flex items-center font-medium rounded-full border',
-        variants[variant],
+        !style && variants[variant],
         sizes[size],
         className
       )}
+      style={style}
     >
       {children}
     </span>
   )
 }
-
