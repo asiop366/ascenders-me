@@ -2,63 +2,97 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  * {
-    box-sizing: border-box;
-  }
-  
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    @apply bg-asc-bg text-asc-text;
-  }
+* {
+  box-sizing: border-box;
 }
 
-@layer components {
-  /* Buttons */
-  .btn-primary {
-    @apply px-4 py-2 bg-asc-text text-asc-bg font-medium rounded-asc 
-           hover:bg-asc-text/90 transition-all duration-150
-           disabled:opacity-50 disabled:cursor-not-allowed;
-  }
-  
-  .btn-secondary {
-    @apply px-4 py-2 bg-asc-surface border border-asc-border text-asc-text 
-           font-medium rounded-asc hover:bg-asc-hover transition-all duration-150
-           disabled:opacity-50 disabled:cursor-not-allowed;
-  }
-  
-  .btn-ghost {
-    @apply px-3 py-2 text-asc-secondary hover:text-asc-text 
-           hover:bg-asc-hover rounded-asc transition-all duration-150;
-  }
-  
-  .btn-danger {
-    @apply px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400
-           font-medium rounded-asc hover:bg-red-500/20 transition-all duration-150;
-  }
-
-  /* Inputs */
-  .input {
-    @apply w-full px-4 py-2.5 bg-asc-surface border border-asc-border rounded-asc 
-           text-asc-text placeholder:text-asc-mute transition-all duration-150
-           focus:outline-none focus:ring-2 focus:ring-asc-text/20 focus:border-asc-text/30
-           hover:border-asc-mute;
-  }
-
-  /* Cards */
-  .card {
-    @apply bg-asc-surface border border-asc-border rounded-asc-lg p-4;
-  }
-  
-  .card-interactive {
-    @apply card cursor-pointer hover:bg-asc-hover hover:border-asc-mute transition-all duration-150;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
-/* Scrollbar */
+body {
+  background-color: #0B0B0B;
+  color: #FDFDFD;
+}
+
+.btn-primary {
+  padding: 0.5rem 1rem;
+  background-color: #FDFDFD;
+  color: #0B0B0B;
+  font-weight: 500;
+  border-radius: 10px;
+  transition: all 150ms;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  padding: 0.5rem 1rem;
+  background-color: #121212;
+  border: 1px solid #2A2A2A;
+  color: #FDFDFD;
+  font-weight: 500;
+  border-radius: 10px;
+  transition: all 150ms;
+}
+
+.btn-secondary:hover {
+  background-color: #1F1F1F;
+}
+
+.btn-ghost {
+  padding: 0.5rem 0.75rem;
+  color: #BDBDBD;
+  border-radius: 10px;
+  transition: all 150ms;
+}
+
+.btn-ghost:hover {
+  color: #FDFDFD;
+  background-color: #1F1F1F;
+}
+
+.input {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  background-color: #121212;
+  border: 1px solid #2A2A2A;
+  border-radius: 10px;
+  color: #FDFDFD;
+  transition: all 150ms;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #FDFDFD;
+}
+
+.input::placeholder {
+  color: #8A8A8A;
+}
+
+.card {
+  background-color: #121212;
+  border: 1px solid #2A2A2A;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.card-interactive {
+  background-color: #121212;
+  border: 1px solid #2A2A2A;
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 150ms;
+}
+
+.card-interactive:hover {
+  background-color: #1F1F1F;
+}
+
 .scrollbar-thin {
   scrollbar-width: thin;
   scrollbar-color: #2A2A2A transparent;
