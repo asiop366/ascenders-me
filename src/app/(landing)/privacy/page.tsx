@@ -1,5 +1,8 @@
 'use client'
+<<<<<<< HEAD
 
+=======
+>>>>>>> 82bb6ea62b7702b16948f8f6af4ae20723826aae
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
@@ -22,7 +25,11 @@ export default function PrivacyPage() {
       </nav>
       <div className="max-w-4xl mx-auto px-6 py-20">
         <h1 className="text-4xl font-bold text-asc-text mb-4">Privacy Policy</h1>
+<<<<<<< HEAD
         <p className="text-asc-mute mb-8">Last updated: December 17, 2024</p>
+=======
+        <p className="text-asc-muted mb-8">Last updated: December 17, 2024</p>
+>>>>>>> 82bb6ea62b7702b16948f8f6af4ae20723826aae
         <div className="space-y-6 text-asc-secondary">
           <section>
             <h2 className="text-2xl font-semibold text-asc-text mb-3">1. Information We Collect</h2>

@@ -10,6 +10,10 @@ const config: Config = {
     extend: {
       colors: {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+        // Ascenders N&B Design System
+>>>>>>> 82bb6ea62b7702b16948f8f6af4ae20723826aae
 =======
         // Ascenders N&B Design System
 >>>>>>> 82bb6ea62b7702b16948f8f6af4ae20723826aae
@@ -29,10 +33,13 @@ const config: Config = {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
 <<<<<<< HEAD
+<<<<<<< HEAD
       borderRadius: {
         'asc': '10px',
         'asc-lg': '12px',
 =======
+=======
+>>>>>>> 82bb6ea62b7702b16948f8f6af4ae20723826aae
       fontSize: {
         'xs': ['12px', '16px'],
         'sm': ['14px', '20px'],
@@ -73,6 +80,9 @@ const config: Config = {
           '0%': { opacity: '0', transform: 'translateX(-8px)' },
           '100%': { opacity: '1', transform: 'translateX(0)' },
         },
+<<<<<<< HEAD
+>>>>>>> 82bb6ea62b7702b16948f8f6af4ae20723826aae
+=======
 >>>>>>> 82bb6ea62b7702b16948f8f6af4ae20723826aae
       },
     },
