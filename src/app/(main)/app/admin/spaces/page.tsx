@@ -24,4 +24,41 @@ export default function AdminSpacesPage() {
 
       {/* Search Bar */}
       <div className="relative">
-        <Search className="absolute left-4 top-1
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Search spaces..."
+          className="w-full pl-12 pr-4 py-3 bg-zinc-900/50 border border-zinc-800 rounded-lg focus:outline-none focus:border-white transition-colors"
+        />
+      </div>
+
+      {/* Spaces Table */}
+      <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-black border-b border-zinc-800">
+            <tr>
+              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Space Name</th>
+              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Owner</th>
+              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Members</th>
+              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Threads</th>
+              <th className="px-6 py-4 text-left text-sm font-medium text-gray-400">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {spaces.map((space) => (
+              <tr key={space.id} className="border-b border-zinc-800 last:border-0">
+                <td className="px-6 py-4 font-medium">{space.name}</td>
+                <td className="px-6 py-4 text-gray-400">{space.owner}</td>
+                <td className="px-6 py-4 text-gray-400">{space.members}</td>
+                <td className="px-6 py-4 text-gray-400">{space.threads}</td>
+                <td className="px-6 py-4">
+                  <button className="text-sm text-blue-400 hover:text-blue-300">Manage</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
