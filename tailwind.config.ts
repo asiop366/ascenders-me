@@ -9,24 +9,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        dark: {
-          bg: '#0b0f14',
-          surface: '#121826',
-          hover: '#1a2332',
-          border: '#1f2937',
-          text: '#e5e7eb',
-          muted: '#9ca3af',
-        },
-        accent: {
-          primary: '#8b5cf6',
-          secondary: '#3b82f6',
-          success: '#10b981',
-          warning: '#f59e0b',
-          error: '#ef4444',
+        asc: {
+          bg: '#0B0B0B',
+          surface: '#121212',
+          surface2: '#181818',
+          border: '#2A2A2A',
+          text: '#FDFDFD',
+          secondary: '#BDBDBD',
+          mute: '#8A8A8A',
+          hover: '#1F1F1F',
+          active: '#252525',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+      borderRadius: {
+        'asc': '10px',
+        'asc-lg': '12px',
       },
     },
   },
@@ -34,4 +34,3 @@ const config: Config = {
 }
 
 export default config
-
