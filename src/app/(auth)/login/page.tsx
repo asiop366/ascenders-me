@@ -4,18 +4,15 @@ import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { loginSchema } from '@/lib/validations'
+import { Eye, EyeOff, Loader2, ArrowRight } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,11 +20,9 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const validated = loginSchema.parse(formData)
-
       const result = await signIn('credentials', {
-        email: validated.email,
-        password: validated.password,
+        email,
+        password,
         redirect: false,
       })
 
@@ -39,61 +34,129 @@ export default function LoginPage() {
 
       router.push('/app')
       router.refresh()
-    } catch (err: any) {
-      setError(err.errors?.[0]?.message || 'Something went wrong')
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-asc-bg flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-accent-primary to-accent-secondary rounded-xl mx-auto mb-4" />
-          <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
-          <p className="text-dark-muted">Sign in to your Ascenders account</p>
+          <Link href="/" className="inline-flex items-center gap-2">
+            <div className="w-10 h-10 bg-asc-text rounded-asc flex items-center justify-center">
+              <span className="text-asc-bg font-bold text-xl">A</span>
+            </div>
+            <span className="text-xl font-bold text-asc-text">Ascenders</span>
+          </Link>
         </div>
 
-        <div className="bg-dark-surface border border-dark-border rounded-xl p-8">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {error && (
-              <div className="px-4 py-3 bg-accent-error/10 border border-accent-error/30 rounded-lg text-accent-error text-sm">
-                {error}
+        {/* Card */}
+        <div className="bg-asc-surface border border-asc-border rounded-asc-lg p-8">
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-asc-text mb-2">Welcome back</h1>
+            <p className="text-asc-muted">Sign in to your account</p>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-asc text-red-400 text-sm text-center">
+              {error}
+            </div>
+          )}
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-asc-secondary mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="input"
+                required
+                disabled={loading}
+              />
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-asc-secondary">
+                  Password
+                </label>
+                <Link 
+                  href="/forgot-password" 
+                  className="text-sm text-asc-muted hover:text-asc-text transition-colors"
+                >
+                  Forgot password?
+                </Link>
               </div>
-            )}
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="input pr-10"
+                  required
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-asc-muted hover:text-asc-text transition-colors"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
 
-            <Input
-              label="Email"
-              type="email"
-              placeholder="you@example.com"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
-            />
-
-            <Input
-              label="Password"
-              type="password"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              required
-            />
-
-            <Button type="submit" fullWidth disabled={loading}>
-              {loading ? 'Signing in...' : 'Sign In'}
-            </Button>
+            <button
+              type="submit"
+              className="btn-primary w-full flex items-center justify-center gap-2 py-3"
+              disabled={loading}
+            >
+              {loading ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <>
+                  Sign in
+                  <ArrowRight size={18} />
+                </>
+              )}
+            </button>
           </form>
 
-          <div className="mt-6 text-center text-sm">
-            <span className="text-dark-muted">Don't have an account? </span>
-            <Link href="/register" className="text-accent-primary hover:underline">
-              Sign up
-            </Link>
+          {/* Divider */}
+          <div className="my-6 flex items-center gap-4">
+            <div className="flex-1 h-px bg-asc-border" />
+            <span className="text-sm text-asc-muted">or</span>
+            <div className="flex-1 h-px bg-asc-border" />
           </div>
+
+          {/* Register link */}
+          <p className="text-center text-asc-secondary">
+            Don't have an account?{' '}
+            <Link href="/register" className="text-asc-text font-medium hover:underline">
+              Create account
+            </Link>
+          </p>
         </div>
+
+        {/* Footer */}
+        <p className="text-center text-xs text-asc-muted mt-6">
+          By signing in, you agree to our{' '}
+          <Link href="/terms" className="hover:text-asc-text">Terms of Service</Link>
+          {' '}and{' '}
+          <Link href="/privacy" className="hover:text-asc-text">Privacy Policy</Link>
+        </p>
       </div>
     </div>
   )
 }
-
