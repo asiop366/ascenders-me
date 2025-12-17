@@ -73,4 +73,3 @@ export function ChannelList({ spaceSlug, channels, spaceName }: ChannelListProps
     </div>
   )
 }
-
