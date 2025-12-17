@@ -14,11 +14,16 @@ export async function GET(req: Request) {
 
     const reports = await prisma.report.findMany({
       include: {
-        reporter: { include: { grade: true } },
+        user: { include: { grade: true } },
         post: {
           include: {
             author: { include: { grade: true } },
             thread: true,
+          },
+        },
+        thread: {
+          include: {
+            author: { include: { grade: true } },
           },
         },
       },
@@ -51,4 +56,3 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: 'Failed to update report' }, { status: 500 })
   }
 }
-
