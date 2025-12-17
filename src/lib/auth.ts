@@ -57,7 +57,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id
         token.username = user.username
         token.role = user.role
-        token.gradeId = user.gradeId
+        token.gradeId = user.gradeId ?? null
       }
       return token
     },
@@ -66,7 +66,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string
         session.user.username = token.username as string
         session.user.role = token.role as string
-        session.user.gradeId = token.gradeId as string | null
+        session.user.gradeId = (token.gradeId as string | null) ?? null
       }
       return session
     },
