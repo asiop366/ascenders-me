@@ -41,7 +41,7 @@ export function Navbar({ channelName, gradeName, gradeColor }: NavbarProps) {
               </span>
               {gradeName && (
                 <Badge
-                  variant="outline"
+                  variant="secondary"
                   style={{ borderColor: gradeColor || undefined }}
                   className="text-xs"
                 >
