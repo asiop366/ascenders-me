@@ -19,11 +19,11 @@ import { useState, useRef, useEffect } from 'react'
 
 interface SidebarProps {
   user: {
-    id?: string
-    username?: string
-    email?: string
-    image?: string
-    role?: string
+    id?: string | null
+    username?: string | null
+    email?: string | null
+    image?: string | null
+    role?: string | null
   }
 }
 
@@ -67,6 +67,9 @@ export function Sidebar({ user }: SidebarProps) {
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
   }, [])
+
+  const isAdmin = user.role === 'ADMIN'
+  const isMod = user.role === 'MODERATOR' || isAdmin
 
   return (
     <aside className="w-70 h-screen bg-asc-surface border-r border-asc-border flex flex-col">
@@ -133,7 +136,7 @@ export function Sidebar({ user }: SidebarProps) {
         </div>
 
         {/* Mod/Admin Section */}
-        {(user.role === 'ADMIN' || user.role === 'MODERATOR') && (
+        {isMod && (
           <div className="mb-6">
             <div className="px-3 mb-2">
               <span className="text-xs font-medium text-asc-muted uppercase tracking-wider">
