@@ -1,157 +1,99 @@
-import { notFound } from 'next/navigation'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
-import Link from 'next/link'
-import { Hash, Plus, Pin, Lock, Clock, MessageSquare, Eye, Heart } from 'lucide-react'
+// app/app/[spaceSlug]/[channelSlug]/page.tsx
+import { Metadata } from "next";
+import Link from "next/link";
+import { Hash, Send } from "lucide-react";
 
-export const dynamic = 'force-dynamic'
+type Props = {
+  params: { 
+    spaceSlug: string;
+    channelSlug: string;
+  };
+};
 
-export default async function ChannelPage({
-  params,
-}: {
-  params: { spaceSlug: string; channelSlug: string }
-}) {
-  const session = await getServerSession(authOptions)
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  return {
+    title: `#${params.channelSlug} - ${params.spaceSlug} | Ascenders`,
+  };
+}
 
-  const space = await prisma.space.findUnique({
-    where: { slug: params.spaceSlug },
-    include: {
-      channels: {
-        orderBy: { position: 'asc' },
-      },
+export default function ChannelPage({ params }: Props) {
+  // TODO: Fetch channel data and messages from database
+  const messages = [
+    {
+      id: 1,
+      author: "john_doe",
+      authorTier: "Gold",
+      content: "Hey everyone! Welcome to the channel.",
+      timestamp: "10:30 AM",
     },
-  })
-
-  if (!space) {
-    notFound()
-  }
-
-  const channel = space.channels.find((c) => c.slug === params.channelSlug)
-
-  if (!channel) {
-    notFound()
-  }
-
-  const threads = await prisma.thread.findMany({
-    where: { channelId: channel.id },
-    include: {
-      author: true,
-      _count: {
-        select: { posts: true, reactions: true },
-      },
+    {
+      id: 2,
+      author: "jane_smith",
+      authorTier: "Silver",
+      content: "Thanks! Excited to be here.",
+      timestamp: "10:32 AM",
     },
-    orderBy: [
-      { pinned: 'desc' },
-      { createdAt: 'desc' },
-    ],
-    take: 50,
-  })
+    {
+      id: 3,
+      author: "mike_wilson",
+      authorTier: "Bronze",
+      content: "This looks great! Can't wait to start contributing.",
+      timestamp: "10:35 AM",
+    },
+  ];
 
   return (
-    <div className="h-full flex flex-col bg-asc-bg">
-      {/* Header */}
-      <header className="sticky top-0 z-10 bg-asc-bg border-b border-asc-border">
-        <div className="px-6 py-4">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-asc-muted mb-3">
-            <Link href="/app" className="hover:text-asc-text transition-colors">Home</Link>
-            <span>/</span>
-            <Link href="/app/topics" className="hover:text-asc-text transition-colors">Topics</Link>
-            <span>/</span>
-            <Link href={`/app/topics/${space.slug}`} className="hover:text-asc-text transition-colors">{space.name}</Link>
-            <span>/</span>
-            <span className="text-asc-secondary">{channel.name}</span>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Hash size={24} className="text-asc-muted" />
-              <h1 className="text-2xl font-bold text-asc-text">{channel.name}</h1>
-            </div>
-            <Link href="/app/new" className="btn-primary flex items-center gap-2">
-              <Plus size={18} />
-              New Thread
-            </Link>
-          </div>
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      {/* Channel Header */}
+      <div className="border-b border-zinc-800 bg-zinc-900/50 px-6 py-4">
+        <div className="flex items-center gap-3">
+          <Hash className="w-6 h-6 text-gray-400" />
+          <h1 className="text-xl font-bold">{params.channelSlug}</h1>
         </div>
-      </header>
+        <p className="text-sm text-gray-400 mt-1">
+          <Link href={`/app/${params.spaceSlug}`} className="hover:underline">
+            {params.spaceSlug}
+          </Link>
+        </p>
+      </div>
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-4xl mx-auto">
-          {threads.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="w-16 h-16 bg-asc-surface border border-asc-border rounded-full flex items-center justify-center mx-auto mb-4">
-                <Hash size={32} className="text-asc-muted" />
-              </div>
-              <h2 className="text-xl font-semibold text-asc-text mb-2">No threads yet</h2>
-              <p className="text-asc-secondary mb-6">Be the first to start a discussion in #{channel.name}!</p>
-              <Link href="/app/new" className="btn-primary inline-flex items-center gap-2">
-                <Plus size={18} />
-                Create Thread
-              </Link>
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        {messages.map((message) => (
+          <div key={message.id} className="flex gap-4 hover:bg-zinc-900/30 p-3 rounded-lg transition-colors">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center font-bold flex-shrink-0">
+              {message.author.charAt(0).toUpperCase()}
             </div>
-          ) : (
-            <div className="space-y-3">
-              {threads.map((thread) => (
-                <Link
-                  key={thread.id}
-                  href={`/app/thread/${thread.id}`}
-                  className="card block group"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-asc-text text-asc-bg rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0">
-                      {thread.author.username[0].toUpperCase()}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        {thread.pinned && (
-                          <span className="badge badge-pinned flex items-center gap-1">
-                            <Pin size={10} />
-                            PINNED
-                          </span>
-                        )}
-                        {thread.locked && (
-                          <span className="badge badge-locked flex items-center gap-1">
-                            <Lock size={10} />
-                            LOCKED
-                          </span>
-                        )}
-                        <h3 className="font-semibold text-asc-text group-hover:underline line-clamp-1">
-                          {thread.title}
-                        </h3>
-                      </div>
-                      <p className="text-sm text-asc-secondary line-clamp-2 mb-2">
-                        {thread.content}
-                      </p>
-                      <div className="flex items-center gap-4 text-xs text-asc-muted">
-                        <span>by {thread.author.username}</span>
-                        <span className="flex items-center gap-1">
-                          <Clock size={12} />
-                          {new Date(thread.createdAt).toLocaleDateString()}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <MessageSquare size={12} />
-                          {thread._count.posts}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Eye size={12} />
-                          {thread.viewCount}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Heart size={12} />
-                          {thread._count.reactions}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <Link href={`/u/${message.author}`} className="font-medium hover:underline">
+                  {message.author}
                 </Link>
-              ))}
+                <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-500 rounded text-xs font-medium">
+                  {message.authorTier}
+                </span>
+                <span className="text-xs text-gray-500">{message.timestamp}</span>
+              </div>
+              <p className="text-gray-300">{message.content}</p>
             </div>
-          )}
+          </div>
+        ))}
+      </div>
+
+      {/* Message Input */}
+      <div className="border-t border-zinc-800 bg-zinc-900/50 p-4">
+        <div className="flex gap-3">
+          <input
+            type="text"
+            placeholder={`Message #${params.channelSlug}`}
+            className="flex-1 px-4 py-3 bg-black border border-zinc-700 rounded-lg focus:outline-none focus:border-white transition-colors"
+          />
+          <button className="px-6 py-3 bg-white text-black rounded-lg hover:bg-gray-200 transition-colors font-medium flex items-center gap-2">
+            <Send className="w-4 h-4" />
+            Send
+          </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
