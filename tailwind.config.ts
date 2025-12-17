@@ -10,23 +10,20 @@ const config: Config = {
     extend: {
       colors: {
         dark: {
-          bg: '#0b0f14',
-          surface: '#121826',
-          hover: '#1a2332',
-          border: '#1f2937',
-          text: '#e5e7eb',
-          muted: '#9ca3af',
+          bg: '#000000',
+          surface: '#0a0a0a',
+          hover: '#1a1a1a',
+          border: '#2a2a2a',
+          text: '#ffffff',
+          muted: '#a0a0a0',
         },
         accent: {
-          primary: '#8b5cf6',
-          secondary: '#3b82f6',
-          success: '#10b981',
-          warning: '#f59e0b',
-          error: '#ef4444',
+          primary: '#ffffff',
+          secondary: '#e0e0e0',
+          success: '#ffffff',
+          warning: '#ffffff',
+          error: '#ffffff',
         },
-      },
-      fontFamily: {
-        sans: ['Inter', 'sans-serif'],
       },
     },
   },
@@ -34,4 +31,3 @@ const config: Config = {
 }
 
 export default config
-
