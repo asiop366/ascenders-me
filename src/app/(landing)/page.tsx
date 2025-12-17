@@ -39,23 +39,19 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-5xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-asc-surface border border-asc-border rounded-full mb-8 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-asc-surface border border-asc-border rounded-full mb-8">
             <Sparkles size={16} className="text-asc-text" />
             <span className="text-sm text-asc-secondary">Built for modern communities</span>
           </div>
 
-          {/* Title */}
-          <h1 className="text-6xl md:text-7xl font-bold text-asc-text mb-6 leading-tight animate-slide-up">
+          <h1 className="text-6xl md:text-7xl font-bold text-asc-text mb-6 leading-tight">
             Welcome to Ascenders
           </h1>
           
-          {/* Subtitle */}
           <p className="text-xl md:text-2xl text-asc-secondary mb-10 max-w-3xl mx-auto leading-relaxed">
             A modern community platform where discussions thrive. Connect, share, and grow with like-minded individuals.
           </p>
 
-          {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link 
               href="/register"
@@ -72,7 +68,6 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          {/* Stats */}
           <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
             <div className="text-center">
               <div className="text-3xl font-bold text-asc-text mb-1">1.2k+</div>
@@ -90,7 +85,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Features */}
       <section className="py-20 px-6 border-t border-asc-border">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
@@ -131,7 +126,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Trending Topics Preview */}
+      {/* Trending */}
       <section className="py-20 px-6 border-t border-asc-border bg-asc-surface">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
@@ -177,7 +172,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA */}
       <section className="py-20 px-6 border-t border-asc-border">
         <div className="max-w-4xl mx-auto text-center">
           <Award size={48} className="text-asc-text mx-auto mb-6" />
@@ -225,9 +220,9 @@ export default function LandingPage() {
             <div>
               <h3 className="font-semibold text-asc-text mb-3">Company</h3>
               <ul className="space-y-2">
-                <li><Link href="/about" className="text-sm text-asc-muted hover:text-asc-text transition-colors">About</Link></li>
-                <li><Link href="/blog" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Blog</Link></li>
-                <li><Link href="/contact" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Contact</Link></li>
+                <li><Link href="/" className="text-sm text-asc-muted hover:text-asc-text transition-colors">About</Link></li>
+                <li><Link href="/" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Blog</Link></li>
+                <li><Link href="/" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Contact</Link></li>
               </ul>
             </div>
 
@@ -236,7 +231,7 @@ export default function LandingPage() {
               <ul className="space-y-2">
                 <li><Link href="/privacy" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Privacy</Link></li>
                 <li><Link href="/terms" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Terms</Link></li>
-                <li><Link href="/guidelines" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Guidelines</Link></li>
+                <li><Link href="/" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Guidelines</Link></li>
               </ul>
             </div>
           </div>
