@@ -1,23 +1,55 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { postSchema } from '@/lib/validations'
 
-export async function POST(req: Request) {
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const threadId = searchParams.get('threadId')
+
+    if (!threadId) {
+      return NextResponse.json({ error: 'Thread ID required' }, { status: 400 })
+    }
+
+    const posts = await prisma.post.findMany({
+      where: { threadId },
+      include: {
+        author: {
+          select: { id: true, username: true, image: true, role: true }
+        },
+        _count: {
+          select: { reactions: true }
+        }
+      },
+      orderBy: { createdAt: 'asc' }
+    })
+
+    return NextResponse.json(posts)
+  } catch (error) {
+    console.error('Error fetching posts:', error)
+    return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 })
+  }
+}
+
+export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await req.json()
-    const validated = postSchema.parse(body)
+    const body = await request.json()
+    const { threadId, content } = body
 
-    // Check if thread exists and is not locked
+    if (!threadId || !content) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
+
+    // Verify thread exists and is not locked
     const thread = await prisma.thread.findUnique({
-      where: { id: validated.threadId },
+      where: { id: threadId }
     })
 
     if (!thread) {
@@ -28,33 +60,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Thread is locked' }, { status: 403 })
     }
 
-    // Create post
     const post = await prisma.post.create({
       data: {
-        content: validated.content,
-        threadId: validated.threadId,
+        threadId,
         authorId: session.user.id,
+        content: content.trim(),
       },
       include: {
         author: {
-          include: { grade: true },
-        },
-      },
-    })
-
-    // Update thread's updatedAt
-    await prisma.thread.update({
-      where: { id: validated.threadId },
-      data: { updatedAt: new Date() },
+          select: { id: true, username: true, image: true }
+        }
+      }
     })
 
     return NextResponse.json(post, { status: 201 })
-  } catch (error: any) {
-    console.error('Create post error:', error)
-    return NextResponse.json(
-      { error: error.message || 'Failed to create post' },
-      { status: 500 }
-    )
+  } catch (error) {
+    console.error('Error creating post:', error)
+    return NextResponse.json({ error: 'Failed to create post' }, { status: 500 })
   }
 }
-

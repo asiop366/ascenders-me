@@ -9,6 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+<<<<<<< HEAD
+=======
+        // Ascenders N&B Design System
+>>>>>>> 82bb6ea62b7702b16948f8f6af4ae20723826aae
         asc: {
           bg: '#0B0B0B',
           surface: '#121212',
@@ -24,13 +28,60 @@ const config: Config = {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
+<<<<<<< HEAD
+      borderRadius: {
+        'asc': '10px',
+        'asc-lg': '12px',
+=======
+      fontSize: {
+        'xs': ['12px', '16px'],
+        'sm': ['14px', '20px'],
+        'base': ['16px', '24px'],
+        'lg': ['18px', '28px'],
+        'xl': ['20px', '28px'],
+        '2xl': ['24px', '32px'],
+        '3xl': ['28px', '36px'],
+      },
+      spacing: {
+        '18': '72px',
+        '68': '272px',
+        '70': '280px',
+      },
       borderRadius: {
         'asc': '10px',
         'asc-lg': '12px',
       },
+      transitionDuration: {
+        '120': '120ms',
+        '180': '180ms',
+      },
+      animation: {
+        'fade-in': 'fadeIn 180ms ease-out',
+        'slide-up': 'slideUp 180ms ease-out',
+        'slide-in-right': 'slideInRight 180ms ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideInRight: {
+          '0%': { opacity: '0', transform: 'translateX(-8px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+>>>>>>> 82bb6ea62b7702b16948f8f6af4ae20723826aae
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms')({
+      strategy: 'class',
+    }),
+  ],
 }
 
 export default config
