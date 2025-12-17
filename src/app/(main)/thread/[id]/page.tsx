@@ -1,211 +1,146 @@
-import { notFound } from 'next/navigation'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
-import { Avatar } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { formatDate, getTimeAgo } from '@/lib/utils'
-import { MessageSquare, Eye, Heart, Share2, Flag, Bookmark, ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
+// app/thread/[id]/page.tsx
+import { Metadata } from "next";
+import Link from "next/link";
+import { ArrowLeft, MessageSquare, Heart, Share2 } from "lucide-react";
 
-export const dynamic = 'force-dynamic'
+type Props = {
+  params: { id: string };
+};
 
-interface ThreadPageProps {
-  params: { id: string }
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  return {
+    title: `Thread #${params.id} | Ascenders`,
+  };
 }
 
-export default async function ThreadPage({ params }: ThreadPageProps) {
-  const session = await getServerSession(authOptions)
-  
-  const thread = await prisma.thread.findUnique({
-    where: { id: params.id },
-    include: {
-      author: { include: { grade: true } },
-      channel: { include: { space: true } },
-      posts: {
-        include: {
-          author: { include: { grade: true } },
-          _count: { select: { reactions: true } }
-        },
-        orderBy: { createdAt: 'asc' }
-      },
-      _count: { select: { posts: true, reactions: true } }
+export default function ThreadPage({ params }: Props) {
+  // TODO: Fetch thread data from database
+  const thread = {
+    id: params.id,
+    title: "How to get started with Next.js?",
+    author: "john_doe",
+    authorTier: "Gold",
+    content: "I'm new to Next.js and want to learn the best practices. What resources do you recommend?",
+    createdAt: "2 hours ago",
+    likes: 12,
+    replies: 5,
+  };
+
+  const replies = [
+    {
+      id: 1,
+      author: "jane_smith",
+      authorTier: "Silver",
+      content: "The official Next.js documentation is great! Start with the tutorial.",
+      createdAt: "1 hour ago",
+      likes: 5,
     },
-  })
-
-  if (!thread) {
-    notFound()
-  }
-
-  // Increment view count
-  await prisma.thread.update({
-    where: { id: params.id },
-    data: { viewCount: { increment: 1 } }
-  })
+    {
+      id: 2,
+      author: "mike_wilson",
+      authorTier: "Bronze",
+      content: "I also recommend checking out Vercel's YouTube channel for video tutorials.",
+      createdAt: "45 minutes ago",
+      likes: 3,
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-asc-bg">
-      {/* Header */}
-      <header className="sticky top-0 z-10 bg-asc-bg/80 backdrop-blur-lg border-b border-asc-border">
-        <div className="px-6 py-4 flex items-center gap-4">
-          <Link 
-            href="/app" 
-            className="p-2 hover:bg-asc-hover rounded-asc transition-colors"
-          >
-            <ArrowLeft size={20} className="text-asc-secondary" />
-          </Link>
-          <div>
-            <p className="text-sm text-asc-muted">
-              {thread.channel.space.name} / {thread.channel.name}
-            </p>
-            <h1 className="text-lg font-semibold text-asc-text truncate max-w-xl">
-              {thread.title}
-            </h1>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-black text-white">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Back Button */}
+        <Link 
+          href="/app" 
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Feed
+        </Link>
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto p-6">
-        {/* Thread */}
-        <article className="bg-asc-surface border border-asc-border rounded-asc-lg p-6 mb-6">
-          {/* Author */}
-          <div className="flex items-start gap-4 mb-4">
-            <Link href={`/app/u/${thread.author.username}`}>
-              <Avatar src={thread.author.image} alt={thread.author.username} size="lg" />
-            </Link>
+        {/* Thread Content */}
+        <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6 mb-6">
+          {/* Author Info */}
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center font-bold">
+              {thread.author.charAt(0).toUpperCase()}
+            </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <Link 
-                  href={`/app/u/${thread.author.username}`}
-                  className="font-semibold text-asc-text hover:underline"
-                >
-                  {thread.author.username}
+              <div className="flex items-center gap-2">
+                <Link href={`/u/${thread.author}`} className="font-medium hover:underline">
+                  {thread.author}
                 </Link>
-                {thread.author.grade && (
-                  <Badge style={{ backgroundColor: thread.author.grade.color }}>
-                    {thread.author.grade.name}
-                  </Badge>
-                )}
+                <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-500 rounded text-xs font-medium">
+                  {thread.authorTier}
+                </span>
               </div>
-              <p className="text-sm text-asc-muted">
-                {getTimeAgo(new Date(thread.createdAt))}
-              </p>
+              <div className="text-sm text-gray-400">{thread.createdAt}</div>
             </div>
           </div>
 
-          {/* Title & Content */}
-          <h2 className="text-2xl font-bold text-asc-text mb-4">{thread.title}</h2>
-          <div className="prose prose-invert max-w-none text-asc-secondary">
-            <p className="whitespace-pre-wrap">{thread.content}</p>
-          </div>
-
-          {/* Stats */}
-          <div className="flex items-center gap-6 mt-6 pt-4 border-t border-asc-border text-sm text-asc-muted">
-            <span className="flex items-center gap-2">
-              <Eye size={16} /> {thread.viewCount} views
-            </span>
-            <span className="flex items-center gap-2">
-              <MessageSquare size={16} /> {thread._count.posts} replies
-            </span>
-            <span className="flex items-center gap-2">
-              <Heart size={16} /> {thread._count.reactions} likes
-            </span>
-          </div>
+          {/* Thread Title & Content */}
+          <h1 className="text-2xl font-bold mb-4">{thread.title}</h1>
+          <p className="text-gray-300 mb-6">{thread.content}</p>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 mt-4">
-            <button className="btn-ghost flex items-center gap-2">
-              <Heart size={18} /> Like
+          <div className="flex items-center gap-6 pt-4 border-t border-zinc-800">
+            <button className="flex items-center gap-2 text-gray-400 hover:text-red-500 transition-colors">
+              <Heart className="w-5 h-5" />
+              <span>{thread.likes}</span>
             </button>
-            <button className="btn-ghost flex items-center gap-2">
-              <Bookmark size={18} /> Save
+            <button className="flex items-center gap-2 text-gray-400 hover:text-blue-500 transition-colors">
+              <MessageSquare className="w-5 h-5" />
+              <span>{thread.replies}</span>
             </button>
-            <button className="btn-ghost flex items-center gap-2">
-              <Share2 size={18} /> Share
-            </button>
-            <button className="btn-ghost flex items-center gap-2 text-asc-muted">
-              <Flag size={18} /> Report
+            <button className="flex items-center gap-2 text-gray-400 hover:text-green-500 transition-colors">
+              <Share2 className="w-5 h-5" />
+              <span>Share</span>
             </button>
           </div>
-        </article>
+        </div>
+
+        {/* Reply Form */}
+        <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6 mb-6">
+          <h3 className="font-semibold mb-4">Add a reply</h3>
+          <textarea
+            placeholder="Write your reply..."
+            rows={4}
+            className="w-full px-4 py-3 bg-black border border-zinc-700 rounded-lg focus:outline-none focus:border-white transition-colors resize-none mb-4"
+          />
+          <button className="px-6 py-2 bg-white text-black rounded-lg hover:bg-gray-200 transition-colors font-medium">
+            Post Reply
+          </button>
+        </div>
 
         {/* Replies */}
-        <section>
-          <h3 className="text-lg font-semibold text-asc-text mb-4">
-            Replies ({thread.posts.length})
-          </h3>
-          
-          {thread.posts.length === 0 ? (
-            <div className="bg-asc-surface border border-asc-border rounded-asc p-8 text-center">
-              <MessageSquare size={40} className="mx-auto mb-3 text-asc-muted" />
-              <p className="text-asc-secondary">No replies yet</p>
-              <p className="text-sm text-asc-muted">Be the first to reply!</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {thread.posts.map((post) => (
-                <article 
-                  key={post.id} 
-                  className="bg-asc-surface border border-asc-border rounded-asc p-4"
-                >
-                  <div className="flex items-start gap-3">
-                    <Link href={`/app/u/${post.author.username}`}>
-                      <Avatar src={post.author.image} alt={post.author.username} />
+        <div className="space-y-4">
+          <h3 className="text-xl font-bold mb-4">{replies.length} Replies</h3>
+          {replies.map((reply) => (
+            <div key={reply.id} className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center font-bold">
+                  {reply.author.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <Link href={`/u/${reply.author}`} className="font-medium hover:underline">
+                      {reply.author}
                     </Link>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Link 
-                          href={`/app/u/${post.author.username}`}
-                          className="font-medium text-asc-text hover:underline"
-                        >
-                          {post.author.username}
-                        </Link>
-                        {post.author.grade && (
-                          <Badge style={{ backgroundColor: post.author.grade.color }}>
-                            {post.author.grade.name}
-                          </Badge>
-                        )}
-                        <span className="text-sm text-asc-muted">
-                          {getTimeAgo(new Date(post.createdAt))}
-                        </span>
-                      </div>
-                      <p className="text-asc-secondary whitespace-pre-wrap">
-                        {post.content}
-                      </p>
-                      <div className="flex items-center gap-4 mt-3">
-                        <button className="text-sm text-asc-muted hover:text-asc-text flex items-center gap-1">
-                          <Heart size={14} /> {post._count.reactions}
-                        </button>
-                      </div>
-                    </div>
+                    <span className="px-2 py-0.5 bg-gray-500/20 text-gray-400 rounded text-xs font-medium">
+                      {reply.authorTier}
+                    </span>
                   </div>
-                </article>
-              ))}
+                  <div className="text-sm text-gray-400">{reply.createdAt}</div>
+                </div>
+              </div>
+              <p className="text-gray-300 mb-4">{reply.content}</p>
+              <button className="flex items-center gap-2 text-gray-400 hover:text-red-500 transition-colors text-sm">
+                <Heart className="w-4 h-4" />
+                <span>{reply.likes}</span>
+              </button>
             </div>
-          )}
-        </section>
-
-        {/* Reply composer */}
-        {session && !thread.locked && (
-          <div className="mt-6 bg-asc-surface border border-asc-border rounded-asc p-4">
-            <textarea 
-              placeholder="Write a reply..."
-              className="w-full bg-asc-bg border border-asc-border rounded-asc p-3 text-asc-text placeholder:text-asc-muted resize-none focus:outline-none focus:ring-2 focus:ring-asc-text/20"
-              rows={3}
-            />
-            <div className="flex justify-end mt-3">
-              <button className="btn-primary">Post Reply</button>
-            </div>
-          </div>
-        )}
-
-        {thread.locked && (
-          <div className="mt-6 bg-asc-surface border border-asc-border rounded-asc p-4 text-center text-asc-muted">
-            🔒 This thread is locked
-          </div>
-        )}
+          ))}
+        </div>
       </div>
     </div>
-  )
+  );
 }
