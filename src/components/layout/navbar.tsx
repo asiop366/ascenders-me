@@ -31,4 +31,41 @@ export function Navbar({ channelName, gradeName, gradeColor }: NavbarProps) {
         trigger={
           <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-dark-hover transition-colors">
             <Avatar
-
+              src={session?.user?.image || undefined}
+              alt={session?.user?.username || 'User'}
+              size="sm"
+            />
+            <div className="flex flex-col items-start">
+              <span className="text-sm font-medium">
+                {session?.user?.username || 'Guest'}
+              </span>
+              {gradeName && (
+                <Badge
+                  variant="outline"
+                  style={{ borderColor: gradeColor || undefined }}
+                  className="text-xs"
+                >
+                  {gradeName}
+                </Badge>
+              )}
+            </div>
+            <ChevronDown size={16} className="text-dark-muted" />
+          </button>
+        }
+      >
+        <DropdownItem>
+          <Link href="/profile" className="flex items-center gap-2 w-full">
+            <User size={16} />
+            <span>Profile</span>
+          </Link>
+        </DropdownItem>
+        <DropdownItem onClick={() => signOut()}>
+          <div className="flex items-center gap-2 w-full">
+            <LogOut size={16} />
+            <span>Sign out</span>
+          </div>
+        </DropdownItem>
+      </Dropdown>
+    </div>
+  )
+}
