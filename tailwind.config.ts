@@ -15,9 +15,9 @@ const config: Config = {
           surface: '#121212',
           surface2: '#181818',
           border: '#2A2A2A',
-          text: '#FFFFFF',
+          text: '#FDFDFD',
           secondary: '#BDBDBD',
-          muted: '#8A8A8A',
+          mute: '#8A8A8A',
           hover: '#1F1F1F',
           active: '#252525',
         },
@@ -68,7 +68,11 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms')({
+      strategy: 'class',
+    }),
+  ],
 }
 
 export default config
