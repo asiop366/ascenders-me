@@ -1,127 +1,144 @@
-'use client'
+// app/pricing/page.tsx
+import { Metadata } from "next";
+import Link from "next/link";
+import { Check, ArrowLeft } from "lucide-react";
 
-import Link from 'next/link'
-import { Check, ArrowLeft } from 'lucide-react'
+export const metadata: Metadata = {
+  title: "Pricing | Ascenders",
+  description: "Choose the perfect plan for your needs",
+};
 
 export default function PricingPage() {
+  const tiers = [
+    {
+      name: "Bronze",
+      price: "Free",
+      description: "Perfect for getting started",
+      features: [
+        "Access to public spaces",
+        "Create up to 3 threads per day",
+        "Basic profile customization",
+        "Community support",
+      ],
+      cta: "Get Started",
+      highlighted: false,
+    },
+    {
+      name: "Silver",
+      price: "$9",
+      period: "/month",
+      description: "For active community members",
+      features: [
+        "Everything in Bronze",
+        "Unlimited threads",
+        "Create private spaces",
+        "Custom profile themes",
+        "Priority support",
+        "Ad-free experience",
+      ],
+      cta: "Upgrade to Silver",
+      highlighted: true,
+    },
+    {
+      name: "Gold",
+      price: "$19",
+      period: "/month",
+      description: "For power users and creators",
+      features: [
+        "Everything in Silver",
+        "Advanced analytics",
+        "Custom badges",
+        "Early access to features",
+        "Dedicated support",
+        "API access",
+        "Space moderation tools",
+      ],
+      cta: "Upgrade to Gold",
+      highlighted: false,
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-asc-bg">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-asc-bg/80 backdrop-blur-lg border-b border-asc-border">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-asc-text rounded-lg flex items-center justify-center">
-              <span className="text-asc-bg font-bold text-lg">A</span>
-            </div>
-            <span className="text-xl font-bold text-asc-text">Ascenders</span>
-          </Link>
-          
-          <Link href="/" className="flex items-center gap-2 text-asc-secondary hover:text-asc-text transition-colors">
-            <ArrowLeft size={18} />
-            <span>Back</span>
-          </Link>
+    <div className="min-h-screen bg-black text-white">
+      <div className="container mx-auto px-4 py-16">
+        <Link 
+          href="/"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Home
+        </Link>
+
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold mb-4">Choose Your Plan</h1>
+          <p className="text-xl text-gray-400">
+            Unlock more features and take your experience to the next level
+          </p>
         </div>
-      </nav>
 
-      {/* Content */}
-      <div className="pt-32 pb-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h1 className="text-5xl font-bold text-asc-text mb-4">Simple, Transparent Pricing</h1>
-            <p className="text-xl text-asc-secondary">Choose the perfect plan for your needs</p>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {tiers.map((tier) => (
+            <div
+              key={tier.name}
+              className={`relative rounded-lg p-8 ${
+                tier.highlighted
+                  ? "bg-white text-black border-4 border-white"
+                  : "bg-zinc-900/50 border border-zinc-800"
+              }`}
+            >
+              {tier.highlighted && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-bold rounded-full">
+                  POPULAR
+                </div>
+              )}
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Free */}
-            <div className="p-8 bg-asc-surface border border-asc-border rounded-xl">
-              <h3 className="text-2xl font-bold text-asc-text mb-2">Free</h3>
               <div className="mb-6">
-                <span className="text-4xl font-bold text-asc-text">$0</span>
-                <span className="text-asc-muted">/month</span>
+                <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
+                <div className="flex items-baseline gap-1 mb-2">
+                  <span className="text-4xl font-bold">{tier.price}</span>
+                  {tier.period && (
+                    <span className={tier.highlighted ? "text-gray-700" : "text-gray-400"}>
+                      {tier.period}
+                    </span>
+                  )}
+                </div>
+                <p className={tier.highlighted ? "text-gray-700" : "text-gray-400"}>
+                  {tier.description}
+                </p>
               </div>
-              <Link href="/register" className="block w-full py-3 bg-asc-bg border border-asc-border hover:border-asc-text rounded-lg text-center text-asc-text font-medium transition-all mb-6">
-                Get Started
-              </Link>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-2 text-asc-secondary">
-                  <Check size={18} className="text-asc-text" />
-                  Access to all public topics
-                </li>
-                <li className="flex items-center gap-2 text-asc-secondary">
-                  <Check size={18} className="text-asc-text" />
-                  Create unlimited threads
-                </li>
-                <li className="flex items-center gap-2 text-asc-secondary">
-                  <Check size={18} className="text-asc-text" />
-                  Community support
-                </li>
-              </ul>
-            </div>
 
-            {/* Pro */}
-            <div className="p-8 bg-asc-text text-asc-bg rounded-xl relative">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-asc-bg border border-asc-border rounded-full text-xs text-asc-text font-medium">
-                POPULAR
-              </div>
-              <h3 className="text-2xl font-bold mb-2">Pro</h3>
-              <div className="mb-6">
-                <span className="text-4xl font-bold">$9</span>
-                <span className="opacity-70">/month</span>
-              </div>
-              <Link href="/register" className="block w-full py-3 bg-asc-bg hover:bg-asc-surface rounded-lg text-center text-asc-text font-medium transition-all mb-6">
-                Start Free Trial
-              </Link>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-2">
-                  <Check size={18} />
-                  Everything in Free
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check size={18} />
-                  Access to premium topics
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check size={18} />
-                  Custom profile badge
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check size={18} />
-                  Priority support
-                </li>
+              <ul className="space-y-3 mb-8">
+                {tier.features.map((feature, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <Check className={`w-5 h-5 flex-shrink-0 ${tier.highlighted ? "text-black" : "text-green-500"}`} />
+                    <span className={tier.highlighted ? "text-gray-800" : "text-gray-300"}>
+                      {feature}
+                    </span>
+                  </li>
+                ))}
               </ul>
-            </div>
 
-            {/* Enterprise */}
-            <div className="p-8 bg-asc-surface border border-asc-border rounded-xl">
-              <h3 className="text-2xl font-bold text-asc-text mb-2">Enterprise</h3>
-              <div className="mb-6">
-                <span className="text-4xl font-bold text-asc-text">Custom</span>
-              </div>
-              <Link href="/contact" className="block w-full py-3 bg-asc-bg border border-asc-border hover:border-asc-text rounded-lg text-center text-asc-text font-medium transition-all mb-6">
-                Contact Sales
+              <Link
+                href="/app"
+                className={`block w-full py-3 rounded-lg font-medium text-center transition-colors ${
+                  tier.highlighted
+                    ? "bg-black text-white hover:bg-gray-900"
+                    : "bg-white text-black hover:bg-gray-200"
+                }`}
+              >
+                {tier.cta}
               </Link>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-2 text-asc-secondary">
-                  <Check size={18} className="text-asc-text" />
-                  Everything in Pro
-                </li>
-                <li className="flex items-center gap-2 text-asc-secondary">
-                  <Check size={18} className="text-asc-text" />
-                  Private community spaces
-                </li>
-                <li className="flex items-center gap-2 text-asc-secondary">
-                  <Check size={18} className="text-asc-text" />
-                  Advanced moderation tools
-                </li>
-                <li className="flex items-center gap-2 text-asc-secondary">
-                  <Check size={18} className="text-asc-text" />
-                  Dedicated account manager
-                </li>
-              </ul>
             </div>
-          </div>
+          ))}
+        </div>
+
+        <div className="text-center mt-16 text-gray-400">
+          <p>All plans include a 14-day money-back guarantee</p>
+          <p className="mt-2">
+            Questions? <Link href="/contact" className="text-white hover:underline">Contact us</Link>
+          </p>
         </div>
       </div>
     </div>
-  )
+  );
 }
