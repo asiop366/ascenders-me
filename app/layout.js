@@ -1,17 +1,17 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'Ascenders - Communauté Elite',
-  description: 'Rejoins la communauté Ascenders et accède à du contenu exclusif',
+  title: 'Ascenders',
+  description: 'Join the community',
 }
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="fr">
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body>{children}</body>
     </html>
