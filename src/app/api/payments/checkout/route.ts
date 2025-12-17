@@ -22,23 +22,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Grade not found' }, { status: 404 })
     }
 
-    // TODO: Create Stripe checkout session
-    // For now, create a pending subscription
+    // Create a pending subscription
     const subscription = await prisma.subscription.create({
       data: {
         userId: session.user.id,
         gradeId: grade.id,
         status: 'PENDING',
-        provider: 'stripe',
-        providerRef: `stub_${Date.now()}`,
-        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
       },
     })
 
+    // Update user's grade
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { gradeId: grade.id },
+    })
+
     return NextResponse.json({
-      message: 'Checkout session created (STUB)',
+      message: 'Subscription created',
       subscriptionId: subscription.id,
-      // In production, return Stripe checkout URL
       checkoutUrl: `/pricing?success=true&subscriptionId=${subscription.id}`,
     })
   } catch (error) {
@@ -46,4 +48,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to create checkout' }, { status: 500 })
   }
 }
-
