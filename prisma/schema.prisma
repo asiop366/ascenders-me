@@ -33,18 +33,18 @@ enum SubscriptionStatus {
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+  id                   String   @id @default(cuid())
+  userId               String
+  type                 String
+  provider             String
+  providerAccountId    String
+  refresh_token        String?  @db.Text
+  access_token         String?  @db.Text
+  expires_at           Int?
+  token_type           String?
+  scope                String?
+  id_token             String?  @db.Text
+  session_state        String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -52,31 +52,31 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String   @id @default(cuid())
+  sessionToken  String   @unique
+  userId        String
+  expires       DateTime
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id             String    @id @default(cuid())
-  email          String    @unique
-  username       String    @unique
+  id             String   @id @default(cuid())
+  email          String   @unique
+  username       String   @unique
   hashedPassword String?
   image          String?
-  bio            String?   @db.Text
-  role           Role      @default(USER)
+  bio            String?  @db.Text
+  role           Role     @default(USER)
   gradeId        String?
   emailVerified  DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   grade         Grade?         @relation(fields: [gradeId], references: [id])
   threads       Thread[]
   posts         Post[]
   reactions     Reaction[]
-  reports       Report[]       @relation("ReportAuthor")
+  reports       Report[]
   subscriptions Subscription[]
   accounts      Account[]
   sessions      Session[]
@@ -86,30 +86,31 @@ model User {
 }
 
 model Grade {
-  id           String  @id @default(cuid())
-  name         String  @unique
-  slug         String  @unique
+  id           String   @id @default(cuid())
+  name         String   @unique
+  slug         String   @unique
   color        String
   icon         String?
-  priceMonthly Int     @default(0)
-  position     Int     @default(0)
-  permissions  Json    @default("{}")
+  priceMonthly Int      @default(0)
+  position     Int      @default(0)
+  permissions  Json     @default("{}")
 
   users         User[]
   channels      Channel[]
   subscriptions Subscription[]
 
   @@index([position])
+  @@index([slug])
 }
 
 model Space {
-  id        String    @id @default(cuid())
-  name      String
-  slug      String    @unique
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
   icon      String?
-  position  Int       @default(0)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   channels  Channel[]
 
   @@index([slug])
@@ -120,18 +121,17 @@ model Channel {
   id         String      @id @default(cuid())
   spaceId    String
   name       String
-  slug       String
+  slug       String      @unique
   type       ChannelType @default(FORUM)
   minGradeId String?
   position   Int         @default(0)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 
-  space    Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-  minGrade Grade?   @relation(fields: [minGradeId], references: [id])
-  threads  Thread[]
+  space   Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  minGrade Grade?  @relation(fields: [minGradeId], references: [id])
+  threads Thread[]
 
-  @@unique([spaceId, slug])
   @@index([spaceId])
   @@index([slug])
 }
@@ -189,7 +189,8 @@ model Reaction {
   thread Thread? @relation(fields: [threadId], references: [id], onDelete: Cascade)
   post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, threadId, postId, type])
+  @@unique([userId, threadId, type])
+  @@unique([userId, postId, type])
   @@index([userId])
   @@index([threadId])
   @@index([postId])
@@ -204,7 +205,7 @@ model Report {
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
 
-  reporter User @relation("ReportAuthor", fields: [reporterId], references: [id], onDelete: Cascade)
+  reporter User @relation(fields: [reporterId], references: [id], onDelete: Cascade)
   post     Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@index([reporterId])
