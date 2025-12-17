@@ -1,204 +1,100 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import { 
-  Calendar, 
-  MessageSquare, 
-  Heart, 
-  Eye,
-  Settings,
-  MoreHorizontal,
-  Shield,
-  Award
-} from 'lucide-react'
+// app/u/[username]/page.tsx
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { Calendar, MapPin, Link as LinkIcon } from "lucide-react";
 
-export default async function UserProfilePage({
-  params,
-}: {
-  params: { username: string }
-}) {
-  const session = await getServerSession(authOptions)
+type Props = {
+  params: { username: string };
+};
 
-  const user = await prisma.user.findUnique({
-    where: { username: params.username },
-    include: {
-      grade: true,
-      threads: {
-        include: {
-          channel: { include: { space: true } },
-          _count: { select: { posts: true, reactions: true } }
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 10,
-      },
-      posts: {
-        include: {
-          thread: true,
-          _count: { select: { reactions: true } }
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 10,
-      },
-      _count: {
-        select: { threads: true, posts: true, reactions: true }
-      }
-    }
-  })
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  return {
+    title: `@${params.username} | Ascenders`,
+  };
+}
 
-  if (!user) {
-    notFound()
-  }
-
-  const isOwnProfile = session?.user?.username === user.username
-  const joinDate = new Date(user.createdAt).toLocaleDateString('en-US', {
-    month: 'long',
-    year: 'numeric'
-  })
+export default function UserProfilePage({ params }: Props) {
+  // TODO: Fetch user data from database
+  const user = {
+    username: params.username,
+    displayName: params.username.charAt(0).toUpperCase() + params.username.slice(1),
+    bio: "Building cool things on the internet",
+    tier: "Gold",
+    joinedDate: "January 2024",
+    location: "San Francisco, CA",
+    website: "https://example.com",
+    stats: {
+      threads: 42,
+      replies: 156,
+      followers: 89,
+      following: 34,
+    },
+  };
 
   return (
-    <div className="h-full overflow-y-auto bg-asc-bg">
-      <div className="max-w-4xl mx-auto p-6">
+    <div className="min-h-screen bg-black text-white">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Profile Header */}
-        <div className="bg-asc-surface border border-asc-border rounded-asc-lg p-6 mb-6">
-          <div className="flex items-start justify-between mb-6">
-            <div className="flex items-center gap-4">
-              {/* Avatar */}
-              <div className="w-20 h-20 bg-asc-text text-asc-bg rounded-full flex items-center justify-center font-bold text-3xl">
-                {user.username[0].toUpperCase()}
+        <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-8 mb-6">
+          <div className="flex items-start gap-6">
+            {/* Avatar */}
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-3xl font-bold flex-shrink-0">
+              {user.displayName.charAt(0)}
+            </div>
+
+            {/* Info */}
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-3xl font-bold">{user.displayName}</h1>
+                <span className="px-3 py-1 bg-yellow-500/20 text-yellow-500 rounded-full text-sm font-medium">
+                  {user.tier}
+                </span>
               </div>
-              
-              {/* User Info */}
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <h1 className="text-2xl font-bold text-asc-text">{user.username}</h1>
-                  {user.role === 'ADMIN' && (
-                    <span className="badge badge-pinned flex items-center gap-1">
-                      <Shield size={10} />
-                      ADMIN
-                    </span>
-                  )}
-                  {user.role === 'MODERATOR' && (
-                    <span className="badge flex items-center gap-1">
-                      <Shield size={10} />
-                      MOD
-                    </span>
-                  )}
+              <div className="text-gray-400 mb-4">@{user.username}</div>
+              <p className="text-gray-300 mb-4">{user.bio}</p>
+
+              {/* Meta Info */}
+              <div className="flex flex-wrap gap-4 text-sm text-gray-400">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  Joined {user.joinedDate}
                 </div>
-                
-                {user.grade && (
-                  <div className="flex items-center gap-2 mb-2">
-                    <Award size={14} className="text-asc-muted" />
-                    <span className="text-sm text-asc-secondary">{user.grade.name}</span>
+                {user.location && (
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4" />
+                    {user.location}
                   </div>
                 )}
-                
-                <div className="flex items-center gap-2 text-sm text-asc-muted">
-                  <Calendar size={14} />
-                  <span>Joined {joinDate}</span>
-                </div>
+                {user.website && (
+                  <a href={user.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition-colors">
+                    <LinkIcon className="w-4 h-4" />
+                    {user.website.replace('https://', '')}
+                  </a>
+                )}
               </div>
             </div>
 
             {/* Actions */}
-            {isOwnProfile ? (
-              <Link href="/app/settings" className="btn-secondary flex items-center gap-2">
-                <Settings size={16} />
-                Edit Profile
-              </Link>
-            ) : (
-              <button className="btn-ghost p-2">
-                <MoreHorizontal size={18} />
+            <div className="flex gap-2">
+              <button className="px-4 py-2 bg-white text-black rounded-lg hover:bg-gray-200 transition-colors font-medium">
+                Follow
               </button>
-            )}
+              <button className="px-4 py-2 bg-zinc-800 rounded-lg hover:bg-zinc-700 transition-colors">
+                Message
+              </button>
+            </div>
           </div>
-
-          {/* Bio */}
-          {user.bio && (
-            <p className="text-asc-secondary mb-6">{user.bio}</p>
-          )}
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="bg-asc-bg border border-asc-border rounded-asc p-4 text-center">
-              <div className="text-2xl font-bold text-asc-text mb-1">{user._count.threads}</div>
-              <div className="text-sm text-asc-muted flex items-center justify-center gap-1">
-                <MessageSquare size={14} />
-                Threads
-              </div>
+          <div className="grid grid-cols-4 gap-4 mt-6 pt-6 border-t border-zinc-800">
+            <div className="text-center">
+              <div className="text-2xl font-bold">{user.stats.threads}</div>
+              <div className="text-sm text-gray-400">Threads</div>
             </div>
-            <div className="bg-asc-bg border border-asc-border rounded-asc p-4 text-center">
-              <div className="text-2xl font-bold text-asc-text mb-1">{user._count.posts}</div>
-              <div className="text-sm text-asc-muted flex items-center justify-center gap-1">
-                <MessageSquare size={14} />
-                Replies
-              </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold">{user.stats.replies}</div>
+              <div className="text-sm text-gray-400">Replies</div>
             </div>
-            <div className="bg-asc-bg border border-asc-border rounded-asc p-4 text-center">
-              <div className="text-2xl font-bold text-asc-text mb-1">{user._count.reactions}</div>
-              <div className="text-sm text-asc-muted flex items-center justify-center gap-1">
-                <Heart size={14} />
-                Reactions
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex items-center gap-1 mb-6 border-b border-asc-border">
-          <button className="px-4 py-3 text-sm font-medium text-asc-text border-b-2 border-asc-text">
-            Threads ({user._count.threads})
-          </button>
-          <button className="px-4 py-3 text-sm text-asc-muted hover:text-asc-text transition-colors">
-            Replies ({user._count.posts})
-          </button>
-          {isOwnProfile && (
-            <button className="px-4 py-3 text-sm text-asc-muted hover:text-asc-text transition-colors">
-              Bookmarks
-            </button>
-          )}
-        </div>
-
-        {/* Threads List */}
-        <div className="space-y-3">
-          {user.threads.length === 0 ? (
-            <div className="text-center py-12 bg-asc-surface border border-asc-border rounded-asc">
-              <MessageSquare size={32} className="text-asc-muted mx-auto mb-3" />
-              <p className="text-asc-secondary">No threads yet</p>
-            </div>
-          ) : (
-            user.threads.map((thread) => (
-              <Link 
-                key={thread.id}
-                href={`/app/thread/${thread.id}`}
-                className="card block"
-              >
-                <h3 className="font-semibold text-asc-text mb-1 hover:underline">
-                  {thread.title}
-                </h3>
-                <p className="text-sm text-asc-secondary line-clamp-2 mb-2">
-                  {thread.content}
-                </p>
-                <div className="flex items-center gap-4 text-xs text-asc-muted">
-                  {thread.channel && (
-                    <span className="tag">{thread.channel.name}</span>
-                  )}
-                  <span>{new Date(thread.createdAt).toLocaleDateString()}</span>
-                  <span className="flex items-center gap-1">
-                    <MessageSquare size={12} />
-                    {thread._count.posts}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Heart size={12} />
-                    {thread._count.reactions}
-                  </span>
-                </div>
-              </Link>
-            ))
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
+            <div className="text-center">
+              <div className="text-2xl font-bold">{user.stats.followers}</div>
+              <div className="text-sm text-gray-400
