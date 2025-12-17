@@ -9,13 +9,19 @@ interface BadgeProps {
   style?: CSSProperties
 }
 
-export function Badge({ children, variant = 'primary', size = 'sm', className, style }: BadgeProps) {
+export function Badge({ 
+  children, 
+  variant = 'primary', 
+  size = 'sm', 
+  className, 
+  style 
+}: BadgeProps) {
   const variants = {
-    primary: 'bg-accent-primary/20 text-accent-primary border-accent-primary/30',
-    secondary: 'bg-accent-secondary/20 text-accent-secondary border-accent-secondary/30',
-    success: 'bg-accent-success/20 text-accent-success border-accent-success/30',
-    warning: 'bg-accent-warning/20 text-accent-warning border-accent-warning/30',
-    error: 'bg-accent-error/20 text-accent-error border-accent-error/30',
+    primary: 'bg-asc-text/10 text-asc-text border-asc-text/20',
+    secondary: 'bg-asc-secondary/10 text-asc-secondary border-asc-secondary/20',
+    success: 'bg-green-500/10 text-green-400 border-green-500/20',
+    warning: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+    error: 'bg-red-500/10 text-red-400 border-red-500/20',
   }
 
   const sizes = {
