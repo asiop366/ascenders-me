@@ -1,1 +1,172 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum ChannelType {
+  FORUM
+  CHAT
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  PENDING
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  username       String    @unique
+  hashedPassword String?
+  image          String?
+  bio            String?   @db.Text
+  role           Role      @default(USER)
+  gradeId        String?
+  emailVerified  DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  grade         Grade?         @relation(fields: [gradeId], references: [id])
+  threads       Thread[]
+  posts         Post[]
+  reactions     Reaction[]
+  reports       Report[]       @relation("ReportAuthor")
+  subscriptions Subscription[]
+  accounts      Account[]
+  sessions      Session[]
+
+  @@index([username])
+  @@index([gradeId])
+}
+
+model Grade {
+  id           String  @id @default(cuid())
+  name         String  @unique
+  slug         String  @unique
+  color        String
+  icon         String?
+  priceMonthly Int     @default(0)
+  position     Int     @default(0)
+  permissions  Json    @default("{}")
+
+  users    User[]
+  channels Channel[]
+
+  @@index([position])
+}
+
+model Space {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  icon      String?
+  position  Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  channels  Channel[]
+
+  @@index([slug])
+  @@index([position])
+}
+
+model Channel {
+  id         String      @id @default(cuid())
+  spaceId    String
+  name       String
+  slug       String
+  type       ChannelType @default(FORUM)
+  minGradeId String?
+  position   Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  space    Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  minGrade Grade?   @relation(fields: [minGradeId], references: [id])
+  threads  Thread[]
+
+  @@unique([spaceId, slug])
+  @@index([spaceId])
+  @@index([slug])
+}
+
+model Thread {
+  id        String   @id @default(cuid())
+  channelId String
+  authorId  String
+  title     String
+  content   String   @db.Text
+  pinned    Boolean  @default(false)
+  locked    Boolean  @default(false)
+  viewCount Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  channel   Channel    @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  posts     Post[]
+  reactions Reaction[]
+
+  @@index([channelId])
+  @@index([authorId])
+  @@index([createdAt])
+  @@index([pinned])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  threadId  String
+  authorId  String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  thread    Thread     @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  reactions Reaction[]
+  reports   Report[]
+
+  @@index([threadId])
+  @@index([authorId])
+  @@index([createdAt])
+}
+
+model Reaction {
+  id        String   @id @default(cuid())
+  userId    String
+  threadId  String?
+  postId    String?
+  type      String   @default("like")
+  createdAt DateTime @default(now())
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  thread Thread? @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, threadId, postId, type])
+  @@index([userId])
+  @@index([threadId])
+  @@index([postId])
+}
+
+model Report {
+  id         String       @id @
 
