@@ -34,56 +34,14 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-asc-text mb-3">2. Use License</h2>
+            <h2 className="text-2xl font-semibold text-asc-text mb-3">2. User Conduct</h2>
             <p className="leading-relaxed">
-              Permission is granted to temporarily access the materials on Ascenders for personal, non-commercial transitory viewing only.
+              You agree to use the service in a respectful manner. No spam, harassment, or illegal content allowed.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-asc-text mb-3">3. User Conduct</h2>
-            <p className="leading-relaxed">
-              You agree to use the service in a respectful manner. Prohibited activities include:
-            </p>
-            <ul className="list-disc list-inside mt-3 space-y-2 ml-4">
-              <li>Posting spam or irrelevant content</li>
-              <li>Harassing or threatening other users</li>
-              <li>Sharing illegal or harmful content</li>
-              <li>Impersonating others</li>
-              <li>Attempting to hack or disrupt the service</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-asc-text mb-3">4. Content Ownership</h2>
-            <p className="leading-relaxed">
-              You retain all rights to the content you post. By posting, you grant Ascenders a license to use, display, and distribute your content on the platform.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-asc-text mb-3">5. Account Termination</h2>
-            <p className="leading-relaxed">
-              We reserve the right to terminate or suspend accounts that violate these terms without prior notice.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-asc-text mb-3">6. Disclaimer</h2>
-            <p className="leading-relaxed">
-              The service is provided "as is" without warranties of any kind, either express or implied.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-asc-text mb-3">7. Changes to Terms</h2>
-            <p className="leading-relaxed">
-              We reserve the right to modify these terms at any time. Continued use of the service constitutes acceptance of the modified terms.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-asc-text mb-3">8. Contact Information</h2>
+            <h2 className="text-2xl font-semibold text-asc-text mb-3">3. Contact</h2>
             <p className="leading-relaxed">
               For questions about these Terms, please contact us at{' '}
               <a href="mailto:legal@ascenders.com" className="text-asc-text hover:underline">
