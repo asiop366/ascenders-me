@@ -8,13 +8,9 @@ export async function POST(request: NextRequest) {
     const { email, username, password } = body
 
     if (!email || !username || !password) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Check if user already exists
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [
@@ -25,35 +21,22 @@ export async function POST(request: NextRequest) {
     })
 
     if (existingUser) {
-      return NextResponse.json(
-        { error: 'User already exists' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'User already exists' }, { status: 400 })
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    // Create user
     const user = await prisma.user.create({
       data: {
         email: email.toLowerCase(),
         username: username.toLowerCase(),
         hashedPassword,
-      },
-      select: {
-        id: true,
-        email: true,
-        username: true,
       }
     })
 
-    return NextResponse.json(user, { status: 201 })
+    return NextResponse.json({ id: user.id, email: user.email, username: user.username }, { status: 201 })
   } catch (error: any) {
     console.error('Registration error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
