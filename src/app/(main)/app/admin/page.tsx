@@ -41,13 +41,13 @@ export default async function AdminPage() {
   const recentReports = await prisma.report.findMany({
     where: { status: 'PENDING' },
     include: {
-      reporter: { select: { username: true } },
+      user: { select: { username: true } },
       post: { 
-        select: { 
+        select: {
           content: true,
           author: { select: { username: true } }
-        } 
-      }
+        }
+      },
     },
     orderBy: { createdAt: 'desc' },
     take: 5,
@@ -86,8 +86,7 @@ export default async function AdminPage() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <StatCard icon={Users} label="Users" value={userCount} />
           <StatCard icon={MessageSquare} label="Threads" value={threadCount} />
-          <StatCard icon={MessageSquare} label="Posts" value={postCount} />
-          <StatCard icon={Folder} label="Topics" value={spaceCount} />
+          <StatCard icon={Folder} label="Posts" value={postCount} />
           <StatCard 
             icon={Flag} 
             label="Pending Reports" 
@@ -141,78 +140,60 @@ export default async function AdminPage() {
           </Link>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Pending Reports */}
-          <div className="bg-asc-surface border border-asc-border rounded-asc-lg">
-            <div className="p-4 border-b border-asc-border flex items-center justify-between">
-              <h2 className="font-semibold text-asc-text flex items-center gap-2">
-                <Flag size={18} />
-                Pending Reports
-              </h2>
-              <Link href="/app/admin/reports" className="text-sm text-asc-muted hover:text-asc-text">
-                View all
-              </Link>
-            </div>
-            <div className="divide-y divide-asc-border">
-              {recentReports.length === 0 ? (
-                <div className="p-6 text-center">
-                  <CheckCircle size={24} className="text-green-500 mx-auto mb-2" />
-                  <p className="text-sm text-asc-muted">No pending reports</p>
-                </div>
-              ) : (
-                recentReports.map((report) => (
-                  <div key={report.id} className="p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-asc-text line-clamp-2">
-                          {report.post.content}
-                        </p>
-                        <p className="text-xs text-asc-muted mt-1">
-                          By @{report.post.author.username}  Reported by @{report.reporter.username}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <button className="p-1.5 hover:bg-green-500/20 rounded text-green-500" title="Dismiss">
-                          <CheckCircle size={16} />
-                        </button>
-                        <button className="p-1.5 hover:bg-red-500/20 rounded text-red-500" title="Remove">
-                          <Ban size={16} />
-                        </button>
-                      </div>
-                    </div>
+        {/* Recent Reports */}
+        <div className="bg-asc-surface border border-asc-border rounded-asc-lg p-4">
+          <h2 className="font-semibold text-asc-text gap-2 mb-2">
+            Pending Reports
+          </h2>
+          <div className="divide-y divide-asc-border">
+            {recentReports.length === 0 ? (
+              <div className="p-6 text-center">
+                <CheckCircle size={24} className="text-green-500 mb-2 mx-auto" />
+                <p className="text-sm text-asc-muted">No pending reports</p>
+              </div>
+            ) : (
+              recentReports.map((report) => (
+                <div key={report.id} className="p-4 flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-asc-text line-clamp-2">
+                      {report.post?.content || 'No content'}
+                    </p>
+                    <p className="text-xs text-asc-muted mt-1">
+                      By @{report.post?.author?.username || 'unknown'} · Reported by @{report.user?.username || 'unknown'}
+                    </p>
                   </div>
-                ))
-              )}
-            </div>
+                  <div className="flex gap-1">
+                    <button className="p-1.5 hover:bg-green-500/20 rounded text-green-500" title="Dismiss">
+                      <CheckCircle size={16} />
+                    </button>
+                    <button className="p-1.5 hover:bg-red-500/20 rounded text-red-500" title="Remove">
+                      <Ban size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
+        </div>
 
-          {/* Recent Users */}
-          <div className="bg-asc-surface border border-asc-border rounded-asc-lg">
-            <div className="p-4 border-b border-asc-border flex items-center justify-between">
-              <h2 className="font-semibold text-asc-text flex items-center gap-2">
-                <Users size={18} />
-                Recent Users
-              </h2>
-              <Link href="/app/admin/users" className="text-sm text-asc-muted hover:text-asc-text">
-                View all
-              </Link>
-            </div>
-            <div className="divide-y divide-asc-border">
-              {recentUsers.map((user) => (
-                <div key={user.id} className="p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-asc-text text-asc-bg rounded-full flex items-center justify-center font-semibold text-sm">
-                      {user.username[0].toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-asc-text">{user.username}</p>
-                      <p className="text-xs text-asc-muted">{user.email}</p>
-                    </div>
-                  </div>
-                  <span className="badge">{user.role}</span>
+        {/* Recent Users */}
+        <div className="bg-asc-surface border border-asc-border rounded-asc-lg p-4 mt-8">
+          <h2 className="font-semibold text-asc-text gap-2 mb-2">
+            Recent Users
+          </h2>
+          <div className="divide-y divide-asc-border">
+            {recentUsers.map((user) => (
+              <div key={user.id} className="p-4 flex items-center gap-3">
+                <div className="w-8 h-8 bg-asc-text text-asc-bg rounded-full flex items-center justify-center font-semibold text-xs">
+                  {user.username[0].toUpperCase()}
                 </div>
-              ))}
-            </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-asc-text">{user.username}</p>
+                  <p className="text-xs text-asc-muted">{user.email}</p>
+                </div>
+                <span className="text-xs px-2 py-1 bg-asc-surface2 rounded text-asc-muted">{user.role}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -226,15 +207,13 @@ function StatCard({
   value, 
   highlight = false 
 }: { 
-  icon: any
-  label: string
-  value: number
-  highlight?: boolean
+  icon: any 
+  label: string 
+  value: number 
+  highlight?: boolean 
 }) {
   return (
-    <div className={`bg-asc-surface border rounded-asc p-4 ${
-      highlight ? 'border-red-500/50' : 'border-asc-border'
-    }`}>
+    <div className={`bg-asc-surface border rounded-asc p-4 ${highlight ? 'border-red-500/50' : 'border-asc-border'}`}>
       <div className="flex items-center gap-3 mb-2">
         <Icon size={18} className={highlight ? 'text-red-400' : 'text-asc-muted'} />
         <span className="text-sm text-asc-muted">{label}</span>
