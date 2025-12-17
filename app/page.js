@@ -1,77 +1,332 @@
 export default function Home() {
   return (
     <div className="container">
-      {/* Header */}
+      {/* Navbar */}
       <nav className="navbar">
-        <div className="logo">
-          <span className="logo-icon">🎮</span>
-          <span>MonServeur</span>
+        <a href="/" className="logo">ascenders</a>
+        
+        <ul className="nav-links">
+          <li><a href="#grades">Pricing</a></li>
+          <li><a href="#preview">Preview</a></li>
+          <li><a href="#features">Features</a></li>
+        </ul>
+        
+        <div className="nav-buttons">
+          <button className="btn btn-ghost">Log in</button>
+          <a href="#grades" className="btn btn-primary">Join</a>
         </div>
-        <a href="https://discord.gg/TON-LIEN-ICI" className="btn-join-nav">
-          Rejoindre
-        </a>
       </nav>
 
-      {/* Hero Section */}
-      <main className="hero">
-        <div className="hero-content">
-          <h1 className="title">
-            Bienvenue sur <span className="highlight">MonServeur</span>
-          </h1>
-          <p className="subtitle">
-            🚀 La meilleure communauté Discord pour discuter, jouer et s'amuser ensemble !
-          </p>
-          
-          <div className="stats">
-            <div className="stat">
-              <span className="stat-number">500+</span>
-              <span className="stat-label">Membres</span>
-            </div>
-            <div className="stat">
-              <span className="stat-number">24/7</span>
-              <span className="stat-label">Actif</span>
-            </div>
-            <div className="stat">
-              <span className="stat-number">🎉</span>
-              <span className="stat-label">Events</span>
-            </div>
-          </div>
-
-          <a 
-            href="https://discord.gg/TON-LIEN-ICI" 
-            className="btn-join"
-            target="_blank"
-          >
-            <svg className="discord-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-            </svg>
-            Rejoindre le Discord
+      {/* Hero */}
+      <section className="hero">
+        <h1>Private community for high performers</h1>
+        <p>
+          Access exclusive guides, private discussions, and connect with 
+          ambitious people. Upgrade your grade for premium content.
+        </p>
+        <div className="hero-buttons">
+          <a href="#grades" className="btn btn-primary">View plans</a>
+          <a href="https://discord.gg/YOUR-LINK" className="btn btn-secondary" target="_blank">
+            Join free
           </a>
         </div>
+      </section>
 
-        {/* Features */}
-        <div className="features">
-          <div className="feature">
-            <span className="feature-icon">💬</span>
-            <h3>Chat & Discussions</h3>
-            <p>Des salons pour tous les sujets</p>
+      {/* Stats */}
+      <section className="stats">
+        <div className="stat">
+          <div className="stat-value">2,847</div>
+          <div className="stat-label">Members</div>
+        </div>
+        <div className="stat">
+          <div className="stat-value">584</div>
+          <div className="stat-label">Premium</div>
+        </div>
+        <div className="stat">
+          <div className="stat-value">127</div>
+          <div className="stat-label">Guides</div>
+        </div>
+      </section>
+
+      {/* Grades */}
+      <section className="grades-section" id="grades">
+        <div className="section-header">
+          <h2>Choose your plan</h2>
+          <p>Unlock features based on your membership level</p>
+        </div>
+        
+        <div className="grades-grid">
+          {/* Free */}
+          <div className="grade-card">
+            <div className="grade-name">Free</div>
+            <div className="grade-price">0€</div>
+            <div className="grade-billing">Forever free</div>
+            <ul className="grade-features">
+              <li>General forum access</li>
+              <li>Free guides</li>
+              <li>Community chat</li>
+              <li className="disabled">Premium channels</li>
+              <li className="disabled">Private guides</li>
+              <li className="disabled">Priority support</li>
+            </ul>
+            <a href="https://discord.gg/YOUR-LINK" className="btn btn-secondary">Join free</a>
           </div>
-          <div className="feature">
-            <span className="feature-icon">🎮</span>
-            <h3>Gaming</h3>
-            <p>Trouve des mates pour jouer</p>
+
+          {/* Standard */}
+          <div className="grade-card">
+            <div className="grade-name">Standard</div>
+            <div className="grade-price">9€ <span>/mo</span></div>
+            <div className="grade-billing">Billed monthly</div>
+            <ul className="grade-features">
+              <li>Everything in Free</li>
+              <li>Standard badge</li>
+              <li>Advanced guides</li>
+              <li>Standard channels</li>
+              <li className="disabled">Premium guides</li>
+              <li className="disabled">Direct support</li>
+            </ul>
+            <a href="/api/checkout?grade=standard" className="btn btn-secondary">Get Standard</a>
           </div>
-          <div className="feature">
-            <span className="feature-icon">🎵</span>
-            <h3>Musique</h3>
-            <p>Écoute de la musique ensemble</p>
+
+          {/* Premium */}
+          <div className="grade-card popular">
+            <div className="grade-badge">Most popular</div>
+            <div className="grade-name">Premium</div>
+            <div className="grade-price">19€ <span>/mo</span></div>
+            <div className="grade-billing">Billed monthly</div>
+            <ul className="grade-features">
+              <li>Everything in Standard</li>
+              <li>Premium badge</li>
+              <li>All premium guides</li>
+              <li>Premium channels</li>
+              <li>Priority support</li>
+              <li className="disabled">VIP access</li>
+            </ul>
+            <a href="/api/checkout?grade=premium" className="btn btn-primary">Get Premium</a>
+          </div>
+
+          {/* VIP */}
+          <div className="grade-card">
+            <div className="grade-name">VIP</div>
+            <div className="grade-price">49€ <span>/mo</span></div>
+            <div className="grade-billing">Billed monthly</div>
+            <ul className="grade-features">
+              <li>Everything in Premium</li>
+              <li>Gold VIP badge</li>
+              <li>All content access</li>
+              <li>Private VIP channel</li>
+              <li>Direct owner access</li>
+              <li>Early access content</li>
+            </ul>
+            <a href="/api/checkout?grade=vip" className="btn btn-gold">Get VIP</a>
           </div>
         </div>
-      </main>
+      </section>
+
+      {/* Preview */}
+      <section className="preview-section" id="preview">
+        <div className="section-header">
+          <h2>Platform preview</h2>
+          <p>See what's inside before you join</p>
+        </div>
+        
+        <div className="preview-container">
+          <div className="preview-header">
+            <div className="preview-dot"></div>
+            <div className="preview-dot"></div>
+            <div className="preview-dot"></div>
+          </div>
+          
+          <div className="preview-content">
+            {/* Sidebar */}
+            <div className="preview-sidebar">
+              <div className="sidebar-header">Ascenders</div>
+              
+              <div className="channel-category">
+                <div className="category-header">General</div>
+                <div className="channel active">
+                  <span className="channel-icon">#</span>
+                  <span>welcome</span>
+                </div>
+                <div className="channel">
+                  <span className="channel-icon">#</span>
+                  <span>chat</span>
+                </div>
+                <div className="channel">
+                  <span className="channel-icon">#</span>
+                  <span>free-guides</span>
+                </div>
+              </div>
+              
+              <div className="channel-category">
+                <div className="category-header">Premium</div>
+                <div className="channel locked">
+                  <span className="channel-icon">🔒</span>
+                  <span>premium-guides</span>
+                </div>
+                <div className="channel locked">
+                  <span className="channel-icon">🔒</span>
+                  <span>premium-chat</span>
+                </div>
+              </div>
+              
+              <div className="channel-category">
+                <div className="category-header">VIP</div>
+                <div className="channel locked">
+                  <span className="channel-icon">🔒</span>
+                  <span>vip-lounge</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Main */}
+            <div className="preview-main">
+              <div className="preview-main-header">
+                <span>#</span> welcome
+              </div>
+              
+              <div className="preview-messages">
+                <div className="message">
+                  <div className="message-avatar">A</div>
+                  <div className="message-content">
+                    <div className="message-header">
+                      <span className="message-author">admin</span>
+                      <span className="message-badge badge-owner">Owner</span>
+                      <span className="message-time">Today at 2:32 PM</span>
+                    </div>
+                    <div className="message-text">Welcome to Ascenders. Read the rules and introduce yourself.</div>
+                  </div>
+                </div>
+                
+                <div className="message">
+                  <div className="message-avatar">M</div>
+                  <div className="message-content">
+                    <div className="message-header">
+                      <span className="message-author">max</span>
+                      <span className="message-badge badge-premium">Premium</span>
+                      <span className="message-time">Today at 2:45 PM</span>
+                    </div>
+                    <div className="message-text">The premium guides are worth it. Learned a lot already.</div>
+                  </div>
+                </div>
+                
+                <div className="message">
+                  <div className="message-avatar">V</div>
+                  <div className="message-content">
+                    <div className="message-header">
+                      <span className="message-author">victor</span>
+                      <span className="message-badge badge-vip">VIP</span>
+                      <span className="message-time">Today at 3:02 PM</span>
+                    </div>
+                    <div className="message-text">VIP channel is next level. Direct access to the team.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Members */}
+            <div className="preview-members">
+              <div className="members-category">
+                <div className="members-category-title">Owner — 1</div>
+                <div className="member">
+                  <div className="member-avatar">A</div>
+                  <span className="member-name owner">admin</span>
+                </div>
+              </div>
+              
+              <div className="members-category">
+                <div className="members-category-title">Mod — 2</div>
+                <div className="member">
+                  <div className="member-avatar">M</div>
+                  <span className="member-name mod">moderator</span>
+                </div>
+              </div>
+              
+              <div className="members-category">
+                <div className="members-category-title">VIP — 8</div>
+                <div className="member">
+                  <div className="member-avatar">V</div>
+                  <span className="member-name vip">victor</span>
+                </div>
+              </div>
+              
+              <div className="members-category">
+                <div className="members-category-title">Premium — 42</div>
+                <div className="member">
+                  <div className="member-avatar">M</div>
+                  <span className="member-name premium">max</span>
+                </div>
+              </div>
+              
+              <div className="members-category">
+                <div className="members-category-title">Standard — 156</div>
+                <div className="member">
+                  <div className="member-avatar">S</div>
+                  <span className="member-name standard">sam</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="features-section" id="features">
+        <div className="section-header">
+          <h2>Why Ascenders</h2>
+          <p>Built for people who want more</p>
+        </div>
+        
+        <div className="features-grid">
+          <div className="feature-card">
+            <div className="feature-icon">📚</div>
+            <h3>Exclusive guides</h3>
+            <p>Detailed guides written by experts. Updated regularly with new content.</p>
+          </div>
+          
+          <div className="feature-card">
+            <div className="feature-icon">💬</div>
+            <h3>Active community</h3>
+            <p>Connect with thousands of motivated members. Share experiences and learn.</p>
+          </div>
+          
+          <div className="feature-card">
+            <div className="feature-icon">🔒</div>
+            <h3>Private content</h3>
+            <p>Access channels with content you won't find anywhere else.</p>
+          </div>
+          
+          <div className="feature-card">
+            <div className="feature-icon">⚡</div>
+            <h3>Grade system</h3>
+            <p>Unlock benefits as you upgrade. More access, more features.</p>
+          </div>
+          
+          <div className="feature-card">
+            <div className="feature-icon">🎯</div>
+            <h3>Clear roadmaps</h3>
+            <p>Follow step-by-step paths to reach your goals faster.</p>
+          </div>
+          
+          <div className="feature-card">
+            <div className="feature-icon">🤝</div>
+            <h3>Networking</h3>
+            <p>Meet people who share your ambitions and mindset.</p>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="footer">
-        <p>© 2025 MonServeur - Fait avec 💜</p>
+        <div className="footer-left">
+          © 2025 Ascenders
+        </div>
+        <div className="footer-links">
+          <a href="#">Terms</a>
+          <a href="#">Privacy</a>
+          <a href="#">Contact</a>
+          <a href="https://discord.gg/YOUR-LINK" target="_blank">Discord</a>
+        </div>
       </footer>
     </div>
   )
