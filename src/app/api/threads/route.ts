@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { threadSchema } from '@/lib/validations'
 
 export async function GET(request: NextRequest) {
   try {
@@ -48,11 +49,17 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { channelId, title, content, tags } = body
-
-    if (!channelId || !title || !content) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    
+    // Validate
+    const validationResult = threadSchema.safeParse(body)
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: validationResult.error.errors[0].message },
+        { status: 400 }
+      )
     }
+
+    const { channelId, title, content } = validationResult.data
 
     // Verify channel exists
     const channel = await prisma.channel.findUnique({
@@ -63,6 +70,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Channel not found' }, { status: 404 })
     }
 
+    // Create thread
     const thread = await prisma.thread.create({
       data: {
         channelId,
