@@ -1,37 +1,41 @@
-export default function TermsPage() {
-  return (
-    <div className="container mx-auto px-4 py-16 max-w-4xl">
-      <h1 className="text-4xl font-bold mb-8">Terms of Service</h1>
-      
-      <div className="prose prose-invert max-w-none space-y-6 text-dark-muted">
-        <section>
-          <h2 className="text-2xl font-semibold text-dark-text mb-4">1. Acceptance of Terms</h2>
-          <p>
-            By accessing and using Ascenders, you accept and agree to be bound by the terms and provision
-            of this agreement. If you do not agree to these terms, please do not use our service.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold text-dark-text mb-4">2. User Conduct</h2>
-          <p>You agree to use Ascenders responsibly and not to:</p>
-          <ul className="list-disc list-inside ml-4 space-y-2">
-            <li>Post harmful, offensive, or illegal content</li>
-            <li>Harass, threaten, or abuse other users</li>
-            <li>Spam or engage in unauthorized advertising</li>
-            <li>Impersonate others or misrepresent your identity</li>
-            <li>Violate any applicable laws or regulations</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold text-dark-text mb-4">3. Content Ownership</h2>
-          <p>
-            You retain ownership of content you post on Ascenders. However, by posting, you grant us
-            a license to use, modify, and display your content on our platform.
-          </p>
-        </section>
-
-        <section>
-          <h2 
-
+{
+  "name": "ascenders-me",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.9.0",
+    "@next-auth/prisma-adapter": "^1.0.7",
+    "bcryptjs": "^2.4.3",
+    "next": "^14.1.0",
+    "next-auth": "^4.24.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "zod": "^3.22.4",
+    "date-fns": "^3.2.0",
+    "clsx": "^2.1.0",
+    "lucide-react": "^0.323.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.11.5",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.33",
+    "prisma": "^5.9.0",
+    "tailwindcss": "^3.4.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
