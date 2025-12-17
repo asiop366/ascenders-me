@@ -1,7 +1,9 @@
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { Sidebar } from '@/components/layout/sidebar'
+
+export const dynamic = 'force-dynamic'
 
 export default async function MainLayout({
   children,
