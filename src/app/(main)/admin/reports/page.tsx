@@ -194,3 +194,68 @@ export default async function ReportsPage() {
                         {report.post.content}
                       </p>
                       
+                      <div className="flex items-center gap-2 mt-2">
+                        <Avatar 
+                          src={report.post.author.image} 
+                          alt={report.post.author.username} 
+                          size="xs" 
+                        />
+                        <span className="text-xs text-asc-muted">
+                          by {report.post.author.username}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-2 mt-4">
+                  {report.status === 'PENDING' && (
+                    <>
+                      <button className="btn-secondary text-sm">
+                        <CheckCircle size={14} className="mr-1.5" />
+                        Mark as Reviewed
+                      </button>
+                      <button className="btn-secondary text-sm text-green-400 border-green-500/20 hover:bg-green-500/10">
+                        <CheckCircle size={14} className="mr-1.5" />
+                        Resolve
+                      </button>
+                      <button className="btn-secondary text-sm text-gray-400 border-gray-500/20 hover:bg-gray-500/10">
+                        <XCircle size={14} className="mr-1.5" />
+                        Dismiss
+                      </button>
+                    </>
+                  )}
+                  
+                  {report.status === 'REVIEWED' && (
+                    <>
+                      <button className="btn-secondary text-sm text-green-400 border-green-500/20 hover:bg-green-500/10">
+                        <CheckCircle size={14} className="mr-1.5" />
+                        Resolve
+                      </button>
+                      <button className="btn-secondary text-sm text-gray-400 border-gray-500/20 hover:bg-gray-500/10">
+                        <XCircle size={14} className="mr-1.5" />
+                        Dismiss
+                      </button>
+                    </>
+                  )}
+
+                  {(report.status === 'RESOLVED' || report.status === 'DISMISSED') && (
+                    <button className="btn-secondary text-sm text-yellow-400 border-yellow-500/20 hover:bg-yellow-500/10">
+                      <Clock size={14} className="mr-1.5" />
+                      Reopen
+                    </button>
+                  )}
+
+                  <button className="btn-danger text-sm ml-auto">
+                    Delete Content
+                  </button>
+                </div>
+              </article>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
