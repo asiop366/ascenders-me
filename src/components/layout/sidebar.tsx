@@ -3,23 +3,25 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
-import { 
-  Home, 
-  Folder, 
-  TrendingUp, 
-  Bookmark, 
-  Bell, 
+import { useState, useEffect, useRef } from 'react'
+import {
+  Home,
+  Folder,
+  TrendingUp,
+  Bookmark,
+  Bell,
   Settings,
   LogOut,
   ChevronDown,
   User,
-  MoreHorizontal
+  MoreHorizontal,
+  Shield,
 } from 'lucide-react'
-import { useState, useRef, useEffect } from 'react'
+import { routes } from '@/config/routes'
 
 interface SidebarProps {
   user: {
-    id?: string | null
+    id?: string
     username?: string | null
     email?: string | null
     image?: string | null
@@ -28,19 +30,18 @@ interface SidebarProps {
 }
 
 const navigation = [
-  { name: 'Home', href: '/app', icon: Home },
-  { name: 'Topics', href: '/app/topics', icon: Folder },
-  { name: 'Trending', href: '/app/trending', icon: TrendingUp },
-  { name: 'Bookmarks', href: '/app/bookmarks', icon: Bookmark },
-  { name: 'Notifications', href: '/app/notifications', icon: Bell },
+  { name: 'Home', href: routes.app, icon: Home },
+  { name: 'Topics', href: routes.topics, icon: Folder },
+  { name: 'Trending', href: routes.trending, icon: TrendingUp },
+  { name: 'Bookmarks', href: routes.bookmarks, icon: Bookmark },
+  { name: 'Notifications', href: routes.notifications, icon: Bell },
 ]
 
 const topTopics = [
-  { name: 'General', slug: 'general', threads: 1243 },
-  { name: 'Build Logs', slug: 'build-logs', threads: 892 },
-  { name: 'Guides', slug: 'guides', threads: 567 },
-  { name: 'Feedback', slug: 'feedback', threads: 234 },
-  { name: 'Off-topic', slug: 'off-topic', threads: 1891 },
+  { name: 'General', slug: 'general', count: 1234 },
+  { name: 'Tech', slug: 'tech', count: 856 },
+  { name: 'Gaming', slug: 'gaming', count: 642 },
+  { name: 'Music', slug: 'music', count: 421 },
 ]
 
 export function Sidebar({ user }: SidebarProps) {
@@ -48,173 +49,201 @@ export function Sidebar({ user }: SidebarProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
-  // Close menu when clicking outside
+  const isAdmin = user.role === 'ADMIN'
+  const isMod = user.role === 'MODERATOR'
+
+  // Close menu on outside click
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setUserMenuOpen(false)
       }
     }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
 
-  // Close menu on ESC
-  useEffect(() => {
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === 'Escape') setUserMenuOpen(false)
+    if (userMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
     }
-    document.addEventListener('keydown', handleEscape)
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [])
 
-  const isAdmin = user.role === 'ADMIN'
-  const isMod = user.role === 'MODERATOR' || isAdmin
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [userMenuOpen])
+
+  // Close menu on escape key
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setUserMenuOpen(false)
+      }
+    }
+
+    if (userMenuOpen) {
+      document.addEventListener('keydown', handleEscape)
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [userMenuOpen])
 
   return (
-    <aside className="w-70 h-screen bg-asc-surface border-r border-asc-border flex flex-col">
-      {/* Header - Logo & Welcome */}
-      <div className="p-5 border-b border-asc-border">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-asc-text rounded-asc flex items-center justify-center">
-            <span className="text-asc-bg font-bold text-lg">A</span>
+    <div className="w-64 bg-zinc-900 border-r border-zinc-800 flex flex-col">
+      {/* Header */}
+      <div className="p-4 border-b border-zinc-800">
+        <Link href={routes.app} className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center font-bold text-white">
+            A
           </div>
           <div>
-            <h1 className="font-semibold text-asc-text">Ascenders</h1>
-            <p className="text-xs text-asc-muted">Welcome back</p>
+            <h1 className="font-bold text-lg">Ascenders</h1>
+            <p className="text-xs text-zinc-400">Welcome back!</p>
           </div>
-        </div>
+        </Link>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto p-3">
-        {/* Main Nav */}
-        <div className="space-y-1 mb-6">
-          {navigation.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`nav-item ${isActive ? 'nav-item-active' : ''}`}
-              >
-                <item.icon size={18} />
-                <span>{item.name}</span>
-                {item.name === 'Notifications' && (
-                  <span className="ml-auto w-5 h-5 bg-asc-text text-asc-bg text-xs font-medium rounded-full flex items-center justify-center">
-                    3
-                  </span>
-                )}
-              </Link>
-            )
-          })}
-        </div>
+      {/* Main Navigation */}
+      <nav className="flex-1 overflow-y-auto p-3 space-y-1">
+        {navigation.map((item) => {
+          const isActive = pathname === item.href
+          const Icon = item.icon
 
-        {/* Top Topics */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between px-3 mb-2">
-            <span className="text-xs font-medium text-asc-muted uppercase tracking-wider">
-              Top Topics
-            </span>
-            <Link href="/app/topics" className="text-xs text-asc-muted hover:text-asc-text transition-colors">
-              View all
+          return (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`
+                flex items-center gap-3 px-3 py-2 rounded-lg transition-colors
+                ${
+                  isActive
+                    ? 'bg-zinc-800 text-white font-medium'
+                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                }
+              `}
+            >
+              <Icon size={20} />
+              <span>{item.name}</span>
             </Link>
+          )
+        })}
+
+        {/* Top Topics Section */}
+        <div className="pt-6 pb-2">
+          <div className="px-3 mb-2 flex items-center justify-between">
+            <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+              Top Topics
+            </h3>
+            <button className="text-zinc-500 hover:text-white transition-colors">
+              <MoreHorizontal size={16} />
+            </button>
           </div>
           <div className="space-y-1">
             {topTopics.map((topic) => (
               <Link
                 key={topic.slug}
-                href={`/app/topics/${topic.slug}`}
-                className="nav-item group"
+                href={routes.topic(topic.slug)}
+                className="flex items-center justify-between px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition-colors"
               >
-                <span className="w-2 h-2 bg-asc-muted rounded-full group-hover:bg-asc-text transition-colors" />
-                <span className="flex-1 truncate">{topic.name}</span>
-                <span className="text-xs text-asc-muted">{topic.threads}</span>
+                <span className="text-sm">#{topic.name}</span>
+                <span className="text-xs text-zinc-600">{topic.count}</span>
               </Link>
             ))}
           </div>
         </div>
 
-        {/* Mod/Admin Section */}
-        {isMod && (
-          <div className="mb-6">
+        {/* Admin Section */}
+        {(isAdmin || isMod) && (
+          <div className="pt-4 border-t border-zinc-800 mt-4">
             <div className="px-3 mb-2">
-              <span className="text-xs font-medium text-asc-muted uppercase tracking-wider">
-                Moderation
-              </span>
+              <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider flex items-center gap-2">
+                <Shield size={14} />
+                Admin
+              </h3>
             </div>
-            <div className="space-y-1">
-              <Link href="/app/admin" className="nav-item">
-                <Settings size={18} />
-                <span>Admin Panel</span>
-              </Link>
-            </div>
+            <Link
+              href={routes.admin}
+              className={`
+                flex items-center gap-3 px-3 py-2 rounded-lg transition-colors
+                ${
+                  pathname.startsWith('/app/admin')
+                    ? 'bg-red-900/20 text-red-400 font-medium'
+                    : 'text-zinc-400 hover:text-red-400 hover:bg-red-900/10'
+                }
+              `}
+            >
+              <Shield size={20} />
+              <span>Admin Panel</span>
+            </Link>
           </div>
         )}
       </nav>
 
       {/* User Card */}
-      <div className="p-3 border-t border-asc-border" ref={menuRef}>
+      <div className="p-3 border-t border-zinc-800" ref={menuRef}>
         <div className="relative">
           <button
             onClick={() => setUserMenuOpen(!userMenuOpen)}
-            className="w-full flex items-center gap-3 p-2 rounded-asc hover:bg-asc-hover transition-all duration-120"
-            aria-expanded={userMenuOpen}
-            aria-haspopup="true"
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-zinc-800 transition-colors"
           >
-            {/* Avatar */}
-            <div className="w-9 h-9 bg-asc-text text-asc-bg rounded-full flex items-center justify-center font-semibold text-sm">
-              {user.username?.[0]?.toUpperCase() || 'U'}
+            <div className="w-8 h-8 rounded-full bg-zinc-700 overflow-hidden flex-shrink-0">
+              {user.image ? (
+                <img src={user.image} alt={user.username || 'User'} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-sm font-medium">
+                  {user.username?.[0]?.toUpperCase() || 'U'}
+                </div>
+              )}
             </div>
-            
-            {/* User Info */}
             <div className="flex-1 text-left min-w-0">
-              <p className="text-sm font-medium text-asc-text truncate">
+              <div className="text-sm font-medium truncate">
                 {user.username || 'User'}
-              </p>
-              <p className="text-xs text-asc-muted truncate">
-                {user.role === 'ADMIN' ? 'Administrator' : user.role === 'MODERATOR' ? 'Moderator' : 'Member'}
-              </p>
+              </div>
+              <div className="text-xs text-zinc-500 truncate">
+                {user.role === 'ADMIN' && '👑 Admin'}
+                {user.role === 'MODERATOR' && '🛡️ Moderator'}
+                {user.role !== 'ADMIN' && user.role !== 'MODERATOR' && 'Member'}
+              </div>
             </div>
-            
-            {/* Chevron */}
-            <ChevronDown 
-              size={16} 
-              className={`text-asc-muted transition-transform duration-120 ${userMenuOpen ? 'rotate-180' : ''}`} 
+            <ChevronDown
+              size={16}
+              className={`text-zinc-500 transition-transform ${
+                userMenuOpen ? 'rotate-180' : ''
+              }`}
             />
           </button>
 
-          {/* User Menu Dropdown */}
+          {/* User Dropdown Menu */}
           {userMenuOpen && (
-            <div className="absolute bottom-full left-0 right-0 mb-2 bg-asc-surface border border-asc-border rounded-asc-lg shadow-lg py-1 animate-fade-in">
+            <div className="absolute bottom-full left-0 right-0 mb-2 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl overflow-hidden">
               <Link
-                href={`/app/u/${user.username}`}
-                className="dropdown-item"
+                href={routes.user(user.username || '')}
                 onClick={() => setUserMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-700 transition-colors"
               >
                 <User size={16} />
-                <span>Profile</span>
+                <span className="text-sm">Profile</span>
               </Link>
               <Link
-                href="/app/settings"
-                className="dropdown-item"
+                href={routes.settings}
                 onClick={() => setUserMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-700 transition-colors"
               >
                 <Settings size={16} />
-                <span>Settings</span>
+                <span className="text-sm">Settings</span>
               </Link>
-              <div className="border-t border-asc-border my-1" />
               <button
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className="dropdown-item w-full text-red-400 hover:text-red-300"
+                onClick={() => {
+                  setUserMenuOpen(false)
+                  signOut()
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-700 transition-colors text-red-400"
               >
                 <LogOut size={16} />
-                <span>Sign out</span>
+                <span className="text-sm">Sign out</span>
               </button>
             </div>
           )}
         </div>
       </div>
-    </aside>
+    </div>
   )
 }
