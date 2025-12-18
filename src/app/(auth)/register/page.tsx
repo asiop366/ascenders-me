@@ -1,13 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, AlertCircle, Check } from 'lucide-react'
+import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { Eye, EyeOff } from 'lucide-react'
 
 export default function RegisterPage() {
   const router = useRouter()
-
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -15,44 +15,27 @@ export default function RegisterPage() {
     confirmPassword: '',
   })
   const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState('')
-  const [acceptTerms, setAcceptTerms] = useState(false)
-
-  const passwordRequirements = [
-    { label: 'At least 6 characters', met: formData.password.length >= 6 },
-  ]
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-    setError('')
-  }
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setIsLoading(true)
 
-    if (!acceptTerms) {
-      setError('You must accept the terms and conditions')
-      return
-    }
-
+    // Validation
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
+      setIsLoading(false)
       return
     }
 
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters')
+      setIsLoading(false)
       return
     }
-
-    if (formData.username.length < 3) {
-      setError('Username must be at least 3 characters')
-      return
-    }
-
-    setIsLoading(true)
 
     try {
       const res = await fetch('/api/auth/register', {
@@ -68,183 +51,174 @@ export default function RegisterPage() {
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.error || 'Registration failed')
-        setIsLoading(false)
-        return
+        throw new Error(data.error || 'Registration failed')
       }
 
-      // Redirect to login
-      router.push('/login?registered=true')
-    } catch (err) {
-      setError('Something went wrong. Please try again.')
+      // Auto login after registration
+      const result = await signIn('credentials', {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      })
+
+      if (result?.ok) {
+        router.push('/app')
+      } else {
+        router.push('/login')
+      }
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong')
+    } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-asc-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-asc-text rounded-lg flex items-center justify-center">
-              <span className="text-asc-bg font-bold text-xl">A</span>
+    <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <Link href="/" className="inline-flex items-center gap-2 mb-8">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center font-bold text-xl">
+              A
             </div>
-            <span className="text-2xl font-bold text-asc-text">Ascenders</span>
+            <span className="text-2xl font-bold">Ascenders</span>
           </Link>
-          <h1 className="text-2xl font-bold text-asc-text mb-2">Create account</h1>
-          <p className="text-asc-secondary">Join our community today</p>
+          <h1 className="text-3xl font-bold mt-6">Create account</h1>
+          <p className="text-zinc-400 mt-2">Join our community today</p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-asc text-red-400 text-sm">
-              <AlertCircle size={16} />
+            <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-500 text-sm">
               {error}
             </div>
           )}
 
+          {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-asc-text mb-1.5">
+            <label htmlFor="email" className="block text-sm font-medium mb-2">
               Email
             </label>
-            <div className="relative">
-              <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-asc-muted" />
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="input pl-10"
-                placeholder="you@example.com"
-                required
-              />
-            </div>
+            <input
+              id="email"
+              type="email"
+              required
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+              placeholder=""
+            />
           </div>
 
+          {/* Username */}
           <div>
-            <label className="block text-sm font-medium text-asc-text mb-1.5">
+            <label htmlFor="username" className="block text-sm font-medium mb-2">
               Username
             </label>
-            <div className="relative">
-              <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-asc-muted" />
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                className="input pl-10"
-                placeholder="johndoe"
-                required
-                minLength={3}
-                maxLength={20}
-                pattern="[a-zA-Z0-9_]+"
-              />
-            </div>
-            <p className="text-xs text-asc-muted mt-1">
-              Letters, numbers, and underscores only
-            </p>
+            <input
+              id="username"
+              type="text"
+              required
+              value={formData.username}
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+              className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+              placeholder=""
+            />
+            <p className="text-xs text-zinc-500 mt-1">Letters, numbers, and underscores only</p>
           </div>
 
+          {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-asc-text mb-1.5">
+            <label htmlFor="password" className="block text-sm font-medium mb-2">
               Password
             </label>
             <div className="relative">
-              <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-asc-muted" />
               <input
+                id="password"
                 type={showPassword ? 'text' : 'password'}
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="input pl-10 pr-10"
-                placeholder="••••••••"
                 required
-                minLength={6}
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors pr-12"
+                placeholder=""
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-asc-muted hover:text-asc-text"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
-            <div className="mt-2 space-y-1">
-              {passwordRequirements.map((req, i) => (
-                <div key={i} className="flex items-center gap-2 text-xs">
-                  <Check 
-                    size={14} 
-                    className={req.met ? 'text-green-400' : 'text-asc-muted'} 
-                  />
-                  <span className={req.met ? 'text-green-400' : 'text-asc-muted'}>
-                    {req.label}
-                  </span>
-                </div>
-              ))}
-            </div>
+            <p className="text-xs text-zinc-500 mt-1">
+              {formData.password.length >= 6 ? '✓' : '○'} At least 6 characters
+            </p>
           </div>
 
+          {/* Confirm Password */}
           <div>
-            <label className="block text-sm font-medium text-asc-text mb-1.5">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
               Confirm Password
             </label>
             <div className="relative">
-              <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-asc-muted" />
               <input
-                type={showPassword ? 'text' : 'password'}
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className="input pl-10"
-                placeholder="••••••••"
+                id="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
                 required
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors pr-12"
+                placeholder=""
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
           </div>
 
-          <label className="flex items-start gap-2 cursor-pointer">
-            <input 
-              type="checkbox" 
-              checked={acceptTerms}
-              onChange={(e) => setAcceptTerms(e.target.checked)}
-              className="mt-1 rounded border-asc-border" 
+          {/* Terms */}
+          <div className="flex items-start gap-2">
+            <input
+              type="checkbox"
+              id="terms"
+              required
+              className="mt-1 w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-blue-500 focus:ring-blue-500 focus:ring-offset-0"
             />
-            <span className="text-sm text-asc-secondary">
+            <label htmlFor="terms" className="text-sm text-zinc-400">
               I agree to the{' '}
-              <Link href="/terms" className="text-asc-text hover:underline">
+              <Link href="/terms" className="text-blue-400 hover:underline">
                 Terms of Service
               </Link>{' '}
               and{' '}
-              <Link href="/privacy" className="text-asc-text hover:underline">
+              <Link href="/privacy" className="text-blue-400 hover:underline">
                 Privacy Policy
               </Link>
-            </span>
-          </label>
+            </label>
+          </div>
 
+          {/* Submit */}
           <button
             type="submit"
-            disabled={isLoading || !acceptTerms}
-            className="btn-primary w-full flex items-center justify-center gap-2"
+            disabled={isLoading}
+            className="w-full py-3 bg-white text-black rounded-lg font-medium hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? (
-              <div className="w-5 h-5 border-2 border-asc-bg/30 border-t-asc-bg rounded-full animate-spin" />
-            ) : (
-              <>
-                Create account <ArrowRight size={18} />
-              </>
-            )}
+            {isLoading ? 'Creating account...' : 'Create account →'}
           </button>
-        </form>
 
-        {/* Footer */}
-        <p className="text-center text-sm text-asc-secondary mt-6">
-          Already have an account?{' '}
-          <Link href="/login" className="text-asc-text hover:underline font-medium">
-            Sign in
-          </Link>
-        </p>
+          {/* Sign in link */}
+          <p className="text-center text-sm text-zinc-400">
+            Already have an account?{' '}
+            <Link href="/login" className="text-blue-400 hover:underline font-medium">
+              Sign in
+            </Link>
+          </p>
+        </form>
       </div>
     </div>
   )
