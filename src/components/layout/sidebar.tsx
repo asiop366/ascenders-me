@@ -38,10 +38,10 @@ const navigation = [
 ]
 
 const topTopics = [
-  { name: 'General', slug: 'general', count: 1234 },
-  { name: 'Tech', slug: 'tech', count: 856 },
-  { name: 'Gaming', slug: 'gaming', count: 642 },
-  { name: 'Music', slug: 'music', count: 421 },
+  { name: 'Looksmaxing', slug: 'looksmaxing', count: 2847 },
+  { name: 'Blackpill', slug: 'blackpill', count: 1923 },
+  { name: 'Redpill', slug: 'redpill', count: 1456 },
+  { name: 'Bluepill', slug: 'bluepill', count: 892 },
 ]
 
 export function Sidebar({ user }: SidebarProps) {
