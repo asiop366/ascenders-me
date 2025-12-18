@@ -1,145 +1,137 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState } from 'react'
+import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import Link from 'next/link'
-import { Eye, EyeOff, Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
 
-function LoginForm() {
+export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/app'
-  const error = searchParams.get('error')
-
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  })
   const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState(error ? 'Invalid credentials' : '')
+
+  const callbackUrl = searchParams.get('callbackUrl') || '/app'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
     setIsLoading(true)
-    setErrorMessage('')
 
     try {
       const result = await signIn('credentials', {
-        email: email.toLowerCase(),
-        password,
+        email: formData.email,
+        password: formData.password,
         redirect: false,
       })
 
       if (result?.error) {
-        setErrorMessage('Invalid email or password')
-        setIsLoading(false)
-      } else {
+        setError('Invalid email or password')
+      } else if (result?.ok) {
         router.push(callbackUrl)
-        router.refresh()
       }
-    } catch (error) {
-      setErrorMessage('Something went wrong. Please try again.')
+    } catch (err) {
+      setError('Something went wrong')
+    } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {errorMessage && (
-        <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-asc text-red-400 text-sm">
-          <AlertCircle size={16} />
-          {errorMessage}
-        </div>
-      )}
-
-      <div>
-        <label className="block text-sm font-medium text-asc-text mb-1.5">
-          Email
-        </label>
-        <div className="relative">
-          <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-asc-mute" />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="input pl-10"
-            placeholder="you@example.com"
-            required
-            autoComplete="email"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-asc-text mb-1.5">
-          Password
-        </label>
-        <div className="relative">
-          <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-asc-mute" />
-          <input
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="input pl-10 pr-10"
-            placeholder="••••••••"
-            required
-            autoComplete="current-password"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-asc-mute hover:text-asc-text"
-          >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
-        </div>
-      </div>
-
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="btn-primary w-full flex items-center justify-center gap-2"
-      >
-        {isLoading ? (
-          <div className="w-5 h-5 border-2 border-asc-bg/30 border-t-asc-bg rounded-full animate-spin" />
-        ) : (
-          <>
-            Sign in <ArrowRight size={18} />
-          </>
-        )}
-      </button>
-    </form>
-  )
-}
-
-export default function LoginPage() {
-  return (
-    <div className="min-h-screen bg-asc-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-asc-text rounded-lg flex items-center justify-center">
-              <span className="text-asc-bg font-bold text-xl">A</span>
+    <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <Link href="/" className="inline-flex items-center gap-2 mb-8">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center font-bold text-xl">
+              A
             </div>
-            <span className="text-2xl font-bold text-asc-text">Ascenders</span>
+            <span className="text-2xl font-bold">Ascenders</span>
           </Link>
-          <h1 className="text-2xl font-bold text-asc-text mb-2">Welcome back</h1>
-          <p className="text-asc-secondary">Sign in to your account to continue</p>
+          <h1 className="text-3xl font-bold mt-6">Welcome back</h1>
+          <p className="text-zinc-400 mt-2">Sign in to your account to continue</p>
         </div>
 
-        {/* Form with Suspense */}
-        <Suspense fallback={<div className="text-center text-asc-mute">Loading...</div>}>
-          <LoginForm />
-        </Suspense>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-500 text-sm">
+              {error}
+            </div>
+          )}
 
-        {/* Footer */}
-        <p className="text-center text-sm text-asc-secondary mt-6">
-          Don't have an account?{' '}
-          <Link href="/register" className="text-asc-text hover:underline font-medium">
-            Create account
-          </Link>
-        </p>
+          {/* Email */}
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium mb-2">
+              Email
+            </label>
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">
+                <Mail size={20} />
+              </div>
+              <input
+                id="email"
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full pl-11 pr-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+                placeholder=""
+              />
+            </div>
+          </div>
+
+          {/* Password */}
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">
+                <Lock size={20} />
+              </div>
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="w-full pl-11 pr-12 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+                placeholder=""
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-3 bg-white text-black rounded-lg font-medium hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? 'Signing in...' : 'Sign in →'}
+          </button>
+
+          {/* Create account link */}
+          <p className="text-center text-sm text-zinc-400">
+            Don't have an account?{' '}
+            <Link href="/register" className="text-blue-400 hover:underline font-medium">
+              Create account
+            </Link>
+          </p>
+        </form>
       </div>
     </div>
   )
