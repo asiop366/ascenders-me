@@ -48,13 +48,16 @@ export function Navbar({ channelName, gradeName, gradeColor }: NavbarProps) {
                   {gradeName}
                 </Badge>
               )}
+              <ChevronDown size={16} className="text-dark-muted" />
             </div>
-            <ChevronDown size={16} className="text-dark-muted" />
           </button>
         }
       >
         <DropdownItem>
-          <Link href="/profile" className="flex items-center gap-2 w-full">
+          <Link 
+            href={`/u/${session?.user?.username || ''}`} 
+            className="flex items-center gap-2 w-full"
+          >
             <User size={16} />
             <span>Profile</span>
           </Link>
