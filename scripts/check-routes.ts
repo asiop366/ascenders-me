@@ -145,3 +145,65 @@ function checkRoute(name: string, route: string): boolean {
 }
 
 function checkDynamicRoute(route: string): boolean {
+  const filePath = dynamicRouteToFilePath(route)
+  const exists = fs.existsSync(filePath)
+
+  if (exists) {
+    console.log(`✅ ${route.padEnd(50)} → ${path.relative(process.cwd(), filePath)}`)
+  } else {
+    console.log(`❌ ${route.padEnd(50)} → MISSING: ${path.relative(process.cwd(), filePath)}`)
+  }
+
+  return exists
+}
+
+// Main execution
+console.log('\n🔍 Vérification des routes de l\'application...\n')
+
+console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+console.log('📄 ROUTES STATIQUES')
+console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+
+const staticResults = Object.entries(routesToCheck).map(([name, route]) =>
+  checkRoute(name, route)
+)
+
+console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+console.log('🔀 ROUTES DYNAMIQUES')
+console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+
+const dynamicResults = dynamicRoutesToCheck.map((route) =>
+  checkDynamicRoute(route)
+)
+
+console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+console.log('📊 RÉSUMÉ')
+console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+
+const totalStatic = staticResults.length
+const validStatic = staticResults.filter(Boolean).length
+const missingStatic = totalStatic - validStatic
+
+const totalDynamic = dynamicResults.length
+const validDynamic = dynamicResults.filter(Boolean).length
+const missingDynamic = totalDynamic - validDynamic
+
+const totalRoutes = totalStatic + totalDynamic
+const validRoutes = validStatic + validDynamic
+const missingRoutes = missingStatic + missingDynamic
+
+console.log(`Routes statiques : ${validStatic}/${totalStatic} valides`)
+console.log(`Routes dynamiques : ${validDynamic}/${totalDynamic} valides`)
+console.log(`\nTOTAL : ${validRoutes}/${totalRoutes} routes valides`)
+
+if (missingRoutes > 0) {
+  console.log(`\n⚠️  ${missingRoutes} route(s) manquante(s) détectée(s)`)
+  console.log('\n💡 Pour corriger :')
+  console.log('   1. Créez les fichiers page.tsx manquants')
+  console.log('   2. Vérifiez que les routes dans src/config/routes.ts correspondent à la structure')
+  console.log('   3. Relancez ce script pour valider\n')
+  process.exit(1)
+} else {
+  console.log('\n✅ Toutes les routes sont valides !\n')
+  process.exit(0)
+}
