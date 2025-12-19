@@ -52,9 +52,9 @@ export default async function HomePage() {
         </Link>
       </div>
 
-      {/* Main Content - Thread Feed */}
-      <div className="flex-1 p-6">
-        <div className="max-w-5xl mx-auto">
+      {/* Main Content - Thread Feed CENTRÉ */}
+      <div className="flex-1 p-6 flex items-center justify-center">
+        <div className="w-full max-w-4xl">
           {threads.length === 0 ? (
             <div className="text-center py-20 text-asc-muted">
               <p className="text-lg">No threads yet. Be the first to create one!</p>
