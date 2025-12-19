@@ -33,18 +33,18 @@ enum SubscriptionStatus {
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+  id                 String   @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -71,60 +71,62 @@ model VerificationToken {
 }
 
 model User {
-  id             String    @id @default(cuid())
-  email          String    @unique
-  username       String    @unique
+  id             String   @id @default(cuid())
+  email          String   @unique
+  username       String   @unique
   hashedPassword String?
-  image          String?   @db.Text
-  bio            String?   @db.Text
-  role           Role      @default(USER)
+  image          String?  @db.Text
+  bio            String?  @db.Text
+  role           Role     @default(USER)
   gradeId        String?
   emailVerified  DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  grade         Grade?         @relation(fields: [gradeId], references: [id])
-  threads       Thread[]
-  posts         Post[]
-  reactions     Reaction[]
-  reports       Report[]
-  subscriptions Subscription[]
-  accounts      Account[]
-  sessions      Session[]
-  bookmarks     Bookmark[]
-  notifications Notification[]
+  grade          Grade?   @relation(fields: [gradeId], references: [id])
+  threads        Thread[]
+  posts          Post[]
+  reactions      Reaction[]
+  reports        Report[]
+  subscriptions  Subscription[]
+  accounts       Account[]
+  sessions       Session[]
+  bookmarks      Bookmark[]
+  notifications  Notification[]
 
   @@index([username])
   @@index([gradeId])
   @@index([email])
+  @@index([createdAt])
 }
 
 model Grade {
-  id           String @id @default(cuid())
-  name         String @unique
-  slug         String @unique
-  color        String
-  icon         String?
-  priceMonthly Int    @default(0)
-  position     Int    @default(0)
-  permissions  Json   @default("{}")
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  color       String
+  icon        String?
+  priceMonthly Int     @default(0)
+  position    Int      @default(0)
+  permissions Json    @default("{}")
 
-  users         User[]
-  channels      Channel[]
+  users       User[]
+  channels    Channel[]
   subscriptions Subscription[]
 
   @@index([position])
   @@index([slug])
+  @@index([priceMonthly])
 }
 
 model Space {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  slug      String    @unique
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
   icon      String?
-  position  Int       @default(0)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   channels  Channel[]
 
   @@index([slug])
@@ -132,19 +134,19 @@ model Space {
 }
 
 model Channel {
-  id         String      @id @default(cuid())
-  spaceId    String
-  name       String
-  slug       String      @unique
-  type       ChannelType @default(FORUM)
-  minGradeId String?
-  position   Int         @default(0)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id          String   @id @default(cuid())
+  spaceId     String
+  name        String
+  slug        String   @unique
+  type        ChannelType @default(FORUM)
+  minGradeId  String?
+  position    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  space    Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-  minGrade Grade?   @relation(fields: [minGradeId], references: [id])
-  threads  Thread[]
+  space      Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  minGrade   Grade?   @relation(fields: [minGradeId], references: [id], onDelete: SetNull)
+  threads    Thread[]
 
   @@index([spaceId])
   @@index([slug])
@@ -152,23 +154,23 @@ model Channel {
 }
 
 model Thread {
-  id        String   @id @default(cuid())
-  channelId String
-  authorId  String
-  title     String
-  content   String   @db.Text
-  pinned    Boolean  @default(false)
-  locked    Boolean  @default(false)
-  viewCount Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  channelId  String
+  authorId   String
+  title      String
+  content    String   @db.Text
+  locked     Boolean  @default(false)
+  pinned     Boolean  @default(false)
+  viewCount  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  channel   Channel    @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  posts     Post[]
-  reactions Reaction[]
-  reports   Report[]
-  bookmarks Bookmark[]
+  channel    Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  posts      Post[]
+  reactions  Reaction[]
+  reports    Report[]
+  bookmarks  Bookmark[]
 
   @@index([channelId])
   @@index([authorId])
@@ -177,17 +179,17 @@ model Thread {
 }
 
 model Post {
-  id        String   @id @default(cuid())
-  threadId  String
-  authorId  String
-  content   String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  threadId   String
+  authorId   String
+  content    String   @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  thread    Thread     @relation(fields: [threadId], references: [id], onDelete: Cascade)
-  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  reactions Reaction[]
-  reports   Report[]
+  thread     Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  reactions  Reaction[]
+  reports    Report[]
 
   @@index([threadId])
   @@index([authorId])
@@ -195,16 +197,16 @@ model Post {
 }
 
 model Reaction {
-  id        String   @id @default(cuid())
-  userId    String
-  threadId  String?
-  postId    String?
-  type      String   @default("like")
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  userId     String
+  threadId   String?
+  postId     String?
+  type       String   @default("like")
+  createdAt  DateTime @default(now())
 
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  thread Thread? @relation(fields: [threadId], references: [id], onDelete: Cascade)
-  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  thread     Thread?  @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  post       Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@unique([userId, threadId, postId, type])
   @@index([userId])
@@ -213,18 +215,18 @@ model Reaction {
 }
 
 model Report {
-  id        String       @id @default(cuid())
-  userId    String
-  threadId  String?
-  postId    String?
-  reason    String       @db.Text
-  status    ReportStatus @default(PENDING)
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  id         String   @id @default(cuid())
+  userId     String
+  threadId   String?
+  postId     String?
+  reason     String   @db.Text
+  status     ReportStatus @default(PENDING)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  thread Thread? @relation(fields: [threadId], references: [id], onDelete: Cascade)
-  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  thread     Thread?  @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  post       Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([status])
@@ -232,17 +234,17 @@ model Report {
 }
 
 model Subscription {
-  id        String             @id @default(cuid())
-  userId    String
-  gradeId   String
-  status    SubscriptionStatus @default(PENDING)
-  startDate DateTime           @default(now())
-  endDate   DateTime?
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
+  id         String   @id @default(cuid())
+  userId     String
+  gradeId    String
+  status     SubscriptionStatus @default(PENDING)
+  startDate  DateTime @default(now())
+  endDate    DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  grade Grade @relation(fields: [gradeId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grade      Grade    @relation(fields: [gradeId], references: [id])
 
   @@index([userId])
   @@index([gradeId])
@@ -250,29 +252,30 @@ model Subscription {
 }
 
 model Bookmark {
-  id        String   @id @default(cuid())
-  userId    String
-  threadId  String
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  userId     String
+  threadId   String
+  createdAt  DateTime @default(now())
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  thread Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  thread     Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
 
   @@unique([userId, threadId])
   @@index([userId])
+  @@index([threadId])
 }
 
 model Notification {
-  id        String   @id @default(cuid())
-  userId    String
-  type      String
-  title     String
-  message   String   @db.Text
-  read      Boolean  @default(false)
-  link      String?
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  userId     String
+  type       String
+  title      String
+  message    String   @db.Text
+  read       Boolean  @default(false)
+  link       String?
+  createdAt  DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([read])
