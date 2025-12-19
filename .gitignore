@@ -1,14 +1,12 @@
-<<<<<<< HEAD
-echo "node_modules
+<<<<<< HEAD
+echo "node_modules"
 .next
 .env
-.env.local
 .env.production
 .DS_Store
 *.log" > .gitignore
-=======
-
->>>>>>> 82bb6ea62b7702b16948f8f6af4ae20723826aae
+========
+>>>>>> 82bb6ea62b7702b16948f8f6af4ae20723826aae
 node_modules/
 .next/
 .vercel/
