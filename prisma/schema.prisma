@@ -83,26 +83,26 @@ model User {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  grade          Grade?   @relation(fields: [gradeId], references: [id])
-  threads        Thread[]
-  posts          Post[]
-  reactions      Reaction[]
-  reports        Report[]
-  subscriptions  Subscription[]
-  accounts       Account[]
-  sessions       Session[]
-  bookmarks      Bookmark[]
-  notifications  Notification[]
+  grade            Grade?         @relation(fields: [gradeId], references: [id])
+  threads          Thread[]
+  posts            Post[]
+  reactions        Reaction[]
+  reports          Report[]
+  subscriptions    Subscription[]
+  accounts         Account[]
+  sessions         Session[]
+  bookmarks        Bookmark[]
+  notifications    Notification[]
+  followers        Follow[]       @relation("Following")
+  following        Follow[]       @relation("Followers")
+  sentMessages     Message[]      @relation("SentMessages")
+  receivedMessages Message[]      @relation("ReceivedMessages")
+  badges           UserBadge[]
 
   @@index([username])
   @@index([gradeId])
   @@index([email])
   @@index([createdAt])
-  followers      Follow[]     @relation("Following")
-  following      Follow[]     @relation("Followers")
-  sentMessages   Message[]    @relation("SentMessages")
-  receivedMessages Message[]  @relation("ReceivedMessages")
-  badges         UserBadge[]
 }
 
 model Grade {
@@ -285,6 +285,8 @@ model Notification {
   @@index([userId])
   @@index([read])
   @@index([createdAt])
+}
+
 model Follow {
   id          String   @id @default(cuid())
   followerId  String
@@ -317,7 +319,7 @@ model Message {
 
 model Badge {
   id          String   @id @default(cuid())
-  name        String
+  name        String   @unique
   description String?
   icon        String
   color       String
@@ -325,8 +327,6 @@ model Badge {
   createdAt   DateTime @default(now())
 
   users       UserBadge[]
-
-  @@unique([name])
 }
 
 model UserBadge {
@@ -341,5 +341,4 @@ model UserBadge {
   @@unique([userId, badgeId])
   @@index([userId])
   @@index([badgeId])
-}
 }
