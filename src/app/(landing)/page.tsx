@@ -50,11 +50,11 @@ export default function LandingPage() {
           </div>
 
           <h1 className="text-6xl md:text-7xl font-bold text-asc-text mb-6 leading-tight">
-            The First Modern Forum About Looksmaxxing
+            Welcome to Ascenders.
           </h1>
           
           <p className="text-xl md:text-2xl text-asc-secondary mb-10 max-w-3xl mx-auto leading-relaxed">
-            Join a science-backed community dedicated to physical self-improvement. Transform your appearance through fitness, skincare, style, and evidence-based methods.
+            The First Modern Forum About Looksmaxxing.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -62,14 +62,14 @@ export default function LandingPage() {
               href="/register"
               className="group px-8 py-4 bg-asc-text text-asc-bg rounded-lg font-semibold text-lg hover:bg-white transition-all hover:scale-105 flex items-center gap-2 shadow-lg"
             >
-              Begin Your Transformation
+              want to Ascend ?
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link 
               href="/app"
               className="px-8 py-4 bg-transparent border-2 border-asc-text rounded-lg text-asc-text font-semibold text-lg hover:bg-asc-surface transition-all"
             >
-              Explore Topics
+              Explore the Forum
             </Link>
           </div>
 
@@ -95,7 +95,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-asc-text mb-4">
-              Why Choose Ascenders?
+              start you looksmaxxing journey
             </h2>
             <p className="text-lg text-asc-secondary max-w-2xl mx-auto">
               Everything you need to maximize your physical potential
@@ -180,7 +180,7 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto text-center">
           <Award size={48} className="text-asc-text mx-auto mb-6" />
           <h2 className="text-4xl md:text-5xl font-bold text-asc-text mb-6">
-            Ready to Level Up?
+            Ready to Ascend ?
           </h2>
           <p className="text-xl text-asc-secondary mb-10 max-w-2xl mx-auto">
             Join thousands of members already transforming their appearance and confidence through evidence-based looksmaxxing.

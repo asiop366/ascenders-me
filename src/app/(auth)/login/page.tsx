@@ -66,7 +66,7 @@ function LoginForm() {
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             className="w-full pl-11 pr-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
-            placeholder="you@example.com"
+            placeholder="your@mail.com"
           />
         </div>
       </div>

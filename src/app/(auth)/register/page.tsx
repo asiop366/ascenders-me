@@ -115,7 +115,7 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full pl-11 pr-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
-                placeholder="you@example.com"
+                placeholder="your@mail.com"
               />
             </div>
           </div>
@@ -134,7 +134,7 @@ export default function RegisterPage() {
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 className="w-full pl-11 pr-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
-                placeholder="johndoe"
+                placeholder="user"
               />
             </div>
             <p className="text-xs text-zinc-500 mt-1">Letters, numbers, and underscores only</p>
