@@ -15,3 +15,4 @@ export function getTimeAgo(date: Date | string): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date
   return formatDistanceToNow(dateObj, { addSuffix: true })
 }
+  
