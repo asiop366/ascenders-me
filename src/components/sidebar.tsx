@@ -11,6 +11,7 @@ const navItems = [
   { icon: Home, label: 'Home', href: '/app', badge: null },
   { icon: TrendingUp, label: 'Trending', href: '/app/trending', badge: null },
   { icon: Bookmark, label: 'Bookmarks', href: '/app/bookmarks', badge: null },
+  { icon: Mail, label: 'Messages', href: '/app/messages', badge: null },  // ← AJOUTE CETTE LIGNE
   { icon: Bell, label: 'Notifications', href: '/app/notifications', badge: 3 },
   { icon: Search, label: 'Search', href: '/app/search', badge: null },
 ]
