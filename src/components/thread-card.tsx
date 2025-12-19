@@ -43,10 +43,10 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
       if (res.ok) {
         if (data.action === 'added') {
           setIsLiked(true)
-          setReactions(prev => prev + 1)
+          setReactions((prev: number) => prev + 1)  // ✅ TYPÉ
         } else {
           setIsLiked(false)
-          setReactions(prev => prev - 1)
+          setReactions((prev: number) => prev - 1)  // ✅ TYPÉ
         }
       }
     } catch (error) {
