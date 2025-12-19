@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { MessageSquare, Users, Zap, Shield, ArrowRight, Sparkles, TrendingUp, Award } from 'lucide-react'
+import { Dumbbell, Heart, Sparkles, TrendingUp, Award, ArrowRight, Zap, Shield, Users } from 'lucide-react'
 
 export default function LandingPage() {
   const router = useRouter()
@@ -35,7 +35,7 @@ export default function LandingPage() {
               href="/register" 
               className="px-6 py-2 bg-asc-text text-asc-bg rounded-lg hover:bg-white transition-all font-medium"
             >
-              Get Started
+              Start Your Journey
             </Link>
           </div>
         </div>
@@ -46,15 +46,15 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-asc-surface border border-asc-border rounded-full mb-8">
             <Sparkles size={16} className="text-asc-text" />
-            <span className="text-sm text-asc-secondary">Built for modern communities</span>
+            <span className="text-sm text-asc-secondary">The forefront of looksmaxxing</span>
           </div>
 
           <h1 className="text-6xl md:text-7xl font-bold text-asc-text mb-6 leading-tight">
-            Welcome to Ascenders
+            The First Modern Forum About Looksmaxxing
           </h1>
           
           <p className="text-xl md:text-2xl text-asc-secondary mb-10 max-w-3xl mx-auto leading-relaxed">
-            A modern community platform where discussions thrive. Connect, share, and grow with like-minded individuals.
+            Join a science-backed community dedicated to physical self-improvement. Transform your appearance through fitness, skincare, style, and evidence-based methods.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -62,29 +62,29 @@ export default function LandingPage() {
               href="/register"
               className="group px-8 py-4 bg-asc-text text-asc-bg rounded-lg font-semibold text-lg hover:bg-white transition-all hover:scale-105 flex items-center gap-2 shadow-lg"
             >
-              Join the Community
+              Begin Your Transformation
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link 
               href="/app"
               className="px-8 py-4 bg-transparent border-2 border-asc-text rounded-lg text-asc-text font-semibold text-lg hover:bg-asc-surface transition-all"
             >
-              Explore Spaces
+              Explore Topics
             </Link>
           </div>
 
           <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
             <div className="text-center">
-              <div className="text-3xl font-bold text-asc-text mb-1">1.2k+</div>
-              <div className="text-sm text-asc-muted">Active Users</div>
+              <div className="text-3xl font-bold text-asc-text mb-1">5k+</div>
+              <div className="text-sm text-asc-muted">Active Members</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-asc-text mb-1">5.8k+</div>
-              <div className="text-sm text-asc-muted">Discussions</div>
+              <div className="text-3xl font-bold text-asc-text mb-1">12k+</div>
+              <div className="text-sm text-asc-muted">Success Stories</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-asc-text mb-1">24/7</div>
-              <div className="text-sm text-asc-muted">Support</div>
+              <div className="text-sm text-asc-muted">Expert Support</div>
             </div>
           </div>
         </div>
@@ -98,77 +98,77 @@ export default function LandingPage() {
               Why Choose Ascenders?
             </h2>
             <p className="text-lg text-asc-secondary max-w-2xl mx-auto">
-              Everything you need to build and grow a thriving community
+              Everything you need to maximize your physical potential
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <FeatureCard
-              icon={<MessageSquare className="w-8 h-8" />}
-              title="Rich Discussions"
-              description="Create threads, reply to posts, and engage in meaningful conversations."
+              icon={<Dumbbell className="w-8 h-8" />}
+              title="Fitness & Training"
+              description="Science-backed workout routines, nutrition plans, and body transformation guides."
               link="/app"
             />
             <FeatureCard
-              icon={<Users className="w-8 h-8" />}
-              title="Community Driven"
-              description="Join spaces and channels tailored to your interests and passions."
-              link="/app/topics"
+              icon={<Heart className="w-8 h-8" />}
+              title="Skincare & Grooming"
+              description="Expert skincare routines, grooming tips, and product recommendations for all skin types."
+              link="/app"
             />
             <FeatureCard
               icon={<Zap className="w-8 h-8" />}
-              title="Premium Grades"
-              description="Unlock exclusive features and channels with our tiered membership system."
-              link="/pricing"
+              title="Style & Fashion"
+              description="Elevate your appearance with personalized style guides and fashion advice."
+              link="/app"
             />
             <FeatureCard
               icon={<Shield className="w-8 h-8" />}
-              title="Secure & Moderated"
-              description="Safe environment with active moderation and community guidelines."
+              title="Evidence-Based Methods"
+              description="Science-backed approaches to mewing, posture correction, and aesthetic enhancement."
               link="/app"
             />
           </div>
         </div>
       </section>
 
-      {/* Trending */}
+      {/* Trending Topics */}
       <section className="py-20 px-6 border-t border-asc-surface">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-asc-text mb-4">
-            Trending Topics
+            Popular Categories
           </h2>
           <p className="text-lg text-asc-secondary mb-10">
-            Join the hottest discussions right now
+            Join the most active discussions in the community
           </p>
 
           <div className="grid md:grid-cols-3 gap-6">
             <TopicCard 
-              name="General Discussion"
-              threads={1243}
-              members={892}
+              name="Fitness & Training"
+              threads={2847}
+              members={1892}
               trending
-              link="/app/topics/general"
+              link="/app"
             />
             <TopicCard 
-              name="Build Logs"
-              threads={567}
-              members={445}
-              link="/app/topics/build-logs"
+              name="Skincare Routines"
+              threads={1567}
+              members={1445}
+              link="/app"
             />
             <TopicCard 
-              name="Guides & Tutorials"
-              threads={234}
-              members={678}
-              link="/app/topics/guides"
+              name="Style & Fashion"
+              threads={934}
+              members={1178}
+              link="/app"
             />
           </div>
 
           <div className="text-center mt-10">
             <Link 
-              href="/app/topics"
+              href="/app"
               className="inline-flex items-center gap-2 px-6 py-4 bg-asc-text border border-asc-border rounded-lg text-asc-bg font-semibold hover:bg-white transition-all"
             >
-              View All Topics
+              View All Categories
               <ArrowRight size={18} />
             </Link>
           </div>
@@ -180,16 +180,16 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto text-center">
           <Award size={48} className="text-asc-text mx-auto mb-6" />
           <h2 className="text-4xl md:text-5xl font-bold text-asc-text mb-6">
-            Ready to Ascend?
+            Ready to Level Up?
           </h2>
           <p className="text-xl text-asc-secondary mb-10 max-w-2xl mx-auto">
-            Join thousands of members already part of our growing community.
+            Join thousands of members already transforming their appearance and confidence through evidence-based looksmaxxing.
           </p>
           <Link
             href="/register"
             className="inline-flex items-center gap-2 px-8 py-4 bg-asc-text text-asc-bg rounded-lg font-semibold text-lg hover:bg-white transition-all hover:scale-105 shadow-lg"
           >
-            Create Your Account
+            Start Your Transformation
             <ArrowRight size={20} />
           </Link>
         </div>
@@ -211,25 +211,25 @@ export default function LandingPage() {
                 <span className="font-bold text-asc-text">Ascenders</span>
               </div>
               <p className="text-sm text-asc-muted">
-                Building the future of online communities.
+                The premier looksmaxxing community.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-asc-text mb-3">Product</h3>
+              <h3 className="font-semibold text-asc-text mb-3">Categories</h3>
               <ul className="space-y-2">
-                <li><Link href="/app" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Features</Link></li>
-                <li><Link href="/pricing" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Pricing</Link></li>
-                <li><Link href="/app/topics" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Topics</Link></li>
+                <li><Link href="/app" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Fitness</Link></li>
+                <li><Link href="/app" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Skincare</Link></li>
+                <li><Link href="/app" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Style</Link></li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold text-asc-text mb-3">Company</h3>
+              <h3 className="font-semibold text-asc-text mb-3">Resources</h3>
               <ul className="space-y-2">
                 <li><Link href="/about" className="text-sm text-asc-muted hover:text-asc-text transition-colors">About</Link></li>
-                <li><Link href="/" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Blog</Link></li>
-                <li><Link href="/" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Contact</Link></li>
+                <li><Link href="/pricing" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Pricing</Link></li>
+                <li><Link href="/" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Guides</Link></li>
               </ul>
             </div>
 
@@ -244,7 +244,7 @@ export default function LandingPage() {
 
           <div className="pt-8 border-t border-asc-border text-center">
             <p className="text-sm text-asc-muted">
-              © 2025 Ascenders. All rights reserved.
+              © 2025 Ascenders. Elevate your potential.
             </p>
           </div>
         </div>

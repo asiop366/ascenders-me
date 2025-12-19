@@ -6,9 +6,9 @@ import { Providers } from '@/components/providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Ascenders - Community Platform',
-  description: 'A modern community platform for discussions and connections',
-  keywords: ['community', 'forum', 'discussions', 'social'],
+  title: 'Ascenders - The First Modern Looksmaxxing Forum',
+  description: 'Join the premier looksmaxxing community. Science-backed discussions on fitness, skincare, style, and physical self-improvement.',
+  keywords: ['looksmaxxing', 'fitness', 'skincare', 'style', 'self-improvement', 'grooming', 'transformation'],
   icons: {
     icon: '/logo.png',
     shortcut: '/logo.png',

@@ -110,7 +110,7 @@ function LoginForm() {
       <p className="text-center text-sm text-zinc-400">
         Don't have an account?{' '}
         <Link href="/register" className="text-blue-400 hover:underline font-medium">
-          Create account
+          Start your journey
         </Link>
       </p>
     </form>
@@ -134,7 +134,7 @@ export default function LoginPage() {
             <span className="text-2xl font-bold">Ascenders</span>
           </Link>
           <h1 className="text-3xl font-bold mt-6">Welcome back</h1>
-          <p className="text-zinc-400 mt-2">Sign in to your account to continue</p>
+          <p className="text-zinc-400 mt-2">Continue your looksmaxxing journey</p>
         </div>
 
         {/* Form wrapped in Suspense */}

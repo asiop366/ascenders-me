@@ -89,8 +89,8 @@ export default function RegisterPage() {
             />
             <span className="text-2xl font-bold">Ascenders</span>
           </Link>
-          <h1 className="text-3xl font-bold mt-6">Create account</h1>
-          <p className="text-zinc-400 mt-2">Join our community today</p>
+          <h1 className="text-3xl font-bold mt-6">Begin Your Transformation</h1>
+          <p className="text-zinc-400 mt-2">Join the premier looksmaxxing community</p>
         </div>
 
         {/* Form */}
@@ -221,7 +221,7 @@ export default function RegisterPage() {
             disabled={isLoading}
             className="w-full py-3 bg-white text-black rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? 'Creating account...' : 'Create account →'}
+            {isLoading ? 'Creating account...' : 'Start Your Journey →'}
           </button>
 
           {/* Sign in link */}
