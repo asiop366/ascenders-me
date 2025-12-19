@@ -1,146 +1,193 @@
-// app/thread/[id]/page.tsx
-import { Metadata } from "next";
-import Link from "next/link";
-import { ArrowLeft, MessageSquare, Heart, Share2 } from "lucide-react";
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import { ArrowLeft, Pin, ThumbsUp, MessageSquare, Clock, Share2 } from 'lucide-react'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { getTimeAgo } from '@/lib/utils'
+import { ReplyForm } from '@/components/reply-form'
+import { PostCard } from '@/components/post-card'
 
-type Props = {
-  params: { id: string };
-};
+export default async function ThreadPage({ params }: { params: { id: string } }) {
+  const session = await getServerSession(authOptions)
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  return {
-    title: `Thread #${params.id} | Ascenders`,
-  };
-}
+  // Incrémenter les vues
+  await prisma.thread.update({
+    where: { id: params.id },
+    data: { viewCount: { increment: 1 } },
+  }).catch(() => {})
 
-export default function ThreadPage({ params }: Props) {
-  // TODO: Fetch thread data from database
-  const thread = {
-    id: params.id,
-    title: "How to get started with Next.js?",
-    author: "john_doe",
-    authorTier: "Gold",
-    content: "I'm new to Next.js and want to learn the best practices. What resources do you recommend?",
-    createdAt: "2 hours ago",
-    likes: 12,
-    replies: 5,
-  };
-
-  const replies = [
-    {
-      id: 1,
-      author: "jane_smith",
-      authorTier: "Silver",
-      content: "The official Next.js documentation is great! Start with the tutorial.",
-      createdAt: "1 hour ago",
-      likes: 5,
+  const thread = await prisma.thread.findUnique({
+    where: { id: params.id },
+    include: {
+      author: {
+        include: {
+          grade: true,
+        },
+      },
+      channel: {
+        include: {
+          space: true,
+        },
+      },
+      posts: {
+        include: {
+          author: {
+            include: {
+              grade: true,
+            },
+          },
+          _count: {
+            select: {
+              reactions: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
+      _count: {
+        select: {
+          posts: true,
+          reactions: true,
+        },
+      },
     },
-    {
-      id: 2,
-      author: "mike_wilson",
-      authorTier: "Bronze",
-      content: "I also recommend checking out Vercel's YouTube channel for video tutorials.",
-      createdAt: "45 minutes ago",
-      likes: 3,
-    },
-  ];
+  })
+
+  if (!thread) {
+    notFound()
+  }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Back Button */}
-        <Link 
-          href="/app" 
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Feed
-        </Link>
-
-        {/* Thread Content */}
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6 mb-6">
-          {/* Author Info */}
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center font-bold">
-              {thread.author.charAt(0).toUpperCase()}
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <Link href={`/u/${thread.author}`} className="font-medium hover:underline">
-                  {thread.author}
-                </Link>
-                <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-500 rounded text-xs font-medium">
-                  {thread.authorTier}
-                </span>
-              </div>
-              <div className="text-sm text-gray-400">{thread.createdAt}</div>
-            </div>
-          </div>
-
-          {/* Thread Title & Content */}
-          <h1 className="text-2xl font-bold mb-4">{thread.title}</h1>
-          <p className="text-gray-300 mb-6">{thread.content}</p>
-
-          {/* Actions */}
-          <div className="flex items-center gap-6 pt-4 border-t border-zinc-800">
-            <button className="flex items-center gap-2 text-gray-400 hover:text-red-500 transition-colors">
-              <Heart className="w-5 h-5" />
-              <span>{thread.likes}</span>
-            </button>
-            <button className="flex items-center gap-2 text-gray-400 hover:text-blue-500 transition-colors">
-              <MessageSquare className="w-5 h-5" />
-              <span>{thread.replies}</span>
-            </button>
-            <button className="flex items-center gap-2 text-gray-400 hover:text-green-500 transition-colors">
-              <Share2 className="w-5 h-5" />
-              <span>Share</span>
-            </button>
+    <div className="min-h-screen bg-dark-950">
+      {/* Header */}
+      <div className="glass border-b border-white/5 px-8 py-6 sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto">
+          <Link 
+            href="/app" 
+            className="inline-flex items-center gap-2 text-dark-200 hover:text-white transition-colors mb-4"
+          >
+            <ArrowLeft size={20} />
+            Back to feed
+          </Link>
+          
+          <div className="flex items-center gap-3 text-sm text-dark-300">
+            <Link href="/app" className="hover:text-primary transition-colors">
+              {thread.channel.space.name}
+            </Link>
+            <span>/</span>
+            <span className="text-dark-200">{thread.channel.name}</span>
           </div>
         </div>
+      </div>
 
-        {/* Reply Form */}
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6 mb-6">
-          <h3 className="font-semibold mb-4">Add a reply</h3>
-          <textarea
-            placeholder="Write your reply..."
-            rows={4}
-            className="w-full px-4 py-3 bg-black border border-zinc-700 rounded-lg focus:outline-none focus:border-white transition-colors resize-none mb-4"
-          />
-          <button className="px-6 py-2 bg-white text-black rounded-lg hover:bg-gray-200 transition-colors font-medium">
-            Post Reply
-          </button>
-        </div>
+      {/* Main Content */}
+      <div className="p-8">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Original Post */}
+          <div className="glass rounded-2xl p-8">
+            {/* Title */}
+            <div className="flex items-start gap-3 mb-6">
+              {thread.pinned && (
+                <Pin size={24} className="text-yellow-500 flex-shrink-0 mt-1" />
+              )}
+              <h1 className="text-4xl font-display font-bold text-white">
+                {thread.title}
+              </h1>
+            </div>
 
-        {/* Replies */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-bold mb-4">{replies.length} Replies</h3>
-          {replies.map((reply) => (
-            <div key={reply.id} className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center font-bold">
-                  {reply.author.charAt(0).toUpperCase()}
+            {/* Author Info */}
+            <div className="flex items-center gap-4 mb-6 pb-6 border-b border-white/5">
+              <Link href={`/u/${thread.author.username}`}>
+                <div className="w-14 h-14 rounded-full bg-gradient-primary flex items-center justify-center font-bold text-xl text-white shadow-glow hover:scale-110 transition-transform">
+                  {thread.author.username[0].toUpperCase()}
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <Link href={`/u/${reply.author}`} className="font-medium hover:underline">
-                      {reply.author}
-                    </Link>
-                    <span className="px-2 py-0.5 bg-gray-500/20 text-gray-400 rounded text-xs font-medium">
-                      {reply.authorTier}
+              </Link>
+              
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <Link 
+                    href={`/u/${thread.author.username}`}
+                    className="font-bold text-white hover:text-primary transition-colors"
+                  >
+                    {thread.author.username}
+                  </Link>
+                  {thread.author.grade && (
+                    <span 
+                      className="px-2 py-0.5 rounded-full text-xs font-medium"
+                      style={{ 
+                        background: `linear-gradient(135deg, ${thread.author.grade.color}20, ${thread.author.grade.color}10)`,
+                        color: thread.author.grade.color,
+                        border: `1px solid ${thread.author.grade.color}40`
+                      }}
+                    >
+                      {thread.author.grade.name}
                     </span>
-                  </div>
-                  <div className="text-sm text-gray-400">{reply.createdAt}</div>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 text-sm text-dark-300">
+                  <span className="flex items-center gap-1.5">
+                    <Clock size={14} />
+                    {getTimeAgo(thread.createdAt)}
+                  </span>
                 </div>
               </div>
-              <p className="text-gray-300 mb-4">{reply.content}</p>
-              <button className="flex items-center gap-2 text-gray-400 hover:text-red-500 transition-colors text-sm">
-                <Heart className="w-4 h-4" />
-                <span>{reply.likes}</span>
+
+              <button className="p-2 rounded-lg hover:bg-dark-800 text-dark-300 hover:text-white transition-all">
+                <Share2 size={20} />
               </button>
             </div>
-          ))}
+
+            {/* Content */}
+            <div className="prose prose-invert max-w-none mb-6">
+              <p className="text-dark-100 leading-relaxed whitespace-pre-wrap">
+                {thread.content}
+              </p>
+            </div>
+
+            {/* Stats */}
+            <div className="flex items-center gap-6 pt-6 border-t border-white/5">
+              <div className="flex items-center gap-2 text-dark-200">
+                <MessageSquare size={20} />
+                <span className="font-semibold">{thread._count.posts}</span> replies
+              </div>
+              <div className="flex items-center gap-2 text-dark-200">
+                <ThumbsUp size={20} />
+                <span className="font-semibold">{thread._count.reactions}</span> reactions
+              </div>
+              <div className="text-dark-300">
+                <span className="font-semibold">{thread.viewCount}</span> views
+              </div>
+            </div>
+          </div>
+
+          {/* Replies */}
+          {thread.posts.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-white px-2">
+                {thread.posts.length} {thread.posts.length === 1 ? 'Reply' : 'Replies'}
+              </h2>
+              {thread.posts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
+          )}
+
+          {/* Reply Form */}
+          {session ? (
+            <ReplyForm threadId={thread.id} />
+          ) : (
+            <div className="glass rounded-2xl p-8 text-center">
+              <p className="text-dark-200 mb-4">Sign in to reply to this thread</p>
+              <Link href="/login" className="btn-primary inline-block">
+                Sign In
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -1,249 +1,191 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { signOut } from 'next-auth/react'
-import { useState, useEffect, useRef } from 'react'
-import {
-  Home,
-  Folder,
-  TrendingUp,
-  Bookmark,
-  Bell,
+import Image from 'next/image'
+import { 
+  Home, 
+  Compass, 
+  TrendingUp, 
+  Bookmark, 
+  Bell, 
   Settings,
   LogOut,
   ChevronDown,
-  User,
-  MoreHorizontal,
-  Shield,
+  Hash
 } from 'lucide-react'
-import { routes } from '@/config/routes'
+import { signOut, useSession } from 'next-auth/react'
 
-interface SidebarProps {
-  user: {
-    id?: string
-    username?: string | null
-    email?: string | null
-    image?: string | null
-    role?: string | null
-  }
-}
-
-const navigation = [
-  { name: 'Home', href: routes.app, icon: Home },
-  { name: 'Topics', href: routes.topics, icon: Folder },
-  { name: 'Trending', href: routes.trending, icon: TrendingUp },
-  { name: 'Bookmarks', href: routes.bookmarks, icon: Bookmark },
-  { name: 'Notifications', href: routes.notifications, icon: Bell },
+const navItems = [
+  { label: 'Home', href: '/app', icon: Home },
+  { label: 'Topics', href: '/app/topics', icon: Compass },
+  { label: 'Trending', href: '/app/trending', icon: TrendingUp },
+  { label: 'Bookmarks', href: '/app/bookmarks', icon: Bookmark },
+  { label: 'Notifications', href: '/app/notifications', icon: Bell, badge: 3 },
 ]
 
 const topTopics = [
-  { name: 'Looksmaxing', slug: 'looksmaxing', count: 2847 },
-  { name: 'Blackpill', slug: 'blackpill', count: 1923 },
-  { name: 'Redpill', slug: 'redpill', count: 1456 },
-  { name: 'Bluepill', slug: 'bluepill', count: 892 },
+  { name: 'Looksmaxxing', count: 2847, color: '#6366F1', slug: 'looksmaxxing' },
+  { name: 'Blackpill', count: 1923, color: '#EF4444', slug: 'blackpill' },
+  { name: 'Redpill', count: 1456, color: '#F59E0B', slug: 'redpill' },
+  { name: 'Bluepill', count: 892, color: '#3B82F6', slug: 'bluepill' },
 ]
 
-export function Sidebar({ user }: SidebarProps) {
+export function Sidebar() {
   const pathname = usePathname()
-  const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const menuRef = useRef<HTMLDivElement>(null)
-
-  const isAdmin = user.role === 'ADMIN'
-  const isMod = user.role === 'MODERATOR'
-
-  // Close menu on outside click
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setUserMenuOpen(false)
-      }
-    }
-
-    if (userMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [userMenuOpen])
-
-  // Close menu on escape key
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setUserMenuOpen(false)
-      }
-    }
-
-    if (userMenuOpen) {
-      document.addEventListener('keydown', handleEscape)
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape)
-    }
-  }, [userMenuOpen])
+  const { data: session } = useSession()
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
 
   return (
-    <div className="w-64 bg-zinc-900 border-r border-zinc-800 flex flex-col">
-      {/* Header */}
-      <div className="p-4 border-b border-zinc-800">
-        <Link href={routes.app} className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center font-bold text-white">
-            A
+    <aside className="w-64 h-screen bg-dark-900 border-r border-white/5 flex flex-col fixed left-0 top-0 z-40">
+      {/* Logo */}
+      <div className="p-6 border-b border-white/5">
+        <Link href="/app" className="flex items-center gap-3 group">
+          <div className="relative">
+            <Image 
+              src="/logo.png" 
+              alt="Ascenders" 
+              width={40} 
+              height={40}
+              className="rounded-xl group-hover:scale-110 transition-transform"
+            />
+            <div className="absolute inset-0 rounded-xl bg-gradient-primary opacity-0 group-hover:opacity-30 blur-xl transition-opacity" />
           </div>
           <div>
-            <h1 className="font-bold text-lg">Ascenders</h1>
-            <p className="text-xs text-zinc-400">Welcome back!</p>
+            <div className="font-bold text-white text-lg">Ascenders</div>
+            <div className="text-xs text-dark-200">Welcome back!</div>
           </div>
         </Link>
       </div>
 
-      {/* Main Navigation */}
-      <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-        {navigation.map((item) => {
+      {/* Navigation */}
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        {navItems.map((item) => {
           const isActive = pathname === item.href
           const Icon = item.icon
 
           return (
             <Link
-              key={item.name}
+              key={item.href}
               href={item.href}
               className={`
-                flex items-center gap-3 px-3 py-2 rounded-lg transition-colors
-                ${
-                  isActive
-                    ? 'bg-zinc-800 text-white font-medium'
-                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                flex items-center justify-between px-4 py-3 rounded-xl transition-all
+                ${isActive 
+                  ? 'bg-gradient-primary text-white shadow-glow' 
+                  : 'text-dark-200 hover:bg-dark-800 hover:text-white'
                 }
               `}
             >
-              <Icon size={20} />
-              <span>{item.name}</span>
+              <div className="flex items-center gap-3">
+                <Icon size={20} />
+                <span className="font-medium">{item.label}</span>
+              </div>
+              {item.badge && (
+                <span className="px-2 py-0.5 bg-red-500 text-white text-xs font-bold rounded-full">
+                  {item.badge}
+                </span>
+              )}
             </Link>
           )
         })}
 
-        {/* Top Topics Section */}
-        <div className="pt-6 pb-2">
-          <div className="px-3 mb-2 flex items-center justify-between">
-            <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+        {/* Top Topics */}
+        <div className="pt-6">
+          <div className="flex items-center justify-between px-4 mb-3">
+            <span className="text-xs font-semibold text-dark-300 uppercase tracking-wider">
               Top Topics
-            </h3>
-            <button className="text-zinc-500 hover:text-white transition-colors">
-              <MoreHorizontal size={16} />
-            </button>
+            </span>
           </div>
           <div className="space-y-1">
             {topTopics.map((topic) => (
               <Link
                 key={topic.slug}
-                href={routes.topic(topic.slug)}
-                className="flex items-center justify-between px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition-colors"
+                href={`/app/topics/${topic.slug}`}
+                onClick={() => setSelectedTopic(topic.slug)}
+                className={`
+                  w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all group
+                  ${selectedTopic === topic.slug
+                    ? 'bg-dark-800 text-white'
+                    : 'text-dark-300 hover:bg-dark-800 hover:text-white'
+                  }
+                `}
               >
-                <span className="text-sm">#{topic.name}</span>
-                <span className="text-xs text-zinc-600">{topic.count}</span>
+                <div className="flex items-center gap-2">
+                  <Hash size={16} style={{ color: topic.color }} />
+                  <span className="font-medium">{topic.name}</span>
+                </div>
+                <span className="text-xs text-dark-400 group-hover:text-dark-200">
+                  {topic.count.toLocaleString()}
+                </span>
               </Link>
             ))}
           </div>
         </div>
-
-        {/* Admin Section */}
-        {(isAdmin || isMod) && (
-          <div className="pt-4 border-t border-zinc-800 mt-4">
-            <div className="px-3 mb-2">
-              <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider flex items-center gap-2">
-                <Shield size={14} />
-                Admin
-              </h3>
-            </div>
-            <Link
-              href={routes.admin}
-              className={`
-                flex items-center gap-3 px-3 py-2 rounded-lg transition-colors
-                ${
-                  pathname.startsWith('/app/admin')
-                    ? 'bg-red-900/20 text-red-400 font-medium'
-                    : 'text-zinc-400 hover:text-red-400 hover:bg-red-900/10'
-                }
-              `}
-            >
-              <Shield size={20} />
-              <span>Admin Panel</span>
-            </Link>
-          </div>
-        )}
       </nav>
 
       {/* User Card */}
-      <div className="p-3 border-t border-zinc-800" ref={menuRef}>
+      <div className="p-4 border-t border-white/5">
         <div className="relative">
           <button
-            onClick={() => setUserMenuOpen(!userMenuOpen)}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-zinc-800 transition-colors"
+            onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-dark-800 transition-all"
           >
-            <div className="w-8 h-8 rounded-full bg-zinc-700 overflow-hidden flex-shrink-0">
-              {user.image ? (
-                <img src={user.image} alt={user.username || 'User'} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-sm font-medium">
-                  {user.username?.[0]?.toUpperCase() || 'U'}
-                </div>
-              )}
+            <div className="w-10 h-10 rounded-full bg-gradient-primary flex items-center justify-center font-bold text-white">
+              {session?.user?.username?.[0]?.toUpperCase() || 'U'}
             </div>
-            <div className="flex-1 text-left min-w-0">
-              <div className="text-sm font-medium truncate">
-                {user.username || 'User'}
+            <div className="flex-1 text-left">
+              <div className="font-semibold text-white text-sm">
+                {session?.user?.username || 'Guest'}
               </div>
-              <div className="text-xs text-zinc-500 truncate">
-                {user.role === 'ADMIN' && '👑 Admin'}
-                {user.role === 'MODERATOR' && '🛡️ Moderator'}
-                {user.role !== 'ADMIN' && user.role !== 'MODERATOR' && 'Member'}
+              <div className="text-xs text-dark-300">
+                Member
               </div>
             </div>
-            <ChevronDown
-              size={16}
-              className={`text-zinc-500 transition-transform ${
-                userMenuOpen ? 'rotate-180' : ''
-              }`}
+            <ChevronDown 
+              size={18} 
+              className={`text-dark-300 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} 
             />
           </button>
 
-          {/* User Dropdown Menu */}
-          {userMenuOpen && (
-            <div className="absolute bottom-full left-0 right-0 mb-2 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl overflow-hidden">
-              <Link
-                href={routes.user(user.username || '')}
-                onClick={() => setUserMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-700 transition-colors"
-              >
-                <User size={16} />
-                <span className="text-sm">Profile</span>
-              </Link>
-              <Link
-                href={routes.settings}
-                onClick={() => setUserMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-700 transition-colors"
-              >
-                <Settings size={16} />
-                <span className="text-sm">Settings</span>
-              </Link>
-              <button
-                onClick={() => {
-                  setUserMenuOpen(false)
-                  signOut()
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-700 transition-colors text-red-400"
-              >
-                <LogOut size={16} />
-                <span className="text-sm">Sign out</span>
-              </button>
-            </div>
+          {/* Dropdown Menu */}
+          {isUserMenuOpen && (
+            <>
+              <div 
+                className="fixed inset-0 z-40" 
+                onClick={() => setIsUserMenuOpen(false)}
+              />
+              <div className="absolute bottom-full left-0 right-0 mb-2 glass rounded-xl p-2 shadow-card z-50">
+                <Link
+                  href={`/u/${session?.user?.username}`}
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-dark-800 text-dark-100 hover:text-white transition-colors"
+                  onClick={() => setIsUserMenuOpen(false)}
+                >
+                  <Home size={18} />
+                  <span>Profile</span>
+                </Link>
+                <Link
+                  href="/settings"
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-dark-800 text-dark-100 hover:text-white transition-colors"
+                  onClick={() => setIsUserMenuOpen(false)}
+                >
+                  <Settings size={18} />
+                  <span>Settings</span>
+                </Link>
+                <div className="my-2 border-t border-white/5" />
+                <button
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-colors"
+                >
+                  <LogOut size={18} />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>
-    </div>
+    </aside>
   )
 }

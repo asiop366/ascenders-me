@@ -38,12 +38,17 @@ export async function POST(req: Request) {
       )
     }
 
-    // Trouver le channel (ou utiliser un par défaut)
+    // Find the channel (by slug or id)
     let channel = await prisma.channel.findFirst({
-      where: { slug: channelId }
+      where: { 
+        OR: [
+          { slug: channelId },
+          { id: channelId }
+        ]
+      }
     })
 
-    // Si pas trouvé, utiliser le premier channel disponible
+    // If no channel found, try to use the first available channel
     if (!channel) {
       channel = await prisma.channel.findFirst()
     }
@@ -55,11 +60,11 @@ export async function POST(req: Request) {
       )
     }
 
-    // Créer le thread
+    // Create the thread with correct Prisma syntax
     const thread = await prisma.thread.create({
       data: {
-        title,
-        content,
+        title: title.trim(),
+        content: content.trim(),
         authorId: session.user.id,
         channelId: channel.id,
       },
