@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, Mail, User, Lock } from 'lucide-react'
@@ -78,10 +79,14 @@ export default function RegisterPage() {
       <div className="w-full max-w-md space-y-8">
         {/* Header */}
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-2 mb-8">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center font-bold text-xl">
-              A
-            </div>
+          <Link href="/" className="inline-flex items-center gap-3 mb-8">
+            <Image 
+              src="/logo.png" 
+              alt="Ascenders Logo" 
+              width={48} 
+              height={48}
+              className="rounded-xl"
+            />
             <span className="text-2xl font-bold">Ascenders</span>
           </Link>
           <h1 className="text-3xl font-bold mt-6">Create account</h1>
@@ -102,9 +107,7 @@ export default function RegisterPage() {
               Email
             </label>
             <div className="relative">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">
-                <Mail size={20} />
-              </div>
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={20} />
               <input
                 id="email"
                 type="email"
@@ -112,7 +115,7 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full pl-11 pr-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
-                placeholder=""
+                placeholder="you@example.com"
               />
             </div>
           </div>
@@ -123,9 +126,7 @@ export default function RegisterPage() {
               Username
             </label>
             <div className="relative">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">
-                <User size={20} />
-              </div>
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={20} />
               <input
                 id="username"
                 type="text"
@@ -133,7 +134,7 @@ export default function RegisterPage() {
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 className="w-full pl-11 pr-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
-                placeholder=""
+                placeholder="johndoe"
               />
             </div>
             <p className="text-xs text-zinc-500 mt-1">Letters, numbers, and underscores only</p>
@@ -145,9 +146,7 @@ export default function RegisterPage() {
               Password
             </label>
             <div className="relative">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">
-                <Lock size={20} />
-              </div>
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={20} />
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -155,7 +154,7 @@ export default function RegisterPage() {
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="w-full pl-11 pr-12 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
-                placeholder=""
+                placeholder="••••••••"
               />
               <button
                 type="button"
@@ -166,7 +165,7 @@ export default function RegisterPage() {
               </button>
             </div>
             <p className="text-xs text-zinc-500 mt-1">
-              {formData.password.length >= 6 ? '✓' : '○'} At least 6 characters
+              {formData.password.length >= 6 ? '✓' : '✗'} At least 6 characters
             </p>
           </div>
 
@@ -176,9 +175,7 @@ export default function RegisterPage() {
               Confirm Password
             </label>
             <div className="relative">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">
-                <Lock size={20} />
-              </div>
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={20} />
               <input
                 id="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
@@ -186,7 +183,7 @@ export default function RegisterPage() {
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 className="w-full pl-11 pr-12 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
-                placeholder=""
+                placeholder="••••••••"
               />
               <button
                 type="button"
@@ -222,7 +219,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 bg-white text-black rounded-lg font-medium hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 bg-white text-black rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? 'Creating account...' : 'Create account →'}
           </button>
