@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Home, TrendingUp, Bookmark, Bell, Search, Settings, LogOut, ChevronDown, User } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
+import { Home, TrendingUp, Bookmark, Bell, Search, Settings, LogOut, ChevronDown, User, Mail } from 'lucide-react'
 
 const navItems = [
   { icon: Home, label: 'Home', href: '/app', badge: null },
