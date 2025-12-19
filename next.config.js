@@ -1,13 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
-    ignoreBuildErrors: false, // Corriger les erreurs au lieu de les ignorer
+    ignoreBuildErrors: false,
   },
   eslint: {
     ignoreDuringBuilds: false,
   },
   images: {
-    domains: ['localhost'], // Ajouter les domaines d'images autorisés
+    domains: ['localhost'],
   },
   experimental: {
     serverActions: true,
