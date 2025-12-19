@@ -61,71 +61,86 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {threads.map((thread) => (
-                <Link
-                  key={thread.id}
-                  href={`/thread/${thread.id}`}
-                  className="block bg-asc-surface border border-asc-border rounded-lg p-4 hover:border-asc-text transition-all group"
-                >
-                  <div className="flex gap-4">
-                    {/* Author Avatar */}
-                    <div className="flex-shrink-0">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-lg">
-                        {thread.author.username[0].toUpperCase()}
+              {threads.map((item: any) => {
+                const authorInitial = item.author?.username?.[0]?.toUpperCase() || 'U'
+                const authorName = item.author?.username || 'Unknown'
+                const gradeName = item.author?.grade?.name
+                const gradeColor = item.author?.grade?.color
+                const spaceName = item.channel?.space?.name || 'General'
+                const channelName = item.channel?.name || 'Discussion'
+
+                return (
+                  <Link
+                    key={item.id}
+                    href={`/thread/${item.id}`}
+                    className="block bg-asc-surface border border-asc-border rounded-lg p-4 hover:border-asc-text transition-all group"
+                  >
+                    <div className="flex gap-4">
+                      {/* Author Avatar */}
+                      <div className="flex-shrink-0">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-lg">
+                          {authorInitial}
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Thread Content */}
-                    <div className="flex-1 min-w-0">
-                      {/* Title */}
-                      <h3 className="text-lg font-semibold text-asc-text group-hover:text-white transition-colors mb-1">
-                        {thread.pinned && (
-                          <span className="text-yellow-500 mr-2">📌</span>
-                        )}
-                        {thread.title}
-                      </h3>
-
-                      {/* Meta Info */}
-                      <div className="flex items-center gap-4 text-sm text-asc-muted">
-                        <span className="flex items-center gap-1">
-                          <span className="font-medium text-asc-secondary">
-                            {thread.author.username}
-                          </span>
-                          {thread.author.grade && (
-                            <span className="text-xs px-2 py-0.5 rounded" style={{ backgroundColor: thread.author.grade.color + '20', color: thread.author.grade.color }}>
-                              {thread.author.grade.name}
-                            </span>
+                      {/* Thread Content */}
+                      <div className="flex-1 min-w-0">
+                        {/* Title */}
+                        <h3 className="text-lg font-semibold text-asc-text group-hover:text-white transition-colors mb-1">
+                          {item.pinned && (
+                            <span className="text-yellow-500 mr-2">📌</span>
                           )}
-                        </span>
-                        
-                        <span className="flex items-center gap-1">
-                          <Clock size={14} />
-                          {getTimeAgo(thread.createdAt)}
-                        </span>
+                          {item.title}
+                        </h3>
 
-                        <span className="text-asc-secondary">
-                          in {thread.channel.space.name} / {thread.channel.name}
-                        </span>
-                      </div>
+                        {/* Meta Info */}
+                        <div className="flex items-center gap-4 text-sm text-asc-muted flex-wrap">
+                          <span className="flex items-center gap-1">
+                            <span className="font-medium text-asc-secondary">
+                              {authorName}
+                            </span>
+                            {gradeName && gradeColor && (
+                              <span 
+                                className="text-xs px-2 py-0.5 rounded" 
+                                style={{ 
+                                  backgroundColor: gradeColor + '20', 
+                                  color: gradeColor 
+                                }}
+                              >
+                                {gradeName}
+                              </span>
+                            )}
+                          </span>
+                          
+                          <span className="flex items-center gap-1">
+                            <Clock size={14} />
+                            {getTimeAgo(item.createdAt)}
+                          </span>
 
-                      {/* Stats */}
-                      <div className="flex items-center gap-4 mt-3 text-sm text-asc-muted">
-                        <span className="flex items-center gap-1">
-                          <MessageSquare size={16} />
-                          {thread._count.posts} replies
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <ThumbsUp size={16} />
-                          {thread._count.reactions} reactions
-                        </span>
-                        <span>
-                          {thread.viewCount} views
-                        </span>
+                          <span className="text-asc-secondary">
+                            in {spaceName} / {channelName}
+                          </span>
+                        </div>
+
+                        {/* Stats */}
+                        <div className="flex items-center gap-4 mt-3 text-sm text-asc-muted">
+                          <span className="flex items-center gap-1">
+                            <MessageSquare size={16} />
+                            {item._count.posts} replies
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <ThumbsUp size={16} />
+                            {item._count.reactions} reactions
+                          </span>
+                          <span>
+                            {item.viewCount} views
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                )
+              })}
             </div>
           )}
         </div>
