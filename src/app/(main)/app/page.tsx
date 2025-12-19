@@ -52,7 +52,7 @@ export default async function HomePage() {
         </Link>
       </div>
 
-      {/* Main Content - Thread Feed HAUT GAUCHE */}
+      {/* Main Content - Thread Feed */}
       <div className="flex-1 p-6 overflow-y-auto">
         <div className="max-w-4xl">
           {threads.length === 0 ? (
@@ -146,14 +146,14 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* User Profile Footer CENTRÉ */}
-      <div className="border-t border-asc-border bg-asc-surface px-6 py-4 sticky bottom-0">
-        <div className="flex items-center justify-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-xl">
+      {/* User Profile - Centré en bas */}
+      <div className="py-6 flex items-center justify-center">
+        <div className="flex items-center gap-4 bg-asc-surface border border-asc-border rounded-xl px-6 py-3">
+          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-xl">
             {session?.user?.username?.[0]?.toUpperCase() || 'U'}
           </div>
           <div>
-            <div className="font-semibold text-asc-text">
+            <div className="font-semibold text-asc-text text-lg">
               {session?.user?.username || 'Guest'}
             </div>
             <div className="text-sm text-asc-muted">
