@@ -62,7 +62,7 @@ export default function LandingPage() {
               href="/register"
               className="group px-8 py-4 bg-asc-text text-asc-bg rounded-lg font-semibold text-lg hover:bg-white transition-all hover:scale-105 flex items-center gap-2 shadow-lg"
             >
-              want to Ascend ?
+              Ready to Ascend ?
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link 
