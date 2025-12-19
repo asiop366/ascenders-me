@@ -6,7 +6,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getTimeAgo } from '@/lib/utils'
 import { ReplyForm } from '@/components/reply-form'
-import { PostCard } from '@/components/post-card'
+import { PostCard } from '@/components/forum/post-card'  // ✅ CORRIGÉ
 
 export default async function ThreadPage({ params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions)
@@ -100,7 +100,7 @@ export default async function ThreadPage({ params }: { params: { id: string } })
 
             {/* Author Info */}
             <div className="flex items-center gap-4 mb-6 pb-6 border-b border-white/5">
-              <Link href={`/u/${thread.author.username}`}>
+              <Link href={`/app/u/${thread.author.username}`}>
                 <div className="w-14 h-14 rounded-full bg-gradient-primary flex items-center justify-center font-bold text-xl text-white shadow-glow hover:scale-110 transition-transform">
                   {thread.author.username[0].toUpperCase()}
                 </div>
@@ -109,7 +109,7 @@ export default async function ThreadPage({ params }: { params: { id: string } })
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <Link 
-                    href={`/u/${thread.author.username}`}
+                    href={`/app/u/${thread.author.username}`}
                     className="font-bold text-white hover:text-primary transition-colors"
                   >
                     {thread.author.username}
@@ -170,7 +170,11 @@ export default async function ThreadPage({ params }: { params: { id: string } })
                 {thread.posts.length} {thread.posts.length === 1 ? 'Reply' : 'Replies'}
               </h2>
               {thread.posts.map((post) => (
-                <PostCard key={post.id} post={post} />
+                <PostCard 
+                  key={post.id} 
+                  post={post}
+                  currentUserId={session?.user?.id}
+                />
               ))}
             </div>
           )}

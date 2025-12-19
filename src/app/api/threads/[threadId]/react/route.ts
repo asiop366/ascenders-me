@@ -11,48 +11,41 @@ export async function POST(
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { threadId } = params
-    const { type = 'like' } = await req.json()
 
-    // Vérifier si déjà liké
+    // Check if already reacted
     const existingReaction = await prisma.reaction.findFirst({
       where: {
-        userId: session.user.id,
         threadId,
-        type,
+        userId: session.user.id,
+        type: 'like',
       },
     })
 
     if (existingReaction) {
-      // Unlike - supprimer la reaction
+      // Remove reaction
       await prisma.reaction.delete({
         where: { id: existingReaction.id },
       })
 
       return NextResponse.json({ liked: false })
     } else {
-      // Like - créer la reaction
+      // Add reaction
       await prisma.reaction.create({
         data: {
-          userId: session.user.id,
           threadId,
-          type,
+          userId: session.user.id,
+          type: 'like',
         },
       })
 
       return NextResponse.json({ liked: true })
     }
-  } catch (error: any) {
-    console.error('Reaction error:', error)
-    return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
-    )
+  } catch (error) {
+    console.error('React error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

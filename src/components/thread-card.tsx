@@ -32,17 +32,22 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
     setIsLoading(true)
 
     try {
-      const res = await fetch(`/api/threads/${thread.id}/react`, {
+      const res = await fetch(`/api/reactions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'like' }),
+        body: JSON.stringify({ threadId: thread.id, type: 'like' }),
       })
 
       const data = await res.json()
 
       if (res.ok) {
-        setIsLiked(data.liked)
-        setReactions(prev => data.liked ? prev + 1 : prev - 1)
+        if (data.action === 'added') {
+          setIsLiked(true)
+          setReactions(prev => prev + 1)
+        } else {
+          setIsLiked(false)
+          setReactions(prev => prev - 1)
+        }
       }
     } catch (error) {
       console.error('Reaction error:', error)
@@ -61,7 +66,7 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
 
   return (
     <Link
-      href={`/thread/${thread.id}`}
+      href={`/app/thread/${thread.id}`}
       className="block gradient-border p-6 group"
     >
       <div className="flex gap-5">

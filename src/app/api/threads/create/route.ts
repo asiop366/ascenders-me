@@ -8,86 +8,44 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { title, content, channelId } = await req.json()
+    const body = await req.json()
+    const { title, content, channelId } = body
 
-    // Validation
     if (!title || !content || !channelId) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    if (title.length < 5 || title.length > 200) {
-      return NextResponse.json(
-        { error: 'Title must be between 5 and 200 characters' },
-        { status: 400 }
-      )
-    }
-
-    if (content.length < 10) {
-      return NextResponse.json(
-        { error: 'Content must be at least 10 characters' },
-        { status: 400 }
-      )
-    }
-
-    // Find the channel (by slug or id)
+    // Trouver le channel par slug ou créer un channel par défaut
     let channel = await prisma.channel.findFirst({
-      where: { 
-        OR: [
-          { slug: channelId },
-          { id: channelId }
-        ]
-      }
+      where: {
+        slug: channelId,
+      },
     })
 
-    // If no channel found, try to use the first available channel
+    // Si pas de channel trouvé, utiliser le premier disponible
     if (!channel) {
       channel = await prisma.channel.findFirst()
     }
 
     if (!channel) {
-      return NextResponse.json(
-        { error: 'No channel found' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'No channel found' }, { status: 400 })
     }
 
-    // Create the thread with correct Prisma syntax
     const thread = await prisma.thread.create({
       data: {
-        title: title.trim(),
-        content: content.trim(),
-        authorId: session.user.id,
+        title,
+        content,
         channelId: channel.id,
-      },
-      include: {
-        author: {
-          include: {
-            grade: true,
-          },
-        },
-        channel: {
-          include: {
-            space: true,
-          },
-        },
+        authorId: session.user.id,
       },
     })
 
     return NextResponse.json(thread, { status: 201 })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Create thread error:', error)
-    return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

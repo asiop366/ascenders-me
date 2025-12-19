@@ -1,144 +1,113 @@
-// app/pricing/page.tsx
-import { Metadata } from "next";
-import Link from "next/link";
-import { Check, ArrowLeft } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Pricing | Ascenders",
-  description: "Choose the perfect plan for your needs",
-};
+import Link from 'next/link'
+import { Check, Zap } from 'lucide-react'
 
 export default function PricingPage() {
-  const tiers = [
-    {
-      name: "Bronze",
-      price: "Free",
-      description: "Perfect for getting started",
-      features: [
-        "Access to public spaces",
-        "Create up to 3 threads per day",
-        "Basic profile customization",
-        "Community support",
-      ],
-      cta: "Get Started",
-      highlighted: false,
-    },
-    {
-      name: "Silver",
-      price: "$9",
-      period: "/month",
-      description: "For active community members",
-      features: [
-        "Everything in Bronze",
-        "Unlimited threads",
-        "Create private spaces",
-        "Custom profile themes",
-        "Priority support",
-        "Ad-free experience",
-      ],
-      cta: "Upgrade to Silver",
-      highlighted: true,
-    },
-    {
-      name: "Gold",
-      price: "$19",
-      period: "/month",
-      description: "For power users and creators",
-      features: [
-        "Everything in Silver",
-        "Advanced analytics",
-        "Custom badges",
-        "Early access to features",
-        "Dedicated support",
-        "API access",
-        "Space moderation tools",
-      ],
-      cta: "Upgrade to Gold",
-      highlighted: false,
-    },
-  ];
-
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="container mx-auto px-4 py-16">
-        <Link 
-          href="/"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Home
-        </Link>
-
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-4">Choose Your Plan</h1>
-          <p className="text-xl text-gray-400">
-            Unlock more features and take your experience to the next level
+    <div className="min-h-screen bg-dark-950 relative overflow-hidden">
+      <div className="fixed inset-0 bg-gradient-mesh opacity-30 pointer-events-none" />
+      
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-32">
+        <div className="text-center mb-20">
+          <div className="badge mb-6">
+            <Zap size={16} />
+            Pricing
+          </div>
+          <h1 className="text-display-lg font-display font-bold text-white mb-6">
+            Choose Your Path
+          </h1>
+          <p className="text-xl text-dark-100 max-w-2xl mx-auto">
+            Start free, upgrade when you're ready to unlock premium features
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {tiers.map((tier) => (
-            <div
-              key={tier.name}
-              className={`relative rounded-lg p-8 ${
-                tier.highlighted
-                  ? "bg-white text-black border-4 border-white"
-                  : "bg-zinc-900/50 border border-zinc-800"
-              }`}
-            >
-              {tier.highlighted && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-bold rounded-full">
-                  POPULAR
-                </div>
-              )}
-
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
-                <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-4xl font-bold">{tier.price}</span>
-                  {tier.period && (
-                    <span className={tier.highlighted ? "text-gray-700" : "text-gray-400"}>
-                      {tier.period}
-                    </span>
-                  )}
-                </div>
-                <p className={tier.highlighted ? "text-gray-700" : "text-gray-400"}>
-                  {tier.description}
-                </p>
-              </div>
-
-              <ul className="space-y-3 mb-8">
-                {tier.features.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <Check className={`w-5 h-5 flex-shrink-0 ${tier.highlighted ? "text-black" : "text-green-500"}`} />
-                    <span className={tier.highlighted ? "text-gray-800" : "text-gray-300"}>
-                      {feature}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <Link
-                href="/app"
-                className={`block w-full py-3 rounded-lg font-medium text-center transition-colors ${
-                  tier.highlighted
-                    ? "bg-black text-white hover:bg-gray-900"
-                    : "bg-white text-black hover:bg-gray-200"
-                }`}
-              >
-                {tier.cta}
-              </Link>
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {/* Free */}
+          <div className="glass rounded-2xl p-8 border border-white/10">
+            <h3 className="text-2xl font-bold text-white mb-2">Free</h3>
+            <div className="text-4xl font-bold text-white mb-6">
+              $0<span className="text-lg text-dark-200">/mo</span>
             </div>
-          ))}
-        </div>
+            <ul className="space-y-4 mb-8">
+              <li className="flex items-center gap-3 text-dark-100">
+                <Check size={20} className="text-primary" />
+                Access to public forums
+              </li>
+              <li className="flex items-center gap-3 text-dark-100">
+                <Check size={20} className="text-primary" />
+                Create threads & replies
+              </li>
+              <li className="flex items-center gap-3 text-dark-100">
+                <Check size={20} className="text-primary" />
+                Basic profile
+              </li>
+            </ul>
+            <Link href="/register" className="btn-secondary w-full block text-center">
+              Get Started
+            </Link>
+          </div>
 
-        <div className="text-center mt-16 text-gray-400">
-          <p>All plans include a 14-day money-back guarantee</p>
-          <p className="mt-2">
-            Questions? <Link href="/contact" className="text-white hover:underline">Contact us</Link>
-          </p>
+          {/* Pro */}
+          <div className="glass rounded-2xl p-8 border-2 border-primary relative">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-primary rounded-full text-white text-sm font-semibold">
+              Most Popular
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-2">Pro</h3>
+            <div className="text-4xl font-bold text-white mb-6">
+              $9<span className="text-lg text-dark-200">/mo</span>
+            </div>
+            <ul className="space-y-4 mb-8">
+              <li className="flex items-center gap-3 text-dark-100">
+                <Check size={20} className="text-primary" />
+                Everything in Free
+              </li>
+              <li className="flex items-center gap-3 text-dark-100">
+                <Check size={20} className="text-primary" />
+                Access to Pro forums
+              </li>
+              <li className="flex items-center gap-3 text-dark-100">
+                <Check size={20} className="text-primary" />
+                Custom profile badge
+              </li>
+              <li className="flex items-center gap-3 text-dark-100">
+                <Check size={20} className="text-primary" />
+                Priority support
+              </li>
+            </ul>
+            <Link href="/register" className="btn-primary w-full block text-center">
+              Upgrade to Pro
+            </Link>
+          </div>
+
+          {/* Elite */}
+          <div className="glass rounded-2xl p-8 border border-white/10">
+            <h3 className="text-2xl font-bold text-white mb-2">Elite</h3>
+            <div className="text-4xl font-bold text-white mb-6">
+              $19<span className="text-lg text-dark-200">/mo</span>
+            </div>
+            <ul className="space-y-4 mb-8">
+              <li className="flex items-center gap-3 text-dark-100">
+                <Check size={20} className="text-primary" />
+                Everything in Pro
+              </li>
+              <li className="flex items-center gap-3 text-dark-100">
+                <Check size={20} className="text-primary" />
+                Exclusive Elite forums
+              </li>
+              <li className="flex items-center gap-3 text-dark-100">
+                <Check size={20} className="text-primary" />
+                Premium badge
+              </li>
+              <li className="flex items-center gap-3 text-dark-100">
+                <Check size={20} className="text-primary" />
+                1-on-1 consultations
+              </li>
+            </ul>
+            <Link href="/register" className="btn-secondary w-full block text-center">
+              Go Elite
+            </Link>
+          </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
