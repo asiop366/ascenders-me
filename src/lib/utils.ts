@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { format } from "date-fns"
+import { format, formatDistanceToNow } from "date-fns"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -9,4 +9,9 @@ export function cn(...inputs: ClassValue[]) {
 export function formatDate(date: Date | string): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date
   return format(dateObj, 'MMM d, yyyy')
+}
+
+export function getTimeAgo(date: Date | string): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date
+  return formatDistanceToNow(dateObj, { addSuffix: true })
 }
