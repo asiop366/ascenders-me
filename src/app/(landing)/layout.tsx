@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function LandingLayout({ children }: { children: ReactNode }) {
   return (
@@ -7,10 +8,14 @@ export default function LandingLayout({ children }: { children: ReactNode }) {
       <header className="border-b border-asc-border bg-asc-surface/50 backdrop-blur-sm sticky top-0 z-40">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-asc-text rounded-lg flex items-center justify-center">
-                <span className="text-asc-bg font-bold text-lg">A</span>
-              </div>
+            <Link href="/" className="flex items-center gap-3">
+              <Image 
+                src="/logo.png" 
+                alt="Ascenders Logo" 
+                width={32} 
+                height={32}
+                className="rounded-lg"
+              />
               <span className="text-xl font-bold text-asc-text">Ascenders</span>
             </Link>
             <nav className="flex items-center gap-4">
@@ -28,7 +33,7 @@ export default function LandingLayout({ children }: { children: ReactNode }) {
               </Link>
               <Link
                 href="/register"
-                className="px-4 py-2 bg-asc-text text-asc-bg hover:bg-asc-text/90 rounded-lg font-medium transition-colors"
+                className="px-4 py-2 bg-asc-text text-asc-bg rounded-lg font-medium hover:bg-white transition-colors"
               >
                 Get Started
               </Link>
