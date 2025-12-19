@@ -52,9 +52,9 @@ export default async function HomePage() {
         </Link>
       </div>
 
-      {/* Main Content - Thread Feed CENTRÉ */}
-      <div className="flex-1 p-6 flex items-center justify-center">
-        <div className="w-full max-w-4xl">
+      {/* Main Content - Thread Feed HAUT GAUCHE */}
+      <div className="flex-1 p-6 overflow-y-auto">
+        <div className="max-w-4xl">
           {threads.length === 0 ? (
             <div className="text-center py-20 text-asc-muted">
               <p className="text-lg">No threads yet. Be the first to create one!</p>
@@ -146,9 +146,9 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* User Profile Footer */}
+      {/* User Profile Footer CENTRÉ */}
       <div className="border-t border-asc-border bg-asc-surface px-6 py-4 sticky bottom-0">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-center gap-3">
           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-xl">
             {session?.user?.username?.[0]?.toUpperCase() || 'U'}
           </div>
