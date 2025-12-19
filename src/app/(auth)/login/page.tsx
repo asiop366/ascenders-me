@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
@@ -57,9 +58,7 @@ function LoginForm() {
           Email
         </label>
         <div className="relative">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">
-            <Mail size={20} />
-          </div>
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={20} />
           <input
             id="email"
             type="email"
@@ -67,7 +66,7 @@ function LoginForm() {
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             className="w-full pl-11 pr-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
-            placeholder=""
+            placeholder="you@example.com"
           />
         </div>
       </div>
@@ -78,9 +77,7 @@ function LoginForm() {
           Password
         </label>
         <div className="relative">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">
-            <Lock size={20} />
-          </div>
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={20} />
           <input
             id="password"
             type={showPassword ? 'text' : 'password'}
@@ -88,7 +85,7 @@ function LoginForm() {
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             className="w-full pl-11 pr-12 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
-            placeholder=""
+            placeholder="••••••••"
           />
           <button
             type="button"
@@ -104,7 +101,7 @@ function LoginForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full py-3 bg-white text-black rounded-lg font-medium hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-3 bg-white text-black rounded-lg font-medium hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {isLoading ? 'Signing in...' : 'Sign in →'}
       </button>
@@ -126,10 +123,14 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-8">
         {/* Header */}
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-2 mb-8">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center font-bold text-xl">
-              A
-            </div>
+          <Link href="/" className="inline-flex items-center gap-3 mb-8">
+            <Image 
+              src="/logo.png" 
+              alt="Ascenders Logo" 
+              width={48} 
+              height={48}
+              className="rounded-xl"
+            />
             <span className="text-2xl font-bold">Ascenders</span>
           </Link>
           <h1 className="text-3xl font-bold mt-6">Welcome back</h1>
