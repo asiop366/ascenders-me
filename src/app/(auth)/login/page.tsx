@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react'
 
 function LoginForm() {
   const router = useRouter()
@@ -47,50 +47,50 @@ function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-500 text-sm">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-400 text-sm backdrop-blur-sm">
           {error}
         </div>
       )}
 
       {/* Email */}
       <div>
-        <label htmlFor="email" className="block text-sm font-medium mb-2">
+        <label htmlFor="email" className="block text-sm font-medium text-dark-100 mb-2">
           Email
         </label>
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={20} />
+          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-300" size={20} />
           <input
             id="email"
             type="email"
             required
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full pl-11 pr-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
-            placeholder="your@mail.com"
+            className="pl-12"
+            placeholder="you@example.com"
           />
         </div>
       </div>
 
       {/* Password */}
       <div>
-        <label htmlFor="password" className="block text-sm font-medium mb-2">
+        <label htmlFor="password" className="block text-sm font-medium text-dark-100 mb-2">
           Password
         </label>
         <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={20} />
+          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-300" size={20} />
           <input
             id="password"
             type={showPassword ? 'text' : 'password'}
             required
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            className="w-full pl-11 pr-12 py-3 bg-zinc-900 border border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+            className="pl-12 pr-12"
             placeholder="••••••••"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-dark-300 hover:text-white transition-colors"
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
@@ -101,15 +101,16 @@ function LoginForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full py-3 bg-white text-black rounded-lg font-medium hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="btn-primary w-full flex items-center justify-center gap-2"
       >
-        {isLoading ? 'Signing in...' : 'Sign in →'}
+        {isLoading ? 'Signing in...' : 'Sign in'}
+        <ArrowRight size={20} />
       </button>
 
       {/* Create account link */}
-      <p className="text-center text-sm text-zinc-400">
+      <p className="text-center text-sm text-dark-200">
         Don't have an account?{' '}
-        <Link href="/register" className="text-blue-400 hover:underline font-medium">
+        <Link href="/register" className="text-primary hover:text-primary-light transition-colors font-semibold">
           Start your journey
         </Link>
       </p>
@@ -119,28 +120,41 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen bg-dark-950 flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="fixed inset-0 bg-gradient-mesh opacity-30 pointer-events-none" />
+      
+      <div className="w-full max-w-md relative z-10">
         {/* Header */}
-        <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-3 mb-8">
-            <Image 
-              src="/logo.png" 
-              alt="Ascenders Logo" 
-              width={48} 
-              height={48}
-              className="rounded-xl"
-            />
-            <span className="text-2xl font-bold">Ascenders</span>
+        <div className="text-center mb-10">
+          <Link href="/" className="inline-flex items-center gap-4 mb-8 group">
+            <div className="relative">
+              <Image 
+                src="/logo.png" 
+                alt="Ascenders Logo" 
+                width={56} 
+                height={56}
+                className="rounded-2xl group-hover:scale-110 transition-transform"
+              />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-primary opacity-0 group-hover:opacity-30 blur-xl transition-opacity" />
+            </div>
+            <span className="text-3xl font-display font-bold text-white">Ascenders</span>
           </Link>
-          <h1 className="text-3xl font-bold mt-6">Welcome back</h1>
-          <p className="text-zinc-400 mt-2">Continue your looksmaxxing journey</p>
+          <h1 className="text-4xl font-display font-bold text-white mb-3">Welcome back</h1>
+          <p className="text-dark-200">Continue your looksmaxxing journey</p>
         </div>
 
-        {/* Form wrapped in Suspense */}
-        <Suspense fallback={<div className="text-center">Loading...</div>}>
-          <LoginForm />
-        </Suspense>
+        {/* Form Card */}
+        <div className="glass rounded-2xl p-8 shadow-card">
+          <Suspense fallback={
+            <div className="text-center py-8">
+              <div className="skeleton h-12 w-full rounded-xl mb-4" />
+              <div className="skeleton h-12 w-full rounded-xl" />
+            </div>
+          }>
+            <LoginForm />
+          </Suspense>
+        </div>
       </div>
     </div>
   )

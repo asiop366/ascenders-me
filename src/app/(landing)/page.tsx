@@ -3,37 +3,55 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Dumbbell, Heart, Sparkles, TrendingUp, Award, ArrowRight, Zap, Shield, Users } from 'lucide-react'
+import { MessageSquare, Users, Zap, Shield, ArrowRight, Sparkles, TrendingUp, Award, Dumbbell, Heart } from 'lucide-react'
 
 export default function LandingPage() {
   const router = useRouter()
 
   return (
-    <div className="min-h-screen bg-asc-bg">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-asc-bg/80 backdrop-blur-lg border-b border-asc-border">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <div className="min-h-screen bg-dark-950 relative overflow-hidden">
+      {/* Animated Mesh Background */}
+      <div className="fixed inset-0 bg-gradient-mesh opacity-50 pointer-events-none" />
+      
+      {/* Glassmorphism Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
-            <Image 
-              src="/logo.png" 
-              alt="Ascenders Logo" 
-              width={32} 
-              height={32}
-              className="rounded-lg group-hover:scale-110 transition-transform"
-            />
-            <span className="text-xl font-bold text-asc-text">Ascenders</span>
+            <div className="relative">
+              <Image 
+                src="/logo.png" 
+                alt="Ascenders Logo" 
+                width={40} 
+                height={40}
+                className="rounded-xl group-hover:scale-110 transition-transform duration-200"
+              />
+              <div className="absolute inset-0 rounded-xl bg-gradient-primary opacity-0 group-hover:opacity-20 blur-xl transition-opacity" />
+            </div>
+            <span className="text-2xl font-bold text-white tracking-tight">Ascenders</span>
           </Link>
           
+          <div className="hidden md:flex items-center gap-8">
+            <Link href="#features" className="text-dark-100 hover:text-white transition-colors font-medium">
+              Features
+            </Link>
+            <Link href="#community" className="text-dark-100 hover:text-white transition-colors font-medium">
+              Community
+            </Link>
+            <Link href="/pricing" className="text-dark-100 hover:text-white transition-colors font-medium">
+              Pricing
+            </Link>
+          </div>
+
           <div className="flex items-center gap-4">
             <Link 
               href="/login" 
-              className="px-4 py-2 text-asc-text hover:text-white transition-colors font-medium"
+              className="btn-ghost hidden sm:block"
             >
               Login
             </Link>
             <Link 
               href="/register" 
-              className="px-6 py-2 bg-asc-text text-asc-bg rounded-lg hover:bg-white transition-all font-medium"
+              className="btn-primary"
             >
               Start Your Journey
             </Link>
@@ -42,208 +60,199 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6">
-        <div className="max-w-5xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-asc-surface border border-asc-border rounded-full mb-8">
-            <Sparkles size={16} className="text-asc-text" />
-            <span className="text-sm text-asc-secondary">The forefront of looksmaxxing</span>
+      <section className="relative pt-40 pb-32 px-6">
+        <div className="max-w-6xl mx-auto text-center relative z-10">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-dark-800/50 border border-primary/30 rounded-full mb-8 backdrop-blur-sm glow">
+            <Sparkles size={16} className="text-primary" />
+            <span className="text-sm font-medium text-primary-light">The forefront of looksmaxxing</span>
           </div>
 
-          <h1 className="text-6xl md:text-7xl font-bold text-asc-text mb-6 leading-tight">
-            Welcome to Ascenders.
+          {/* Main Title */}
+          <h1 className="text-display-xl md:text-[72px] font-display font-bold mb-6 leading-none">
+            <span className="gradient-text">Transform Your</span>
+            <br />
+            <span className="text-white">Potential.</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-asc-secondary mb-10 max-w-3xl mx-auto leading-relaxed">
-            The First Modern Forum About Looksmaxxing.
+          {/* Subtitle */}
+          <p className="text-xl md:text-2xl text-dark-100 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
+            The modern platform for serious self-improvement enthusiasts
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20">
             <Link 
               href="/register"
-              className="group px-8 py-4 bg-asc-text text-asc-bg rounded-lg font-semibold text-lg hover:bg-white transition-all hover:scale-105 flex items-center gap-2 shadow-lg"
+              className="group btn-primary flex items-center gap-2"
             >
-              Ready to Ascend ?
+              Get Started
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link 
               href="/app"
-              className="px-8 py-4 bg-transparent border-2 border-asc-text rounded-lg text-asc-text font-semibold text-lg hover:bg-asc-surface transition-all"
+              className="btn-secondary"
             >
-              Explore the Forum
+              Explore Community
             </Link>
           </div>
 
-          <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-asc-text mb-1">5k+</div>
-              <div className="text-sm text-asc-muted">Active Members</div>
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-8 max-w-3xl mx-auto">
+            <div className="glass rounded-2xl p-6 hover:scale-105 transition-transform duration-200">
+              <div className="flex items-center justify-center mb-2">
+                <Users className="text-primary" size={24} />
+              </div>
+              <div className="text-4xl font-bold text-white mb-1">5K+</div>
+              <div className="text-sm text-dark-200">Active Members</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-asc-text mb-1">12k+</div>
-              <div className="text-sm text-asc-muted">Success Stories</div>
+            <div className="glass rounded-2xl p-6 hover:scale-105 transition-transform duration-200">
+              <div className="flex items-center justify-center mb-2">
+                <TrendingUp className="text-accent" size={24} />
+              </div>
+              <div className="text-4xl font-bold text-white mb-1">12K+</div>
+              <div className="text-sm text-dark-200">Success Stories</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-asc-text mb-1">24/7</div>
-              <div className="text-sm text-asc-muted">Expert Support</div>
+            <div className="glass rounded-2xl p-6 hover:scale-105 transition-transform duration-200">
+              <div className="flex items-center justify-center mb-2">
+                <Shield className="text-secondary" size={24} />
+              </div>
+              <div className="text-4xl font-bold text-white mb-1">24/7</div>
+              <div className="text-sm text-dark-200">Expert Support</div>
             </div>
           </div>
         </div>
+
+        {/* Floating particles effect */}
+        <div className="absolute top-20 left-10 w-2 h-2 bg-primary rounded-full animate-float opacity-60" />
+        <div className="absolute top-40 right-20 w-3 h-3 bg-secondary rounded-full animate-float opacity-40" style={{ animationDelay: '1s' }} />
+        <div className="absolute bottom-20 left-1/4 w-2 h-2 bg-accent rounded-full animate-float opacity-50" style={{ animationDelay: '2s' }} />
       </section>
 
-      {/* Features */}
-      <section className="py-20 px-6 border-t border-asc-border">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-asc-text mb-4">
-              start you looksmaxxing journey
+      {/* Features Section */}
+      <section id="features" className="relative py-32 px-6 border-t border-white/5">
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-20">
+            <h2 className="text-display-lg font-display font-bold text-white mb-4">
+              Why Choose Ascenders?
             </h2>
-            <p className="text-lg text-asc-secondary max-w-2xl mx-auto">
+            <p className="text-xl text-dark-100 max-w-2xl mx-auto">
               Everything you need to maximize your physical potential
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <FeatureCard
-              icon={<Dumbbell className="w-8 h-8" />}
+              icon={<Dumbbell className="w-10 h-10" />}
               title="Fitness & Training"
               description="Science-backed workout routines, nutrition plans, and body transformation guides."
-              link="/app"
+              gradient="from-primary to-primary-light"
             />
             <FeatureCard
-              icon={<Heart className="w-8 h-8" />}
+              icon={<Heart className="w-10 h-10" />}
               title="Skincare & Grooming"
               description="Expert skincare routines, grooming tips, and product recommendations for all skin types."
-              link="/app"
+              gradient="from-secondary to-secondary-light"
             />
             <FeatureCard
-              icon={<Zap className="w-8 h-8" />}
+              icon={<Zap className="w-10 h-10" />}
               title="Style & Fashion"
               description="Elevate your appearance with personalized style guides and fashion advice."
-              link="/app"
+              gradient="from-accent to-accent-light"
             />
             <FeatureCard
-              icon={<Shield className="w-8 h-8" />}
-              title="Evidence-Based Methods"
+              icon={<Shield className="w-10 h-10" />}
+              title="Evidence-Based"
               description="Science-backed approaches to mewing, posture correction, and aesthetic enhancement."
-              link="/app"
+              gradient="from-primary to-secondary"
+            />
+            <FeatureCard
+              icon={<Users className="w-10 h-10" />}
+              title="Active Community"
+              description="Connect with thousands of members on the same journey towards self-improvement."
+              gradient="from-secondary to-accent"
+            />
+            <FeatureCard
+              icon={<MessageSquare className="w-10 h-10" />}
+              title="Expert Discussions"
+              description="Engage in meaningful conversations with experienced community members."
+              gradient="from-accent to-primary"
             />
           </div>
         </div>
       </section>
 
-      {/* Trending Topics */}
-      <section className="py-20 px-6 border-t border-asc-surface">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-asc-text mb-4">
-            Popular Categories
-          </h2>
-          <p className="text-lg text-asc-secondary mb-10">
-            Join the most active discussions in the community
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            <TopicCard 
-              name="Fitness & Training"
-              threads={2847}
-              members={1892}
-              trending
-              link="/app"
-            />
-            <TopicCard 
-              name="Skincare Routines"
-              threads={1567}
-              members={1445}
-              link="/app"
-            />
-            <TopicCard 
-              name="Style & Fashion"
-              threads={934}
-              members={1178}
-              link="/app"
-            />
+      {/* CTA Section */}
+      <section className="relative py-32 px-6 border-t border-white/5">
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-primary mb-8 glow">
+            <Award size={40} className="text-white" />
           </div>
-
-          <div className="text-center mt-10">
-            <Link 
-              href="/app"
-              className="inline-flex items-center gap-2 px-6 py-4 bg-asc-text border border-asc-border rounded-lg text-asc-bg font-semibold hover:bg-white transition-all"
-            >
-              View All Categories
-              <ArrowRight size={18} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 px-6 border-t border-asc-border">
-        <div className="max-w-4xl mx-auto text-center">
-          <Award size={48} className="text-asc-text mx-auto mb-6" />
-          <h2 className="text-4xl md:text-5xl font-bold text-asc-text mb-6">
-            Ready to Ascend ?
+          <h2 className="text-display-lg font-display font-bold text-white mb-6">
+            Ready to Level Up?
           </h2>
-          <p className="text-xl text-asc-secondary mb-10 max-w-2xl mx-auto">
+          <p className="text-xl text-dark-100 mb-12 max-w-2xl mx-auto">
             Join thousands of members already transforming their appearance and confidence through evidence-based looksmaxxing.
           </p>
           <Link
             href="/register"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-asc-text text-asc-bg rounded-lg font-semibold text-lg hover:bg-white transition-all hover:scale-105 shadow-lg"
+            className="inline-flex items-center gap-2 btn-primary text-lg px-10 py-4"
           >
             Start Your Transformation
-            <ArrowRight size={20} />
+            <ArrowRight size={24} />
           </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-asc-border">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
+      <footer className="relative py-16 px-6 border-t border-white/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <Image 
                   src="/logo.png" 
                   alt="Ascenders Logo" 
-                  width={24} 
-                  height={24}
-                  className="rounded"
+                  width={32} 
+                  height={32}
+                  className="rounded-lg"
                 />
-                <span className="font-bold text-asc-text">Ascenders</span>
+                <span className="font-bold text-white text-lg">Ascenders</span>
               </div>
-              <p className="text-sm text-asc-muted">
+              <p className="text-sm text-dark-200">
                 The premier looksmaxxing community.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-asc-text mb-3">Categories</h3>
-              <ul className="space-y-2">
-                <li><Link href="/app" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Fitness</Link></li>
-                <li><Link href="/app" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Skincare</Link></li>
-                <li><Link href="/app" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Style</Link></li>
+              <h3 className="font-semibold text-white mb-4 tracking-tight">Categories</h3>
+              <ul className="space-y-3">
+                <li><Link href="/app" className="text-sm text-dark-200 hover:text-primary transition-colors">Fitness</Link></li>
+                <li><Link href="/app" className="text-sm text-dark-200 hover:text-primary transition-colors">Skincare</Link></li>
+                <li><Link href="/app" className="text-sm text-dark-200 hover:text-primary transition-colors">Style</Link></li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold text-asc-text mb-3">Resources</h3>
-              <ul className="space-y-2">
-                <li><Link href="/about" className="text-sm text-asc-muted hover:text-asc-text transition-colors">About</Link></li>
-                <li><Link href="/pricing" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Pricing</Link></li>
-                <li><Link href="/" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Guides</Link></li>
+              <h3 className="font-semibold text-white mb-4 tracking-tight">Resources</h3>
+              <ul className="space-y-3">
+                <li><Link href="/about" className="text-sm text-dark-200 hover:text-primary transition-colors">About</Link></li>
+                <li><Link href="/pricing" className="text-sm text-dark-200 hover:text-primary transition-colors">Pricing</Link></li>
+                <li><Link href="/" className="text-sm text-dark-200 hover:text-primary transition-colors">Guides</Link></li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold text-asc-text mb-3">Legal</h3>
-              <ul className="space-y-2">
-                <li><Link href="/terms" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Terms</Link></li>
-                <li><Link href="/privacy" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Privacy</Link></li>
+              <h3 className="font-semibold text-white mb-4 tracking-tight">Legal</h3>
+              <ul className="space-y-3">
+                <li><Link href="/terms" className="text-sm text-dark-200 hover:text-primary transition-colors">Terms</Link></li>
+                <li><Link href="/privacy" className="text-sm text-dark-200 hover:text-primary transition-colors">Privacy</Link></li>
               </ul>
             </div>
           </div>
 
-          <div className="pt-8 border-t border-asc-border text-center">
-            <p className="text-sm text-asc-muted">
+          <div className="pt-8 border-t border-white/5 text-center">
+            <p className="text-sm text-dark-300">
               © 2025 Ascenders. Elevate your potential.
             </p>
           </div>
@@ -253,50 +262,25 @@ export default function LandingPage() {
   )
 }
 
-function FeatureCard({ icon, title, description, link }: { 
+function FeatureCard({ icon, title, description, gradient }: { 
   icon: React.ReactNode
   title: string
   description: string
-  link: string
+  gradient: string
 }) {
   return (
-    <Link
-      href={link}
-      className="group p-6 bg-asc-surface border border-asc-border rounded-lg hover:border-asc-text transition-all hover:scale-105 flex flex-col items-center gap-4 text-center"
-    >
-      <div className="text-asc-text">
-        {icon}
+    <div className="group gradient-border p-8 hover:scale-105 transition-all duration-200">
+      <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${gradient} bg-opacity-10 mb-6 group-hover:scale-110 transition-transform`}>
+        <div className={`text-transparent bg-clip-text bg-gradient-to-br ${gradient}`}>
+          {icon}
+        </div>
       </div>
-      <h3 className="text-lg font-semibold text-asc-text group-hover:underline">{title}</h3>
-      <p className="text-asc-secondary leading-relaxed text-sm">{description}</p>
-    </Link>
-  )
-}
-
-function TopicCard({ name, threads, members, trending, link }: { 
-  name: string
-  threads: number
-  members: number
-  trending?: boolean
-  link: string
-}) {
-  return (
-    <Link
-      href={link}
-      className="group p-6 bg-asc-surface border border-asc-border rounded-lg hover:border-asc-text transition-all"
-    >
-      <div className="flex items-start justify-between mb-4">
-        <h3 className="text-lg font-semibold text-asc-text group-hover:underline">{name}</h3>
-        {trending && (
-          <div className="flex items-center gap-1 text-asc-text">
-            <TrendingUp size={16} />
-          </div>
-        )}
-      </div>
-      <div className="flex justify-between text-asc-secondary text-sm">
-        <div>{threads} Threads</div>
-        <div>{members} Members</div>
-      </div>
-    </Link>
+      <h3 className="text-xl font-bold text-white mb-3 tracking-tight">{title}</h3>
+      <p className="text-dark-200 leading-relaxed mb-4">{description}</p>
+      <Link href="/app" className="inline-flex items-center gap-2 text-primary font-medium group-hover:gap-3 transition-all">
+        Learn more 
+        <ArrowRight size={16} />
+      </Link>
+    </div>
   )
 }
