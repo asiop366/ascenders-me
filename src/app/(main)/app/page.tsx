@@ -1,15 +1,44 @@
 import Link from 'next/link'
-import { Plus } from 'lucide-react'
+import { Plus, MessageSquare, ThumbsUp, Clock } from 'lucide-react'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { getTimeAgo } from '@/lib/utils'
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions)
 
+  // Récupérer tous les threads
+  const threads = await prisma.thread.findMany({
+    include: {
+      author: {
+        include: {
+          grade: true,
+        },
+      },
+      channel: {
+        include: {
+          space: true,
+        },
+      },
+      _count: {
+        select: {
+          posts: true,
+          reactions: true,
+        },
+      },
+    },
+    orderBy: [
+      { pinned: 'desc' },
+      { createdAt: 'desc' },
+    ],
+    take: 50,
+  })
+
   return (
     <div className="min-h-screen bg-asc-bg flex flex-col">
       {/* Header */}
-      <div className="border-b border-asc-border bg-asc-surface px-6 py-4 flex items-center justify-between">
+      <div className="border-b border-asc-border bg-asc-surface px-6 py-4 flex items-center justify-between sticky top-0 z-10">
         <h1 className="text-2xl font-bold text-asc-text">
           WELCOME TO ASCENDERS
         </h1>
@@ -23,20 +52,87 @@ export default async function HomePage() {
         </Link>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content - Thread Feed */}
       <div className="flex-1 p-6">
-        <div className="max-w-7xl mx-auto">
-          {/* Feed will go here */}
-          <div className="space-y-4">
+        <div className="max-w-5xl mx-auto">
+          {threads.length === 0 ? (
             <div className="text-center py-20 text-asc-muted">
               <p className="text-lg">No threads yet. Be the first to create one!</p>
             </div>
-          </div>
+          ) : (
+            <div className="space-y-3">
+              {threads.map((thread) => (
+                <Link
+                  key={thread.id}
+                  href={`/thread/${thread.id}`}
+                  className="block bg-asc-surface border border-asc-border rounded-lg p-4 hover:border-asc-text transition-all group"
+                >
+                  <div className="flex gap-4">
+                    {/* Author Avatar */}
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-lg">
+                        {thread.author.username[0].toUpperCase()}
+                      </div>
+                    </div>
+
+                    {/* Thread Content */}
+                    <div className="flex-1 min-w-0">
+                      {/* Title */}
+                      <h3 className="text-lg font-semibold text-asc-text group-hover:text-white transition-colors mb-1">
+                        {thread.pinned && (
+                          <span className="text-yellow-500 mr-2">📌</span>
+                        )}
+                        {thread.title}
+                      </h3>
+
+                      {/* Meta Info */}
+                      <div className="flex items-center gap-4 text-sm text-asc-muted">
+                        <span className="flex items-center gap-1">
+                          <span className="font-medium text-asc-secondary">
+                            {thread.author.username}
+                          </span>
+                          {thread.author.grade && (
+                            <span className="text-xs px-2 py-0.5 rounded" style={{ backgroundColor: thread.author.grade.color + '20', color: thread.author.grade.color }}>
+                              {thread.author.grade.name}
+                            </span>
+                          )}
+                        </span>
+                        
+                        <span className="flex items-center gap-1">
+                          <Clock size={14} />
+                          {getTimeAgo(thread.createdAt)}
+                        </span>
+
+                        <span className="text-asc-secondary">
+                          in {thread.channel.space.name} / {thread.channel.name}
+                        </span>
+                      </div>
+
+                      {/* Stats */}
+                      <div className="flex items-center gap-4 mt-3 text-sm text-asc-muted">
+                        <span className="flex items-center gap-1">
+                          <MessageSquare size={16} />
+                          {thread._count.posts} replies
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <ThumbsUp size={16} />
+                          {thread._count.reactions} reactions
+                        </span>
+                        <span>
+                          {thread.viewCount} views
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
       {/* User Profile Footer */}
-      <div className="border-t border-asc-border bg-asc-surface px-6 py-4">
+      <div className="border-t border-asc-border bg-asc-surface px-6 py-4 sticky bottom-0">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-xl">
             {session?.user?.username?.[0]?.toUpperCase() || 'U'}
