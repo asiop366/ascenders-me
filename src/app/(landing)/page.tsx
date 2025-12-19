@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { MessageSquare, Users, Zap, Shield, ArrowRight, Sparkles, TrendingUp, Award } from 'lucide-react'
 
@@ -12,10 +13,14 @@ export default function LandingPage() {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-asc-bg/80 backdrop-blur-lg border-b border-asc-border">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-asc-text rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-              <span className="text-asc-bg font-bold text-lg">A</span>
-            </div>
+          <Link href="/" className="flex items-center gap-3 group">
+            <Image 
+              src="/logo.png" 
+              alt="Ascenders Logo" 
+              width={32} 
+              height={32}
+              className="rounded-lg group-hover:scale-110 transition-transform"
+            />
             <span className="text-xl font-bold text-asc-text">Ascenders</span>
           </Link>
           
@@ -62,7 +67,7 @@ export default function LandingPage() {
             </Link>
             <Link 
               href="/app"
-              className="px-8 py-4 bg-transparent border-2 border-asc-border hover:border-asc-text rounded-lg text-asc-text font-semibold text-lg transition-all hover:bg-asc-surface flex items-center gap-2"
+              className="px-8 py-4 bg-transparent border-2 border-asc-text rounded-lg text-asc-text font-semibold text-lg hover:bg-asc-surface transition-all"
             >
               Explore Spaces
             </Link>
@@ -127,16 +132,14 @@ export default function LandingPage() {
       </section>
 
       {/* Trending */}
-      <section className="py-20 px-6 border-t border-asc-border bg-asc-surface">
+      <section className="py-20 px-6 border-t border-asc-surface">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-asc-text mb-4">
-              Trending Topics
-            </h2>
-            <p className="text-lg text-asc-secondary">
-              Join the hottest discussions right now
-            </p>
-          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-asc-text mb-4">
+            Trending Topics
+          </h2>
+          <p className="text-lg text-asc-secondary mb-10">
+            Join the hottest discussions right now
+          </p>
 
           <div className="grid md:grid-cols-3 gap-6">
             <TopicCard 
@@ -163,7 +166,7 @@ export default function LandingPage() {
           <div className="text-center mt-10">
             <Link 
               href="/app/topics"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-asc-bg border border-asc-border hover:border-asc-text rounded-lg text-asc-text font-medium transition-all"
+              className="inline-flex items-center gap-2 px-6 py-4 bg-asc-text border border-asc-border rounded-lg text-asc-bg font-semibold hover:bg-white transition-all"
             >
               View All Topics
               <ArrowRight size={18} />
@@ -197,10 +200,14 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-6 h-6 bg-asc-text rounded flex items-center justify-center">
-                  <span className="text-asc-bg font-bold text-sm">A</span>
-                </div>
+              <div className="flex items-center gap-3 mb-4">
+                <Image 
+                  src="/logo.png" 
+                  alt="Ascenders Logo" 
+                  width={24} 
+                  height={24}
+                  className="rounded"
+                />
                 <span className="font-bold text-asc-text">Ascenders</span>
               </div>
               <p className="text-sm text-asc-muted">
@@ -220,7 +227,7 @@ export default function LandingPage() {
             <div>
               <h3 className="font-semibold text-asc-text mb-3">Company</h3>
               <ul className="space-y-2">
-                <li><Link href="/" className="text-sm text-asc-muted hover:text-asc-text transition-colors">About</Link></li>
+                <li><Link href="/about" className="text-sm text-asc-muted hover:text-asc-text transition-colors">About</Link></li>
                 <li><Link href="/" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Blog</Link></li>
                 <li><Link href="/" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Contact</Link></li>
               </ul>
@@ -229,16 +236,15 @@ export default function LandingPage() {
             <div>
               <h3 className="font-semibold text-asc-text mb-3">Legal</h3>
               <ul className="space-y-2">
-                <li><Link href="/privacy" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Privacy</Link></li>
                 <li><Link href="/terms" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Terms</Link></li>
-                <li><Link href="/" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Guidelines</Link></li>
+                <li><Link href="/privacy" className="text-sm text-asc-muted hover:text-asc-text transition-colors">Privacy</Link></li>
               </ul>
             </div>
           </div>
 
           <div className="pt-8 border-t border-asc-border text-center">
             <p className="text-sm text-asc-muted">
-              © 2024 Ascenders. All rights reserved.
+              © 2025 Ascenders. All rights reserved.
             </p>
           </div>
         </div>
@@ -254,14 +260,14 @@ function FeatureCard({ icon, title, description, link }: {
   link: string
 }) {
   return (
-    <Link 
+    <Link
       href={link}
-      className="group p-6 bg-asc-surface border border-asc-border rounded-xl hover:border-asc-text transition-all hover:-translate-y-1"
+      className="group p-6 bg-asc-surface border border-asc-border rounded-lg hover:border-asc-text transition-all hover:scale-105 flex flex-col items-center gap-4 text-center"
     >
-      <div className="w-14 h-14 bg-asc-bg border border-asc-border rounded-lg flex items-center justify-center text-asc-text mb-4 group-hover:border-asc-text group-hover:scale-110 transition-all">
+      <div className="text-asc-text">
         {icon}
       </div>
-      <h3 className="text-xl font-semibold text-asc-text mb-2">{title}</h3>
+      <h3 className="text-lg font-semibold text-asc-text group-hover:underline">{title}</h3>
       <p className="text-asc-secondary leading-relaxed text-sm">{description}</p>
     </Link>
   )
@@ -277,7 +283,7 @@ function TopicCard({ name, threads, members, trending, link }: {
   return (
     <Link
       href={link}
-      className="group p-6 bg-asc-bg border border-asc-border rounded-lg hover:border-asc-text transition-all"
+      className="group p-6 bg-asc-surface border border-asc-border rounded-lg hover:border-asc-text transition-all"
     >
       <div className="flex items-start justify-between mb-4">
         <h3 className="text-lg font-semibold text-asc-text group-hover:underline">{name}</h3>
@@ -287,15 +293,9 @@ function TopicCard({ name, threads, members, trending, link }: {
           </div>
         )}
       </div>
-      <div className="flex items-center gap-4 text-sm text-asc-muted">
-        <span className="flex items-center gap-1">
-          <MessageSquare size={14} />
-          {threads} threads
-        </span>
-        <span className="flex items-center gap-1">
-          <Users size={14} />
-          {members} members
-        </span>
+      <div className="flex justify-between text-asc-secondary text-sm">
+        <div>{threads} Threads</div>
+        <div>{members} Members</div>
       </div>
     </Link>
   )
