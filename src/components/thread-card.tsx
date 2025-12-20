@@ -1,169 +1,327 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import Link from 'next/link'
-import { MessageSquare, ThumbsUp, Clock, Pin, Bookmark } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Avatar } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { getTimeAgo } from '@/lib/utils'
+import { 
+  MessagesSquare, 
+  Eye, 
+  Heart, 
+  Pin, 
+  Lock, 
+  Bookmark,
+  MoreHorizontal,
+  Share2,
+  Flag
+} from 'lucide-react'
 
 interface ThreadCardProps {
-  thread: any
+  thread: {
+    id: string
+    title: string
+    content: string
+    pinned: boolean
+    locked: boolean
+    viewCount: number
+    createdAt: Date | string
+    author: {
+      id: string
+      username: string
+      image: string | null
+      role?: string
+      grade?: { name: string; color: string } | null
+    }
+    channel: {
+      name: string
+      slug: string
+      space: { name: string; slug: string }
+    }
+    _count: {
+      posts: number
+      reactions: number
+    }
+  }
   currentUserId?: string
 }
 
 export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
-  const [reactions, setReactions] = useState(thread._count?.reactions || 0)
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const [isLiked, setIsLiked] = useState(false)
+  const [likeCount, setLikeCount] = useState(thread._count.reactions)
   const [isBookmarked, setIsBookmarked] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
 
-  const authorInitial = thread.author?.username?.[0]?.toUpperCase() || 'U'
-  const authorName = thread.author?.username || 'Unknown'
-  const gradeName = thread.author?.grade?.name
-  const gradeColor = thread.author?.grade?.color
-  const spaceName = thread.channel?.space?.name || 'General'
-  const channelName = thread.channel?.name || 'Discussion'
-
-  const handleReaction = async (e: React.MouseEvent) => {
+  const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    
+    if (!currentUserId) {
+      router.push('/login')
+      return
+    }
 
-    if (isLoading) return
-
-    setIsLoading(true)
+    // Optimistic update
+    setIsLiked(!isLiked)
+    setLikeCount(prev => isLiked ? prev - 1 : prev + 1)
 
     try {
-      const res = await fetch(`/api/reactions`, {
+      const res = await fetch(`/api/threads/${thread.id}/react`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ threadId: thread.id, type: 'like' }),
       })
-
-      const data = await res.json()
-
-      if (res.ok) {
-        if (data.action === 'added') {
-          setIsLiked(true)
-          setReactions((prev: number) => prev + 1)  // ✅ TYPÉ
-        } else {
-          setIsLiked(false)
-          setReactions((prev: number) => prev - 1)  // ✅ TYPÉ
-        }
+      
+      if (!res.ok) {
+        // Revert on error
+        setIsLiked(isLiked)
+        setLikeCount(thread._count.reactions)
       }
     } catch (error) {
-      console.error('Reaction error:', error)
-    } finally {
-      setIsLoading(false)
+      // Revert on error
+      setIsLiked(isLiked)
+      setLikeCount(thread._count.reactions)
     }
   }
 
   const handleBookmark = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    
+    if (!currentUserId) {
+      router.push('/login')
+      return
+    }
 
     setIsBookmarked(!isBookmarked)
-    // TODO: Implement API call
+    
+    // TODO: Add API call for bookmarks
+  }
+
+  const handleShare = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    if (navigator.share) {
+      navigator.share({
+        title: thread.title,
+        url: `${window.location.origin}/app/thread/${thread.id}`
+      })
+    } else {
+      navigator.clipboard.writeText(`${window.location.origin}/app/thread/${thread.id}`)
+      // TODO: Show toast "Link copied!"
+    }
   }
 
   return (
-    <Link
-      href={`/app/thread/${thread.id}`}
-      className="block gradient-border p-6 group"
-    >
-      <div className="flex gap-5">
-        {/* Author Avatar */}
-        <div className="flex-shrink-0">
-          <div className="relative">
-            <div className="w-14 h-14 rounded-full bg-gradient-primary flex items-center justify-center font-bold text-xl text-white shadow-glow">
-              {authorInitial}
-            </div>
-            <div className="absolute inset-0 rounded-full bg-gradient-primary opacity-0 group-hover:opacity-30 blur-xl transition-opacity" />
-          </div>
-        </div>
-
-        {/* Thread Content */}
-        <div className="flex-1 min-w-0">
-          {/* Title */}
-          <div className="flex items-start gap-3 mb-2">
+    <Link href={`/app/thread/${thread.id}`} className="block group">
+      <article className="relative bg-dark-800/40 hover:bg-dark-800/60 border border-white/5 hover:border-white/10 rounded-2xl p-5 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
+        {/* Pinned/Locked indicators */}
+        {(thread.pinned || thread.locked) && (
+          <div className="absolute top-4 right-4 flex items-center gap-2">
             {thread.pinned && (
-              <Pin size={18} className="text-yellow-500 flex-shrink-0 mt-1" />
+              <div className="p-1.5 bg-primary/20 rounded-lg" title="Pinned">
+                <Pin size={14} className="text-primary" />
+              </div>
             )}
-            <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors">
-              {thread.title}
-            </h3>
+            {thread.locked && (
+              <div className="p-1.5 bg-yellow-500/20 rounded-lg" title="Locked">
+                <Lock size={14} className="text-yellow-500" />
+              </div>
+            )}
           </div>
+        )}
 
-          {/* Meta Info */}
-          <div className="flex items-center gap-4 text-sm text-dark-200 flex-wrap mb-4">
-            <span className="flex items-center gap-2">
-              <span className="font-semibold text-dark-100">
-                {authorName}
-              </span>
-              {gradeName && gradeColor && (
-                <span 
-                  className="px-2 py-0.5 rounded-full text-xs font-medium"
+        <div className="flex gap-4">
+          {/* Avatar */}
+          <Link 
+            href={`/app/u/${thread.author.username}`}
+            onClick={(e) => e.stopPropagation()}
+            className="shrink-0"
+          >
+            <Avatar 
+              src={thread.author.image} 
+              alt={thread.author.username} 
+              size="md"
+              className="ring-2 ring-transparent group-hover:ring-primary/30 transition-all duration-300"
+            />
+          </Link>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            {/* Header */}
+            <div className="flex items-center gap-2 flex-wrap mb-2">
+              <Link 
+                href={`/app/u/${thread.author.username}`}
+                onClick={(e) => e.stopPropagation()}
+                className="font-semibold text-white hover:text-primary transition-colors"
+              >
+                {thread.author.username}
+              </Link>
+              
+              {thread.author.grade && (
+                <Badge 
+                  size="sm"
                   style={{ 
-                    background: `linear-gradient(135deg, ${gradeColor}20, ${gradeColor}10)`,
-                    color: gradeColor,
-                    border: `1px solid ${gradeColor}40`
+                    backgroundColor: thread.author.grade.color + '20', 
+                    color: thread.author.grade.color,
+                    borderColor: thread.author.grade.color + '40'
                   }}
                 >
-                  {gradeName}
-                </span>
+                  {thread.author.grade.name}
+                </Badge>
               )}
-            </span>
-            
-            <span className="flex items-center gap-1.5">
-              <Clock size={14} className="text-dark-300" />
-              {getTimeAgo(thread.createdAt)}
-            </span>
-
-            <span className="text-dark-300">
-              in <span className="text-primary">{spaceName}</span> / {channelName}
-            </span>
-          </div>
-
-          {/* Stats & Actions */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6 text-sm text-dark-300">
-              <span className="flex items-center gap-2 hover:text-primary transition-colors">
-                <MessageSquare size={16} />
-                <span className="font-medium">{thread._count?.posts || 0}</span> replies
-              </span>
               
-              <button
-                onClick={handleReaction}
-                disabled={isLoading}
-                className={`flex items-center gap-2 transition-all ${
-                  isLiked 
-                    ? 'text-red-500 hover:text-red-400' 
-                    : 'hover:text-secondary'
-                } disabled:opacity-50`}
-              >
-                <ThumbsUp 
-                  size={16} 
-                  className={isLiked ? 'fill-current' : ''} 
-                />
-                <span className="font-medium">{reactions}</span> reactions
-              </button>
+              {thread.author.role === 'ADMIN' && (
+                <Badge size="sm" className="bg-red-500/20 text-red-400 border-red-500/40">
+                  Admin
+                </Badge>
+              )}
               
-              <span className="hover:text-accent transition-colors">
-                <span className="font-medium">{thread.viewCount || 0}</span> views
+              {thread.author.role === 'MODERATOR' && (
+                <Badge size="sm" className="bg-blue-500/20 text-blue-400 border-blue-500/40">
+                  Mod
+                </Badge>
+              )}
+              
+              <span className="text-sm text-dark-400">
+                 {getTimeAgo(new Date(thread.createdAt))}
               </span>
             </div>
 
-            <button
-              onClick={handleBookmark}
-              className={`p-2 rounded-lg transition-all ${
-                isBookmarked 
-                  ? 'text-yellow-500 bg-yellow-500/10' 
-                  : 'text-dark-300 hover:text-yellow-500 hover:bg-yellow-500/10'
-              }`}
-            >
-              <Bookmark size={18} className={isBookmarked ? 'fill-current' : ''} />
-            </button>
+            {/* Title */}
+            <h3 className="font-bold text-lg text-white mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+              {thread.title}
+            </h3>
+
+            {/* Preview */}
+            <p className="text-sm text-dark-300 line-clamp-2 mb-4">
+              {thread.content}
+            </p>
+
+            {/* Category Tag */}
+            <div className="mb-4">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-dark-700/50 text-dark-200 border border-white/5">
+                {thread.channel.space.name} / {thread.channel.name}
+              </span>
+            </div>
+
+            {/* Footer - Stats & Actions */}
+            <div className="flex items-center justify-between">
+              {/* Stats */}
+              <div className="flex items-center gap-4">
+                {/* Like Button */}
+                <button
+                  onClick={handleLike}
+                  className={`flex items-center gap-1.5 text-sm transition-all duration-200 ${
+                    isLiked 
+                      ? 'text-red-500' 
+                      : 'text-dark-400 hover:text-red-400'
+                  }`}
+                >
+                  <Heart 
+                    size={18} 
+                    className={`transition-transform duration-200 ${isLiked ? 'fill-current scale-110' : 'group-hover:scale-110'}`}
+                  />
+                  <span className="font-medium">{likeCount}</span>
+                </button>
+
+                {/* Replies */}
+                <div className="flex items-center gap-1.5 text-sm text-dark-400">
+                  <MessagesSquare size={18} />
+                  <span className="font-medium">{thread._count.posts}</span>
+                </div>
+
+                {/* Views */}
+                <div className="flex items-center gap-1.5 text-sm text-dark-400">
+                  <Eye size={18} />
+                  <span className="font-medium">{thread.viewCount}</span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-2">
+                {/* Bookmark */}
+                <button
+                  onClick={handleBookmark}
+                  className={`p-2 rounded-lg transition-all duration-200 ${
+                    isBookmarked 
+                      ? 'text-primary bg-primary/10' 
+                      : 'text-dark-400 hover:text-primary hover:bg-white/5'
+                  }`}
+                  title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+                >
+                  <Bookmark size={18} className={isBookmarked ? 'fill-current' : ''} />
+                </button>
+
+                {/* Share */}
+                <button
+                  onClick={handleShare}
+                  className="p-2 rounded-lg text-dark-400 hover:text-white hover:bg-white/5 transition-all duration-200"
+                  title="Share"
+                >
+                  <Share2 size={18} />
+                </button>
+
+                {/* More Options */}
+                <div className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setShowMenu(!showMenu)
+                    }}
+                    className="p-2 rounded-lg text-dark-400 hover:text-white hover:bg-white/5 transition-all duration-200"
+                  >
+                    <MoreHorizontal size={18} />
+                  </button>
+
+                  {showMenu && (
+                    <>
+                      <div 
+                        className="fixed inset-0 z-40" 
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setShowMenu(false)
+                        }}
+                      />
+                      <div className="absolute right-0 bottom-full mb-2 w-48 bg-dark-800 border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden">
+                        <button 
+                          className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-dark-200 hover:bg-white/5 hover:text-white transition-colors"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            handleShare(e)
+                            setShowMenu(false)
+                          }}
+                        >
+                          <Share2 size={16} />
+                          Copy Link
+                        </button>
+                        <button 
+                          className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            // TODO: Report modal
+                            setShowMenu(false)
+                          }}
+                        >
+                          <Flag size={16} />
+                          Report
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </article>
     </Link>
   )
 }
