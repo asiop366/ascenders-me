@@ -8,6 +8,7 @@ import { signOut, useSession } from 'next-auth/react'
 import { cn } from '@/lib/utils'
 import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { useLanguage } from '@/lib/language-context'
 import {
   Home,
   Compass,
@@ -98,12 +99,48 @@ const defaultTopTopics = [
 ]
 
 export function Sidebar({ spaces = [], topTopics = defaultTopTopics, userGrade, isOpen, onClose }: SidebarProps) {
+  const { t, language, setLanguage } = useLanguage()
   const pathname = usePathname()
   const router = useRouter()
   const { data: session } = useSession()
   const [expandedSpaces, setExpandedSpaces] = useState<string[]>([])
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
+
+  const navItems = [
+    {
+      label: t('nav.home'),
+      href: '/app',
+      icon: Home,
+      exact: true
+    },
+    {
+      label: t('nav.topics'),
+      href: '/app/topics',
+      icon: Compass
+    },
+    {
+      label: t('forum.trending'),
+      href: '/app/trending',
+      icon: TrendingUp
+    },
+    {
+      label: t('nav.messages'),
+      href: '/app/messages',
+      icon: Mail
+    },
+    {
+      label: 'Bookmarks',
+      href: '/app/bookmarks',
+      icon: Bookmark
+    },
+    {
+      label: t('nav.notifications'),
+      href: '/app/notifications',
+      icon: Bell,
+      badge: 3
+    },
+  ]
 
   const toggleSpace = (spaceId: string) => {
     setExpandedSpaces(prev =>
@@ -165,9 +202,33 @@ export function Sidebar({ spaces = [], topTopics = defaultTopTopics, userGrade, 
             className="flex items-center gap-3 w-full px-4 py-2.5 bg-dark-800/50 border border-white/5 rounded-xl text-dark-400 text-sm hover:bg-dark-800 hover:border-white/10 transition-all shadow-inner"
           >
             <Search size={18} />
-            <span>Search...</span>
+            <span>{t('forum.search_placeholder')}</span>
             <span className="ml-auto text-xs bg-dark-700 px-2 py-0.5 rounded">⌘K</span>
           </Link>
+        </div>
+
+        {/* Language Switcher */}
+        <div className="px-4 mb-3">
+          <div className="flex items-center bg-dark-800/50 border border-white/5 rounded-xl p-1">
+            <button
+              onClick={() => setLanguage('fr')}
+              className={cn(
+                "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
+                language === 'fr' ? "bg-primary text-white shadow-glow" : "text-dark-400 hover:text-white"
+              )}
+            >
+              FR
+            </button>
+            <button
+              onClick={() => setLanguage('en')}
+              className={cn(
+                "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
+                language === 'en' ? "bg-primary text-white shadow-glow" : "text-dark-400 hover:text-white"
+              )}
+            >
+              EN
+            </button>
+          </div>
         </div>
 
         {/* Create Thread Button */}
@@ -177,7 +238,7 @@ export function Sidebar({ spaces = [], topTopics = defaultTopTopics, userGrade, 
             className="flex items-center justify-center gap-2 w-full py-3 btn-primary text-white font-semibold hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.02] transition-all duration-300"
           >
             <Plus size={20} />
-            Create Thread
+            {t('forum.create_thread')}
           </Link>
         </div>
 
@@ -185,7 +246,7 @@ export function Sidebar({ spaces = [], topTopics = defaultTopTopics, userGrade, 
         <nav className="px-3 pb-4 border-b border-white/5 overflow-y-auto scrollbar-hide">
           <p className="px-3 mb-2 text-xs font-semibold text-dark-500 uppercase tracking-wider">Menu</p>
           <ul className="space-y-1">
-            {mainNavItems.map((item) => {
+            {navItems.map((item) => {
               const Icon = item.icon
               const active = isActive(item.href, item.exact)
 
@@ -389,7 +450,7 @@ export function Sidebar({ spaces = [], topTopics = defaultTopTopics, userGrade, 
                     }}
                   >
                     <Settings size={18} />
-                    Settings
+                    {t('nav.settings')}
                   </Link>
                   <div className="border-t border-white/5">
                     <button
@@ -400,7 +461,7 @@ export function Sidebar({ spaces = [], topTopics = defaultTopTopics, userGrade, 
                       className="flex items-center gap-3 w-full px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
                     >
                       <LogOut size={18} />
-                      Sign Out
+                      {t('nav.logout')}
                     </button>
                   </div>
                 </div>

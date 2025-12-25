@@ -9,6 +9,7 @@ import { Dropdown, DropdownItem } from '@/components/ui/dropdown'
 import { ReportModal } from '../report-modal'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useLanguage } from '@/lib/language-context'
 
 interface PostCardProps {
   post: {
@@ -33,6 +34,7 @@ export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
   const router = useRouter()
   const isAuthor = currentUserId === post.author.id
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
+  const { t } = useLanguage()
 
   return (
     <article className="glass rounded-xl p-6 hover:border-primary/30 transition-all">
@@ -80,10 +82,10 @@ export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
               {isAuthor && (
                 <>
                   <DropdownItem onClick={() => { }}>
-                    <Edit size={14} className="mr-2" /> Edit
+                    <Edit size={14} className="mr-2" /> {t('nav.edit')}
                   </DropdownItem>
                   <DropdownItem onClick={() => onDelete?.(post.id)} danger>
-                    <Trash2 size={14} className="mr-2" /> Delete
+                    <Trash2 size={14} className="mr-2" /> {t('nav.delete')}
                   </DropdownItem>
                 </>
               )}
@@ -94,7 +96,7 @@ export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
                 }
                 setIsReportModalOpen(true)
               }}>
-                <Flag size={14} className="mr-2" /> Report
+                <Flag size={14} className="mr-2" /> {t('nav.report')}
               </DropdownItem>
             </Dropdown>
           </div>

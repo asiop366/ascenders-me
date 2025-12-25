@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { getTimeAgo } from '@/lib/utils'
+import { useLanguage } from '@/lib/language-context'
 import {
   MessagesSquare,
   Eye,
@@ -62,6 +63,7 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
+  const { t } = useLanguage()
 
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -132,12 +134,12 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
         {(thread.pinned || thread.locked) && (
           <div className="absolute top-4 right-4 flex items-center gap-2">
             {thread.pinned && (
-              <div className="p-1.5 bg-primary/20 rounded-lg" title="Pinned">
+              <div className="p-1.5 bg-primary/20 rounded-lg" title={t('nav.pinned')}>
                 <Pin size={14} className="text-primary" />
               </div>
             )}
             {thread.locked && (
-              <div className="p-1.5 bg-yellow-500/20 rounded-lg" title="Locked">
+              <div className="p-1.5 bg-yellow-500/20 rounded-lg" title={t('nav.locked')}>
                 <Lock size={14} className="text-yellow-500" />
               </div>
             )}
@@ -196,7 +198,7 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
               )}
 
               <span className="text-sm text-dark-400">
-                 {getTimeAgo(new Date(thread.createdAt))}
+                • {getTimeAgo(new Date(thread.createdAt))}
               </span>
             </div>
 
@@ -221,7 +223,7 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
                 ) : thread.channel ? (
                   `${thread.channel.space.name} / ${thread.channel.name}`
                 ) : (
-                  'General'
+                  t('nav.general')
                 )}
               </span>
             </div>
@@ -267,7 +269,7 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
                     ? 'text-primary bg-primary/10'
                     : 'text-dark-400 hover:text-primary hover:bg-white/5'
                     }`}
-                  title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+                  title={isBookmarked ? t('nav.remove_bookmark') : t('nav.bookmark')}
                 >
                   <Bookmark size={18} className={isBookmarked ? 'fill-current' : ''} />
                 </button>
@@ -276,7 +278,7 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
                 <button
                   onClick={handleShare}
                   className="p-2 rounded-lg text-dark-400 hover:text-white hover:bg-white/5 transition-all duration-200"
-                  title="Share"
+                  title={t('nav.share')}
                 >
                   <Share2 size={18} />
                 </button>
@@ -315,7 +317,7 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
                           }}
                         >
                           <Share2 size={16} />
-                          Copy Link
+                          {t('nav.copy_link')}
                         </button>
                         <button
                           className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
@@ -331,7 +333,7 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
                           }}
                         >
                           <Flag size={16} />
-                          Report
+                          {t('nav.report')}
                         </button>
                       </div>
                     </>

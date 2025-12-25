@@ -6,6 +6,7 @@ import { prisma } from './prisma'
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
+    maxAge: 7 * 24 * 60 * 60, // 7 days
   },
   pages: {
     signIn: '/login',
@@ -17,6 +18,7 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
+        rememberMe: { label: 'Remember Me', type: 'checkbox' },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {

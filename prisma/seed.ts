@@ -129,13 +129,32 @@ async function main() {
     },
   })
 
+  // Create Topics (New Model)
+  const topicsData = [
+    { name: 'General Discussion', slug: 'general', icon: '💬', color: '#6366F1' },
+    { name: 'Showcase', slug: 'showcase', icon: '✨', color: '#EC4899' },
+    { name: 'Questions & Help', slug: 'help', icon: '❓', color: '#F59E0B' },
+    { name: 'Tutorials', slug: 'tutorials', icon: '📖', color: '#10B981' },
+    { name: 'Feedback', slug: 'feedback', icon: '💡', color: '#8B5CF6' },
+  ]
+
+  const createdTopics = await Promise.all(
+    topicsData.map(topic =>
+      prisma.topic.upsert({
+        where: { slug: topic.slug },
+        update: {},
+        create: topic
+      })
+    )
+  )
+
   // Create welcome thread
   await prisma.thread.upsert({
     where: { id: 'welcome-thread' },
     update: {},
     create: {
       id: 'welcome-thread',
-      channelId: announcementsChannel.id,
+      topicId: createdTopics[0].id,
       authorId: admin.id,
       title: 'Welcome to Ascenders! 👋',
       content: `Welcome to our community! We're excited to have you here.
@@ -146,7 +165,7 @@ This is a place where you can:
 - Connect with like-minded people
 - Grow together as a community
 
-Please take a moment to introduce yourself in the #introductions channel.
+Please take a moment to introduce yourself.
 
 Enjoy your stay! 🚀`,
       pinned: true,

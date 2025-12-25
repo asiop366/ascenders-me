@@ -5,14 +5,17 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Check } from 'lucide-react'
+import { useLanguage } from '@/lib/language-context'
 
 function LoginForm() {
+  const { t } = useLanguage()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    rememberMe: false,
   })
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -29,6 +32,7 @@ function LoginForm() {
       const result = await signIn('credentials', {
         email: formData.email,
         password: formData.password,
+        rememberMe: formData.rememberMe ? 'true' : 'false',
         redirect: false,
       })
 
@@ -55,7 +59,7 @@ function LoginForm() {
       {/* Email */}
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-dark-100 mb-2">
-          Email
+          {t('auth.email')}
         </label>
         <div className="relative">
           <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-300" size={20} />
@@ -74,7 +78,7 @@ function LoginForm() {
       {/* Password */}
       <div>
         <label htmlFor="password" className="block text-sm font-medium text-dark-100 mb-2">
-          Password
+          {t('auth.password')}
         </label>
         <div className="relative">
           <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-300" size={20} />
@@ -97,21 +101,42 @@ function LoginForm() {
         </div>
       </div>
 
+      {/* Remember Me & Forgot Password */}
+      <div className="flex items-center justify-between">
+        <label className="flex items-center gap-2 cursor-pointer group">
+          <div className="relative flex items-center">
+            <input
+              type="checkbox"
+              checked={formData.rememberMe}
+              onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
+              className="peer h-5 w-5 appearance-none rounded-md border border-white/10 bg-dark-800 checked:bg-primary checked:border-primary transition-all cursor-pointer"
+            />
+            <Check className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white h-3.5 w-3.5 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
+          </div>
+          <span className="text-sm text-dark-200 group-hover:text-white transition-colors">
+            {t('auth.remember_me')}
+          </span>
+        </label>
+        <Link href="/forgot-password" title={t('auth.forgot_password')} className="text-sm text-primary hover:text-primary-light transition-colors">
+          {t('auth.forgot_password')}
+        </Link>
+      </div>
+
       {/* Submit */}
       <button
         type="submit"
         disabled={isLoading}
         className="btn-primary w-full flex items-center justify-center gap-2"
       >
-        {isLoading ? 'Signing in...' : 'Sign in'}
+        {isLoading ? t('auth.signing_in') : t('auth.sign_in')}
         <ArrowRight size={20} />
       </button>
 
       {/* Create account link */}
       <p className="text-center text-sm text-dark-200">
-        Don't have an account?{' '}
+        {t('auth.no_account')}{' '}
         <Link href="/register" className="text-primary hover:text-primary-light transition-colors font-semibold">
-          Start your journey
+          {t('auth.start_journey')}
         </Link>
       </p>
     </form>
@@ -119,20 +144,22 @@ function LoginForm() {
 }
 
 export default function LoginPage() {
+  const { t } = useLanguage()
+
   return (
     <div className="min-h-screen bg-dark-950 flex items-center justify-center p-6 relative overflow-hidden">
       {/* Background Effects */}
       <div className="fixed inset-0 bg-gradient-mesh opacity-30 pointer-events-none" />
-      
+
       <div className="w-full max-w-md relative z-10">
         {/* Header */}
         <div className="text-center mb-10">
           <Link href="/" className="inline-flex items-center gap-4 mb-8 group">
             <div className="relative">
-              <Image 
-                src="/logo.png" 
-                alt="Ascenders Logo" 
-                width={56} 
+              <Image
+                src="/logo.png"
+                alt="Ascenders Logo"
+                width={56}
                 height={56}
                 className="rounded-2xl group-hover:scale-110 transition-transform"
               />
@@ -140,8 +167,8 @@ export default function LoginPage() {
             </div>
             <span className="text-3xl font-display font-bold text-white">Ascenders</span>
           </Link>
-          <h1 className="text-4xl font-display font-bold text-white mb-3">Welcome back</h1>
-          <p className="text-dark-200">Continue your looksmaxxing journey</p>
+          <h1 className="text-4xl font-display font-bold text-white mb-3">{t('auth.login_title')}</h1>
+          <p className="text-dark-200">{t('auth.login_subtitle')}</p>
         </div>
 
         {/* Form Card */}
