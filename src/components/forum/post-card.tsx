@@ -4,8 +4,11 @@ import Link from 'next/link'
 import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { getTimeAgo } from '@/lib/utils'
-import { Heart, MoreHorizontal, Flag, Edit, Trash2 } from 'lucide-react'
+import { Heart, MoreHorizontal, Flag, Edit, Trash2, User } from 'lucide-react'
 import { Dropdown, DropdownItem } from '@/components/ui/dropdown'
+import { ReportModal } from '../report-modal'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 interface PostCardProps {
   post: {
@@ -27,7 +30,9 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
+  const router = useRouter()
   const isAuthor = currentUserId === post.author.id
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false)
 
   return (
     <article className="glass rounded-xl p-6 hover:border-primary/30 transition-all">
@@ -37,19 +42,19 @@ export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
             {post.author.username[0].toUpperCase()}
           </div>
         </Link>
-        
+
         <div className="flex-1 min-w-0">
           {/* Header */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Link 
+              <Link
                 href={`/app/u/${post.author.username}`}
                 className="font-bold text-white hover:text-primary transition-colors"
               >
                 {post.author.username}
               </Link>
               {post.author.grade && (
-                <Badge 
+                <Badge
                   size="sm"
                   style={{
                     backgroundColor: post.author.grade.color + '20',
@@ -74,7 +79,7 @@ export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
             >
               {isAuthor && (
                 <>
-                  <DropdownItem onClick={() => {}}>
+                  <DropdownItem onClick={() => { }}>
                     <Edit size={14} className="mr-2" /> Edit
                   </DropdownItem>
                   <DropdownItem onClick={() => onDelete?.(post.id)} danger>
@@ -82,7 +87,13 @@ export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
                   </DropdownItem>
                 </>
               )}
-              <DropdownItem onClick={() => {}}>
+              <DropdownItem onClick={() => {
+                if (!currentUserId) {
+                  router.push('/login')
+                  return
+                }
+                setIsReportModalOpen(true)
+              }}>
                 <Flag size={14} className="mr-2" /> Report
               </DropdownItem>
             </Dropdown>
@@ -102,6 +113,12 @@ export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
           </div>
         </div>
       </div>
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        postId={post.id}
+        contentType="post"
+      />
     </article>
   )
 }

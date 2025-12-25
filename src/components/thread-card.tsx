@@ -17,6 +17,7 @@ import {
   Share2,
   Flag
 } from 'lucide-react'
+import { ReportModal } from './report-modal'
 
 interface ThreadCardProps {
   thread: {
@@ -30,15 +31,21 @@ interface ThreadCardProps {
     author: {
       id: string
       username: string
+      displayName?: string | null
       image: string | null
       role?: string
       grade?: { name: string; color: string } | null
     }
-    channel: {
+    channel?: {
       name: string
       slug: string
       space: { name: string; slug: string }
-    }
+    } | null
+    topic?: {
+      name: string
+      slug: string
+      color?: string | null
+    } | null
     _count: {
       posts: number
       reactions: number
@@ -54,6 +61,7 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
   const [likeCount, setLikeCount] = useState(thread._count.reactions)
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false)
 
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -157,10 +165,9 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
             <div className="flex items-center gap-2 flex-wrap mb-2">
               <Link
                 href={`/app/u/${thread.author.username}`}
-                onClick={(e) => e.stopPropagation()}
-                className="font-semibold text-white hover:text-primary transition-colors"
+                className="text-sm font-semibold text-white hover:text-primary transition-colors truncate block"
               >
-                {thread.author.username}
+                {thread.author.displayName || thread.author.username}
               </Link>
 
               {thread.author.grade && (
@@ -206,7 +213,16 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
             {/* Category Tag */}
             <div className="mb-4">
               <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-dark-700/50 text-dark-200 border border-white/5">
-                {thread.channel.space.name} / {thread.channel.name}
+                {thread.topic ? (
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: thread.topic.color || '#6366F1' }} />
+                    {thread.topic.name}
+                  </span>
+                ) : thread.channel ? (
+                  `${thread.channel.space.name} / ${thread.channel.name}`
+                ) : (
+                  'General'
+                )}
               </span>
             </div>
 
@@ -218,8 +234,8 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
                 <button
                   onClick={handleLike}
                   className={`flex items-center gap-1.5 text-sm transition-all duration-200 ${isLiked
-                      ? 'text-red-500'
-                      : 'text-dark-400 hover:text-red-400'
+                    ? 'text-red-500'
+                    : 'text-dark-400 hover:text-red-400'
                     }`}
                 >
                   <Heart
@@ -248,8 +264,8 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
                 <button
                   onClick={handleBookmark}
                   className={`p-2 rounded-lg transition-all duration-200 ${isBookmarked
-                      ? 'text-primary bg-primary/10'
-                      : 'text-dark-400 hover:text-primary hover:bg-white/5'
+                    ? 'text-primary bg-primary/10'
+                    : 'text-dark-400 hover:text-primary hover:bg-white/5'
                     }`}
                   title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
                 >
@@ -306,7 +322,11 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
-                            // TODO: Report modal
+                            if (!currentUserId) {
+                              router.push('/login')
+                              return
+                            }
+                            setIsReportModalOpen(true)
                             setShowMenu(false)
                           }}
                         >
@@ -322,6 +342,12 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
           </div>
         </div>
       </article>
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        threadId={thread.id}
+        contentType="thread"
+      />
     </Link>
   )
 }

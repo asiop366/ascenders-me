@@ -71,17 +71,19 @@ model VerificationToken {
 }
 
 model User {
-  id             String   @id @default(cuid())
-  email          String   @unique
-  username       String   @unique
-  hashedPassword String?
-  image          String?  @db.Text
-  bio            String?  @db.Text
-  role           Role     @default(USER)
-  gradeId        String?
-  emailVerified  DateTime?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  email              String   @unique
+  username           String   @unique
+  displayName        String?
+  usernameChangedAt  DateTime?
+  hashedPassword     String?
+  image              String?  @db.Text
+  bio                String?  @db.Text
+  role               Role     @default(USER)
+  gradeId            String?
+  emailVerified      DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   grade            Grade?         @relation(fields: [gradeId], references: [id])
   threads          Thread[]
@@ -138,6 +140,20 @@ model Space {
   @@index([position])
 }
 
+model Topic {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  icon      String?
+  color     String?
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  threads   Thread[]
+
+  @@index([slug])
+  @@index([position])
+}
+
 model Channel {
   id          String   @id @default(cuid())
   spaceId     String
@@ -160,17 +176,20 @@ model Channel {
 
 model Thread {
   id         String   @id @default(cuid())
-  channelId  String
+  channelId  String?
+  topicId    String?
   authorId   String
   title      String
   content    String   @db.Text
+  imageUrl   String?  @db.Text
   locked     Boolean  @default(false)
   pinned     Boolean  @default(false)
   viewCount  Int      @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  channel    Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channel    Channel?  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  topic      Topic?    @relation(fields: [topicId], references: [id], onDelete: SetNull)
   author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   posts      Post[]
   reactions  Reaction[]
@@ -178,6 +197,7 @@ model Thread {
   bookmarks  Bookmark[]
 
   @@index([channelId])
+  @@index([topicId])
   @@index([authorId])
   @@index([createdAt])
   @@index([pinned])

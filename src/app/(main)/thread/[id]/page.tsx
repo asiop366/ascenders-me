@@ -15,7 +15,7 @@ export default async function ThreadPage({ params }: { params: { id: string } })
   await prisma.thread.update({
     where: { id: params.id },
     data: { viewCount: { increment: 1 } },
-  }).catch(() => {})
+  }).catch(() => { })
 
   const thread = await prisma.thread.findUnique({
     where: { id: params.id },
@@ -25,6 +25,7 @@ export default async function ThreadPage({ params }: { params: { id: string } })
           grade: true,
         },
       },
+      topic: true,
       channel: {
         include: {
           space: true,
@@ -65,20 +66,34 @@ export default async function ThreadPage({ params }: { params: { id: string } })
       {/* Header */}
       <div className="glass border-b border-white/5 px-8 py-6 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto">
-          <Link 
-            href="/app" 
+          <Link
+            href="/app"
             className="inline-flex items-center gap-2 text-dark-200 hover:text-white transition-colors mb-4"
           >
             <ArrowLeft size={20} />
             Back to feed
           </Link>
-          
+
           <div className="flex items-center gap-3 text-sm text-dark-300">
-            <Link href="/app" className="hover:text-primary transition-colors">
-              {thread.channel.space.name}
-            </Link>
-            <span>/</span>
-            <span className="text-dark-200">{thread.channel.name}</span>
+            {thread.topic ? (
+              <>
+                <Link href="/app/topics" className="hover:text-primary transition-colors">
+                  Topics
+                </Link>
+                <span>/</span>
+                <span className="text-primary">{thread.topic.name}</span>
+              </>
+            ) : thread.channel ? (
+              <>
+                <Link href="/app" className="hover:text-primary transition-colors">
+                  {thread.channel.space.name}
+                </Link>
+                <span>/</span>
+                <span className="text-dark-200">{thread.channel.name}</span>
+              </>
+            ) : (
+              <span className="text-dark-200">General</span>
+            )}
           </div>
         </div>
       </div>
@@ -105,19 +120,19 @@ export default async function ThreadPage({ params }: { params: { id: string } })
                   {thread.author.username[0].toUpperCase()}
                 </div>
               </Link>
-              
+
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <Link 
+                  <Link
                     href={`/app/u/${thread.author.username}`}
                     className="font-bold text-white hover:text-primary transition-colors"
                   >
-                    {thread.author.username}
+                    {thread.author.displayName || thread.author.username}
                   </Link>
                   {thread.author.grade && (
-                    <span 
+                    <span
                       className="px-2 py-0.5 rounded-full text-xs font-medium"
-                      style={{ 
+                      style={{
                         background: `linear-gradient(135deg, ${thread.author.grade.color}20, ${thread.author.grade.color}10)`,
                         color: thread.author.grade.color,
                         border: `1px solid ${thread.author.grade.color}40`
@@ -169,9 +184,9 @@ export default async function ThreadPage({ params }: { params: { id: string } })
               <h2 className="text-xl font-bold text-white px-2">
                 {thread.posts.length} {thread.posts.length === 1 ? 'Reply' : 'Replies'}
               </h2>
-              {thread.posts.map((post) => (
-                <PostCard 
-                  key={post.id} 
+              {thread.posts.map((post: any) => (
+                <PostCard
+                  key={post.id}
                   post={post}
                   currentUserId={session?.user?.id}
                 />

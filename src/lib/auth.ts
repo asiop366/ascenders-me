@@ -45,9 +45,12 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           username: user.username,
+          displayName: user.displayName,
           image: user.image,
           role: user.role,
           gradeId: user.gradeId,
+          usernameChangedAt: user.usernameChangedAt,
+          bio: user.bio,
         }
       },
     }),
@@ -57,8 +60,11 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id
         token.username = user.username
+        token.displayName = user.displayName
         token.role = user.role
         token.gradeId = user.gradeId ?? null
+        token.usernameChangedAt = user.usernameChangedAt
+        token.bio = (user as any).bio
       }
       return token
     },
@@ -66,8 +72,11 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id as string
         session.user.username = token.username as string
+        session.user.displayName = token.displayName as string | undefined
         session.user.role = token.role as string
         session.user.gradeId = (token.gradeId as string | null) ?? null
+        session.user.usernameChangedAt = token.usernameChangedAt as Date | undefined
+        session.user.bio = token.bio as string | undefined
       }
       return session
     },

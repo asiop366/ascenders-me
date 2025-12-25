@@ -2,150 +2,121 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { 
-  Folder, 
-  MessageSquare, 
-  Users, 
-  Clock,
+import {
+  Hash,
+  MessageSquare,
   ChevronRight,
   Plus,
-  Search
+  Search,
+  Flame
 } from 'lucide-react'
+
+export const dynamic = 'force-dynamic'
 
 export default async function TopicsPage() {
   const session = await getServerSession(authOptions)
 
-  const spaces = await prisma.space.findMany({
+  const topics = await prisma.topic.findMany({
     include: {
-      channels: {
-        include: {
-          _count: {
-            select: { threads: true }
-          }
-        },
-        orderBy: { position: 'asc' }
-      },
       _count: {
-        select: { channels: true }
+        select: { threads: true }
       }
     },
     orderBy: { position: 'asc' }
   })
 
   const isAdmin = session?.user?.role === 'ADMIN'
-  const isMod = session?.user?.role === 'MODERATOR' || isAdmin
 
   return (
-    <div className="h-full overflow-y-auto bg-asc-bg">
-      <div className="max-w-4xl mx-auto p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-asc-text flex items-center gap-2">
-              <Folder size={24} />
-              Topics
-            </h1>
-            <p className="text-asc-muted mt-1">
-              Browse all discussion topics and channels
-            </p>
-          </div>
-          
-          {isMod && (
-            <Link href="/app/admin/topics/new" className="btn-primary flex items-center gap-2">
-              <Plus size={18} />
-              New Topic
-            </Link>
-          )}
-        </div>
-
-        {/* Search */}
-        <div className="relative mb-6">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-asc-muted" />
-          <input
-            type="text"
-            placeholder="Search topics..."
-            className="input pl-11"
-          />
-        </div>
-
-        {/* Topics List */}
-        {spaces.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="w-16 h-16 bg-asc-surface border border-asc-border rounded-full flex items-center justify-center mx-auto mb-4">
-              <Folder size={32} className="text-asc-muted" />
+    <div className="min-h-screen bg-dark-950">
+      {/* Header */}
+      <div className="bg-dark-900/80 backdrop-blur-xl border-b border-white/5 px-8 py-6 sticky top-0 z-30">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
+                <Hash size={28} className="text-primary" />
+                Topics
+              </h1>
+              <p className="text-dark-400 mt-1">Browse discussion topics and find what interests you</p>
             </div>
-            <h2 className="text-lg font-semibold text-asc-text mb-2">No topics yet</h2>
-            <p className="text-asc-muted mb-4">Topics will appear here once created by administrators.</p>
+
             {isAdmin && (
-              <Link href="/app/admin/topics/new" className="btn-primary inline-flex items-center gap-2">
+              <Link href="/app/admin/topics/new" className="btn-primary flex items-center gap-2">
                 <Plus size={18} />
-                Create first topic
+                New Topic
               </Link>
             )}
           </div>
-        ) : (
-          <div className="space-y-4">
-            {spaces.map((space) => (
-              <SpaceCard key={space.id} space={space} />
-            ))}
+
+          {/* Search */}
+          <div className="relative max-w-xl">
+            <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-400" />
+            <input
+              type="text"
+              placeholder="Search topics..."
+              className="w-full bg-dark-800/50 border border-white/5 rounded-2xl pl-12 pr-4 py-3 text-white placeholder-dark-400 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
+            />
           </div>
-        )}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-8">
+        <div className="max-w-6xl mx-auto">
+          {topics.length === 0 ? (
+            <div className="text-center py-32 bg-dark-800/20 border border-white/5 rounded-3xl">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 mb-6">
+                <Hash className="text-primary" size={32} />
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">No topics yet</h2>
+              <p className="text-dark-400 mb-8 max-w-md mx-auto">
+                Topics will appear here once created by administrators.
+              </p>
+              {isAdmin && (
+                <Link href="/app/admin/topics/new" className="btn-primary inline-flex items-center gap-2">
+                  <Plus size={18} />
+                  Create first topic
+                </Link>
+              )}
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {topics.map((topic) => (
+                <TopicCard key={topic.id} topic={topic} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
 }
 
-function SpaceCard({ space }: { space: any }) {
-  const totalThreads = space.channels.reduce(
-    (acc: number, ch: any) => acc + ch._count.threads, 
-    0
-  )
-
+function TopicCard({ topic }: { topic: any }) {
   return (
-    <div className="bg-asc-surface border border-asc-border rounded-asc-lg overflow-hidden">
-      {/* Space Header */}
-      <div className="p-4 border-b border-asc-border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-asc-surface2 border border-asc-border rounded-asc flex items-center justify-center">
-              <Folder size={20} className="text-asc-muted" />
-            </div>
-            <div>
-              <h2 className="font-semibold text-asc-text">{space.name}</h2>
-              <p className="text-sm text-asc-muted">
-                {space._count.channels} channels  {totalThreads} threads
-              </p>
-            </div>
-          </div>
+    <Link
+      href={`/app/topics/${topic.slug}`}
+      className="group gradient-border p-6 hover:translate-y-[-4px]"
+    >
+      <div className="flex items-start gap-4">
+        <div
+          className="w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0"
+          style={{ backgroundColor: topic.color ? `${topic.color}20` : 'rgba(99, 102, 241, 0.2)' }}
+        >
+          {topic.icon || <Hash size={20} style={{ color: topic.color || '#6366F1' }} />}
         </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-white group-hover:text-primary transition-colors truncate">
+            {topic.name}
+          </h3>
+          <p className="text-sm text-dark-400 mt-1 flex items-center gap-1">
+            <MessageSquare size={14} />
+            {topic._count.threads} threads
+          </p>
+        </div>
+        <ChevronRight size={18} className="text-dark-500 group-hover:text-primary transition-colors shrink-0" />
       </div>
-
-      {/* Channels */}
-      <div className="divide-y divide-asc-border">
-        {space.channels.map((channel: any) => (
-          <Link
-            key={channel.id}
-            href={`/app/${space.slug}/${channel.slug}`}
-            className="flex items-center justify-between p-4 hover:bg-asc-hover transition-colors group"
-          >
-            <div className="flex items-center gap-3">
-              <span className="text-asc-muted">#</span>
-              <div>
-                <h3 className="font-medium text-asc-text group-hover:underline">
-                  {channel.name}
-                </h3>
-                <div className="flex items-center gap-3 text-xs text-asc-muted mt-1">
-                  <span className="flex items-center gap-1">
-                    <MessageSquare size={12} />
-                    {channel._count.threads} threads
-                  </span>
-                </div>
-              </div>
-            </div>
-            <ChevronRight size={18} className="text-asc-muted group-hover:text-asc-text transition-colors" />
-          </Link>
-        ))}
-      </div>
-    </div>
+    </Link>
   )
 }

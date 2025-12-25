@@ -79,6 +79,7 @@ export default async function HomePage() {
             grade: true,
           },
         },
+        topic: true,
         channel: {
           include: {
             space: true,

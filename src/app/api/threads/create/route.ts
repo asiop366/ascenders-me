@@ -2,50 +2,59 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { z } from 'zod'
 
-export async function POST(req: Request) {
+const createThreadSchema = z.object({
+  title: z.string().min(5).max(200),
+  content: z.string().min(10).max(10000),
+  topicId: z.string().optional(),
+  imageUrl: z.string().url().optional(),
+})
+
+export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
     }
 
-    const body = await req.json()
-    const { title, content, channelId } = body
-
-    if (!title || !content || !channelId) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
-    }
-
-    // Trouver le channel par slug ou créer un channel par défaut
-    let channel = await prisma.channel.findFirst({
-      where: {
-        slug: channelId,
-      },
-    })
-
-    // Si pas de channel trouvé, utiliser le premier disponible
-    if (!channel) {
-      channel = await prisma.channel.findFirst()
-    }
-
-    if (!channel) {
-      return NextResponse.json({ error: 'No channel found' }, { status: 400 })
-    }
+    const body = await request.json()
+    const validated = createThreadSchema.parse(body)
 
     const thread = await prisma.thread.create({
       data: {
-        title,
-        content,
-        channelId: channel.id,
+        title: validated.title,
+        content: validated.content,
+        topicId: validated.topicId || null,
+        imageUrl: validated.imageUrl || null,
         authorId: session.user.id,
       },
+      include: {
+        author: {
+          select: { id: true, username: true, displayName: true, image: true }
+        },
+        topic: true,
+      }
     })
 
-    return NextResponse.json(thread, { status: 201 })
-  } catch (error) {
-    console.error('Create thread error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json(thread)
+  } catch (error: any) {
+    console.error('Error creating thread:', error)
+
+    if (error.name === 'ZodError') {
+      return NextResponse.json(
+        { error: 'Invalid input', details: error.errors },
+        { status: 400 }
+      )
+    }
+
+    return NextResponse.json(
+      { error: 'Failed to create thread' },
+      { status: 500 }
+    )
   }
 }

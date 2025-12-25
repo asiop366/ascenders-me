@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { 
-  ArrowLeft, 
-  Send, 
-  Image as ImageIcon, 
+import {
+  ArrowLeft,
+  Send,
+  Image as ImageIcon,
   Link as LinkIcon,
   Bold,
   Italic,
@@ -19,18 +19,17 @@ import {
   Hash,
   Loader2,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  Upload
 } from 'lucide-react'
 
-interface Channel {
+interface Topic {
   id: string
   name: string
   slug: string
-  space: {
-    id: string
-    name: string
-    slug: string
-  }
+  icon?: string
+  color?: string
+  _count?: { threads: number }
 }
 
 export default function NewThreadPage() {
@@ -38,30 +37,28 @@ export default function NewThreadPage() {
   const { data: session, status } = useSession()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [selectedChannel, setSelectedChannel] = useState('')
-  const [channels, setChannels] = useState<Channel[]>([])
+  const [selectedTopic, setSelectedTopic] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
+  const [topics, setTopics] = useState<Topic[]>([])
   const [isPreview, setIsPreview] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
 
-  // Fetch channels on mount
+  // Fetch topics on mount
   useEffect(() => {
-    async function fetchChannels() {
+    async function fetchTopics() {
       try {
-        const res = await fetch('/api/channels')
+        const res = await fetch('/api/topics')
         if (res.ok) {
           const data = await res.json()
-          setChannels(data)
-          if (data.length > 0) {
-            setSelectedChannel(data[0].slug)
-          }
+          setTopics(data)
         }
       } catch (err) {
-        console.error('Failed to fetch channels:', err)
+        console.error('Failed to fetch topics:', err)
       }
     }
-    fetchChannels()
+    fetchTopics()
   }, [])
 
   // Redirect if not authenticated
@@ -74,22 +71,22 @@ export default function NewThreadPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    
+
     if (!title.trim()) {
       setError('Please enter a title')
       return
     }
-    
+
     if (title.length < 5) {
       setError('Title must be at least 5 characters')
       return
     }
-    
+
     if (!content.trim()) {
       setError('Please enter some content')
       return
     }
-    
+
     if (content.length < 10) {
       setError('Content must be at least 10 characters')
       return
@@ -104,7 +101,8 @@ export default function NewThreadPage() {
         body: JSON.stringify({
           title: title.trim(),
           content: content.trim(),
-          channelId: selectedChannel,
+          topicId: selectedTopic || undefined,
+          imageUrl: imageUrl.trim() || undefined,
         }),
       })
 
@@ -115,7 +113,7 @@ export default function NewThreadPage() {
 
       const thread = await res.json()
       setSuccess(true)
-      
+
       setTimeout(() => {
         router.push(`/app/thread/${thread.id}`)
       }, 1000)
@@ -137,32 +135,25 @@ export default function NewThreadPage() {
     const selectedText = text.substring(start, end)
 
     let newText = ''
-    let cursorOffset = 0
 
     switch (format) {
       case 'bold':
         newText = `**${selectedText || 'bold text'}**`
-        cursorOffset = selectedText ? newText.length : 2
         break
       case 'italic':
         newText = `*${selectedText || 'italic text'}*`
-        cursorOffset = selectedText ? newText.length : 1
         break
       case 'list':
         newText = `\n- ${selectedText || 'list item'}`
-        cursorOffset = newText.length
         break
       case 'quote':
         newText = `\n> ${selectedText || 'quote'}`
-        cursorOffset = newText.length
         break
       case 'code':
         newText = `\`${selectedText || 'code'}\``
-        cursorOffset = selectedText ? newText.length : 1
         break
       case 'link':
         newText = `[${selectedText || 'link text'}](url)`
-        cursorOffset = selectedText ? newText.length - 1 : 11
         break
     }
 
@@ -202,11 +193,10 @@ export default function NewThreadPage() {
             <button
               type="button"
               onClick={() => setIsPreview(!isPreview)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                isPreview 
-                  ? 'bg-primary/20 text-primary border border-primary/30' 
-                  : 'bg-dark-800/50 text-dark-300 border border-white/5 hover:bg-dark-800 hover:text-white'
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${isPreview
+                ? 'bg-primary/20 text-primary border border-primary/30'
+                : 'bg-dark-800/50 text-dark-300 border border-white/5 hover:bg-dark-800 hover:text-white'
+                }`}
             >
               {isPreview ? <Edit3 size={16} /> : <Eye size={16} />}
               {isPreview ? 'Edit' : 'Preview'}
@@ -248,29 +238,60 @@ export default function NewThreadPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Category Selection */}
+          {/* Topic Selection (Optional) */}
           <div>
             <label className="block text-sm font-medium text-dark-200 mb-2">
-              Category
+              Topic <span className="text-dark-500">(optional)</span>
             </label>
             <div className="relative">
               <Hash size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-400" />
               <select
-                value={selectedChannel}
-                onChange={(e) => setSelectedChannel(e.target.value)}
+                value={selectedTopic}
+                onChange={(e) => setSelectedTopic(e.target.value)}
                 className="w-full bg-dark-800/50 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-white appearance-none focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
               >
-                {channels.length === 0 ? (
-                  <option value="">Loading categories...</option>
-                ) : (
-                  channels.map((channel) => (
-                    <option key={channel.id} value={channel.slug}>
-                      {channel.space.name} / {channel.name}
-                    </option>
-                  ))
-                )}
+                <option value="">General (No specific topic)</option>
+                {topics.map((topic) => (
+                  <option key={topic.id} value={topic.id}>
+                    {topic.icon ? `${topic.icon} ` : ''}{topic.name}
+                  </option>
+                ))}
               </select>
             </div>
+            <p className="mt-2 text-xs text-dark-500">
+              Choose a topic to help others find your thread
+            </p>
+          </div>
+
+          {/* Image URL */}
+          <div>
+            <label className="block text-sm font-medium text-dark-200 mb-2">
+              Image URL <span className="text-dark-500">(optional)</span>
+            </label>
+            <div className="relative">
+              <ImageIcon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-400" />
+              <input
+                type="url"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                placeholder="https://example.com/image.jpg"
+                className="w-full bg-dark-800/50 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-white placeholder-dark-500 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
+              />
+            </div>
+            {imageUrl && (
+              <div className="mt-4 relative w-full h-48 rounded-xl overflow-hidden border border-white/10 bg-dark-800">
+                <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                <button
+                  onClick={() => setImageUrl('')}
+                  className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-lg text-white hover:bg-black transition-colors"
+                >
+                  <ArrowLeft size={16} className="rotate-45" />
+                </button>
+              </div>
+            )}
+            <p className="mt-2 text-xs text-dark-500">
+              Provide a direct link to an image (jpg, png, gif)
+            </p>
           </div>
 
           {/* Title Input */}
@@ -282,7 +303,7 @@ export default function NewThreadPage() {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter a descriptive title for your thread..."
+              placeholder="What's your thread about?"
               maxLength={200}
               className="w-full bg-dark-800/50 border border-white/5 rounded-xl px-4 py-3 text-white placeholder-dark-500 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all text-lg"
             />
@@ -356,7 +377,7 @@ export default function NewThreadPage() {
                   <button
                     type="button"
                     className="p-2 rounded-lg text-dark-400 hover:text-white hover:bg-white/5 transition-colors"
-                    title="Image"
+                    title="Upload Image (coming soon)"
                   >
                     <ImageIcon size={18} />
                   </button>
@@ -408,7 +429,7 @@ export default function NewThreadPage() {
               <li>• Be respectful and constructive in your discussions</li>
               <li>• Use a clear, descriptive title (min. 5 characters)</li>
               <li>• Provide detailed content to help others understand (min. 10 characters)</li>
-              <li>• Use appropriate categories for better discoverability</li>
+              <li>• Select an appropriate topic for better discoverability</li>
               <li>• No spam, hate speech, or illegal content</li>
             </ul>
           </div>
