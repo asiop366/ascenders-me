@@ -1,0 +1,183 @@
+﻿  Ôû▓ Next.js 14.2.35
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/50) ...
+node.exe : Error fetching channels: 
+PrismaClientInitializationError: 
+Au caractère Ligne:1 : 1
++ & "C:\Program 
+Files\nodejs/node.exe" "C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpec 
+   ified: (Error fetching ...lizatio  
+  nError: :String) [], RemoteExcept   
+ ion
+    + FullyQualifiedErrorId : NativeC 
+   ommandError
+ 
+Invalid `prisma.channel.findMany()` 
+invocation:
+
+
+error: Environment variable not 
+found: DATABASE_URL.
+  -->  schema.prisma:7
+   | 
+ 6 |   provider = "postgresql"
+ 7 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at $n.handleRequestError (C:\Users
+\aegis\anti\ascenders-me\ascenders-me\
+node_modules\@prisma\client\runtime\li
+brary.js:121:7615)
+    at $n.handleAndLogRequestError (C:
+\Users\aegis\anti\ascenders-me\ascende
+rs-me\node_modules\@prisma\client\runt
+ime\library.js:121:6623)
+    at $n.request (C:\Users\aegis\anti
+\ascenders-me\ascenders-me\node_module
+s\@prisma\client\runtime\library.js:12
+1:6307)
+    at async l (C:\Users\aegis\anti\as
+cenders-me\ascenders-me\node_modules\@
+prisma\client\runtime\library.js:130:9
+633)
+    at async p (C:\Users\aegis\anti\as
+cenders-me\ascenders-me\.next\server\a
+pp\api\channels\route.js:1:532)
+    at async C:\Users\aegis\anti\ascen
+ders-me\ascenders-me\node_modules\next
+\dist\compiled\next-server\app-route.r
+untime.prod.js:6:38411
+    at async e_.execute (C:\Users\aegi
+s\anti\ascenders-me\ascenders-me\node_
+modules\next\dist\compiled\next-server
+\app-route.runtime.prod.js:6:27880)
+    at async e_.handle (C:\Users\aegis
+\anti\ascenders-me\ascenders-me\node_m
+odules\next\dist\compiled\next-server\
+app-route.runtime.prod.js:6:39943)
+    at async exportAppRoute (C:\Users\
+aegis\anti\ascenders-me\ascenders-me\n
+ode_modules\next\dist\export\routes\ap
+p-route.js:77:26)
+    at async exportPageImpl (C:\Users\
+aegis\anti\ascenders-me\ascenders-me\n
+ode_modules\next\dist\export\worker.js
+:175:20) {
+  clientVersion: '5.22.0',
+  errorCode: undefined
+}
+Search error: n [Error]: Dynamic 
+server usage: Route /api/users/search 
+couldn't be rendered statically 
+because it used `headers`. See more 
+info here: https://nextjs.org/docs/mes
+sages/dynamic-server-error
+    at l (C:\Users\aegis\anti\ascender
+s-me\ascenders-me\.next\server\chunks\
+9276.js:1:37220)
+    at u (C:\Users\aegis\anti\ascender
+s-me\ascenders-me\.next\server\chunks\
+2857.js:25:120454)
+    at s (C:\Users\aegis\anti\ascender
+s-me\ascenders-me\.next\server\chunks\
+2857.js:25:19584)
+    at p (C:\Users\aegis\anti\ascender
+s-me\ascenders-me\.next\server\app\api
+\users\search\route.js:1:1259)
+    at C:\Users\aegis\anti\ascenders-m
+e\ascenders-me\node_modules\next\dist\
+compiled\next-server\app-route.runtime
+.prod.js:6:38417
+    at C:\Users\aegis\anti\ascenders-m
+e\ascenders-me\node_modules\next\dist\
+server\lib\trace\tracer.js:140:36
+    at NoopContextManager.with (C:\Use
+rs\aegis\anti\ascenders-me\ascenders-m
+e\node_modules\next\dist\compiled\@ope
+ntelemetry\api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\aegis
+\anti\ascenders-me\ascenders-me\node_m
+odules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:518)
+    at NoopTracer.startActiveSpan (C:\
+Users\aegis\anti\ascenders-me\ascender
+s-me\node_modules\next\dist\compiled\@
+opentelemetry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:
+\Users\aegis\anti\ascenders-me\ascende
+rs-me\node_modules\next\dist\compiled\
+@opentelemetry\api\index.js:1:18854) {
+  description: "Route 
+/api/users/search couldn't be 
+rendered statically because it used 
+`headers`. See more info here: https:/
+/nextjs.org/docs/messages/dynamic-serv
+er-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+   Generating static pages (12/50) 
+   Generating static pages (24/50) 
+ Ô¿» useSearchParams() should be 
+wrapped in a suspense boundary at 
+page "/app/messages/new". Read more: h
+ttps://nextjs.org/docs/messages/missin
+g-suspense-with-csr-bailout
+    at a (C:\Users\aegis\anti\ascender
+s-me\ascenders-me\.next\server\chunks\
+5892.js:1:34277)
+    at c (C:\Users\aegis\anti\ascender
+s-me\ascenders-me\.next\server\chunks\
+5892.js:1:45260)
+    at u (C:\Users\aegis\anti\ascender
+s-me\ascenders-me\.next\server\app\(ma
+in)\app\messages\new\page.js:1:5824)
+    at nj (C:\Users\aegis\anti\ascende
+rs-me\ascenders-me\node_modules\next\d
+ist\compiled\next-server\app-page.runt
+ime.prod.js:12:46252)
+    at nM (C:\Users\aegis\anti\ascende
+rs-me\ascenders-me\node_modules\next\d
+ist\compiled\next-server\app-page.runt
+ime.prod.js:12:47572)
+    at nL (C:\Users\aegis\anti\ascende
+rs-me\ascenders-me\node_modules\next\d
+ist\compiled\next-server\app-page.runt
+ime.prod.js:12:64547)
+    at nI (C:\Users\aegis\anti\ascende
+rs-me\ascenders-me\node_modules\next\d
+ist\compiled\next-server\app-page.runt
+ime.prod.js:12:47011)
+    at nM (C:\Users\aegis\anti\ascende
+rs-me\ascenders-me\node_modules\next\d
+ist\compiled\next-server\app-page.runt
+ime.prod.js:12:47718)
+    at nM (C:\Users\aegis\anti\ascende
+rs-me\ascenders-me\node_modules\next\d
+ist\compiled\next-server\app-page.runt
+ime.prod.js:12:61547)
+    at nL (C:\Users\aegis\anti\ascende
+rs-me\ascenders-me\node_modules\next\d
+ist\compiled\next-server\app-page.runt
+ime.prod.js:12:64547)
+
+Error occurred prerendering page 
+"/app/messages/new". Read more: https:
+//nextjs.org/docs/messages/prerender-e
+rror
+
+   Generating static pages (37/50) 
+ Ô£ô Generating static pages (50/50)
+
+> Export encountered errors on 
+following paths:
+	/(main)/app/messages/new/page: 
+/app/messages/new

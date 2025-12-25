@@ -9,12 +9,12 @@ interface BadgeProps {
   style?: CSSProperties
 }
 
-export function Badge({ 
-  children, 
-  variant = 'primary', 
-  size = 'sm', 
-  className, 
-  style 
+export function Badge({
+  children,
+  variant = 'primary',
+  size = 'sm',
+  className,
+  style
 }: BadgeProps) {
   const variants = {
     primary: 'bg-asc-text/10 text-asc-text border-asc-text/20',
@@ -32,7 +32,7 @@ export function Badge({
   return (
     <span
       className={clsx(
-        'inline-flex items-center font-medium rounded-full border',
+        'inline-flex items-center font-bold rounded-full border backdrop-blur-sm transition-all duration-300',
         !style && variants[variant],
         sizes[size],
         className

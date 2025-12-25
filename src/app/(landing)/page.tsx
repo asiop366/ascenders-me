@@ -12,16 +12,16 @@ export default function LandingPage() {
     <div className="min-h-screen bg-dark-950 relative overflow-hidden">
       {/* Animated Mesh Background */}
       <div className="fixed inset-0 bg-gradient-mesh opacity-50 pointer-events-none" />
-      
+
       {/* Glassmorphism Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative">
-              <Image 
-                src="/logo.png" 
-                alt="Ascenders Logo" 
-                width={40} 
+              <Image
+                src="/logo.png"
+                alt="Ascenders Logo"
+                width={40}
                 height={40}
                 className="rounded-xl group-hover:scale-110 transition-transform duration-200"
               />
@@ -29,7 +29,7 @@ export default function LandingPage() {
             </div>
             <span className="text-2xl font-bold text-white tracking-tight">Ascenders</span>
           </Link>
-          
+
           <div className="hidden md:flex items-center gap-8">
             <Link href="#features" className="text-dark-100 hover:text-white transition-colors font-medium">
               Features
@@ -43,14 +43,14 @@ export default function LandingPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Link 
-              href="/login" 
+            <Link
+              href="/login"
               className="btn-ghost hidden sm:block"
             >
               Login
             </Link>
-            <Link 
-              href="/register" 
+            <Link
+              href="/register"
               className="btn-primary"
             >
               Start Your Journey
@@ -74,7 +74,7 @@ export default function LandingPage() {
             <br />
             <span className="text-white">Potential.</span>
           </h1>
-          
+
           {/* Subtitle */}
           <p className="text-xl md:text-2xl text-dark-100 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
             The modern platform for serious self-improvement enthusiasts
@@ -82,14 +82,14 @@ export default function LandingPage() {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20">
-            <Link 
+            <Link
               href="/register"
               className="group btn-primary flex items-center gap-2"
             >
               Get Started
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </Link>
-            <Link 
+            <Link
               href="/app"
               className="btn-secondary"
             >
@@ -210,10 +210,10 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <Image 
-                  src="/logo.png" 
-                  alt="Ascenders Logo" 
-                  width={32} 
+                <Image
+                  src="/logo.png"
+                  alt="Ascenders Logo"
+                  width={32}
                   height={32}
                   className="rounded-lg"
                 />
@@ -262,15 +262,15 @@ export default function LandingPage() {
   )
 }
 
-function FeatureCard({ icon, title, description, gradient }: { 
+function FeatureCard({ icon, title, description, gradient }: {
   icon: React.ReactNode
   title: string
   description: string
   gradient: string
 }) {
   return (
-    <div className="group gradient-border p-8 hover:scale-105 transition-all duration-200">
-      <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${gradient} bg-opacity-10 mb-6 group-hover:scale-110 transition-transform`}>
+    <div className="group gradient-border p-8 hover:translate-y-[-4px]">
+      <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${gradient} bg-opacity-10 mb-6 group-hover:scale-110 transition-transform duration-300`}>
         <div className={`text-transparent bg-clip-text bg-gradient-to-br ${gradient}`}>
           {icon}
         </div>
@@ -278,7 +278,7 @@ function FeatureCard({ icon, title, description, gradient }: {
       <h3 className="text-xl font-bold text-white mb-3 tracking-tight">{title}</h3>
       <p className="text-dark-200 leading-relaxed mb-4">{description}</p>
       <Link href="/app" className="inline-flex items-center gap-2 text-primary font-medium group-hover:gap-3 transition-all">
-        Learn more 
+        Learn more
         <ArrowRight size={16} />
       </Link>
     </div>

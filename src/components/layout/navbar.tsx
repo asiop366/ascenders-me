@@ -4,11 +4,11 @@ import { useState } from 'react'
 import { signOut, useSession } from 'next-auth/react'
 import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { 
-  ChevronDown, 
-  User, 
-  LogOut, 
-  Settings, 
+import {
+  ChevronDown,
+  User,
+  LogOut,
+  Settings,
   Bell,
   Bookmark,
   Search
@@ -55,7 +55,7 @@ export function Navbar({ channelName, gradeName, gradeColor }: NavbarProps) {
       {/* Right - Actions & User */}
       <div className="flex items-center gap-4">
         {/* Notifications */}
-        <Link 
+        <Link
           href="/app/notifications"
           className="relative p-2 rounded-lg hover:bg-white/5 transition-colors"
         >
@@ -66,7 +66,7 @@ export function Navbar({ channelName, gradeName, gradeColor }: NavbarProps) {
         </Link>
 
         {/* Bookmarks */}
-        <Link 
+        <Link
           href="/app/bookmarks"
           className="p-2 rounded-lg hover:bg-white/5 transition-colors"
         >
@@ -75,7 +75,7 @@ export function Navbar({ channelName, gradeName, gradeColor }: NavbarProps) {
 
         {/* User Dropdown */}
         <div className="relative">
-          <button 
+          <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition-all duration-200"
           >
@@ -91,10 +91,10 @@ export function Navbar({ channelName, gradeName, gradeColor }: NavbarProps) {
               {gradeName && (
                 <Badge
                   variant="secondary"
-                  style={{ 
+                  style={{
                     backgroundColor: `${gradeColor}20`,
                     color: gradeColor || undefined,
-                    borderColor: gradeColor || undefined 
+                    borderColor: gradeColor || undefined
                   }}
                   className="text-xs"
                 >
@@ -102,9 +102,9 @@ export function Navbar({ channelName, gradeName, gradeColor }: NavbarProps) {
                 </Badge>
               )}
             </div>
-            <ChevronDown 
-              size={16} 
-              className={`text-dark-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} 
+            <ChevronDown
+              size={16}
+              className={`text-dark-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
             />
           </button>
 
@@ -112,11 +112,11 @@ export function Navbar({ channelName, gradeName, gradeColor }: NavbarProps) {
           {isDropdownOpen && (
             <>
               {/* Backdrop */}
-              <div 
-                className="fixed inset-0 z-40" 
+              <div
+                className="fixed inset-0 z-40"
                 onClick={() => setIsDropdownOpen(false)}
               />
-              
+
               {/* Menu */}
               <div className="absolute right-0 top-full mt-2 w-56 bg-dark-800 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                 {/* User Info Header */}
@@ -127,16 +127,16 @@ export function Navbar({ channelName, gradeName, gradeColor }: NavbarProps) {
 
                 {/* Menu Items */}
                 <div className="py-2">
-                  <Link 
-                    href={`/app/u/${session?.user?.username || ''}`}
+                  <Link
+                    href={`/u/${session?.user?.username || ''}`}
                     className="flex items-center gap-3 px-4 py-2.5 text-sm text-dark-200 hover:bg-white/5 hover:text-white transition-colors"
                     onClick={() => setIsDropdownOpen(false)}
                   >
                     <User size={16} />
                     <span>My Profile</span>
                   </Link>
-                  
-                  <Link 
+
+                  <Link
                     href="/app/settings"
                     className="flex items-center gap-3 px-4 py-2.5 text-sm text-dark-200 hover:bg-white/5 hover:text-white transition-colors"
                     onClick={() => setIsDropdownOpen(false)}
@@ -145,7 +145,7 @@ export function Navbar({ channelName, gradeName, gradeColor }: NavbarProps) {
                     <span>Settings</span>
                   </Link>
 
-                  <Link 
+                  <Link
                     href="/app/bookmarks"
                     className="flex items-center gap-3 px-4 py-2.5 text-sm text-dark-200 hover:bg-white/5 hover:text-white transition-colors"
                     onClick={() => setIsDropdownOpen(false)}
@@ -157,7 +157,7 @@ export function Navbar({ channelName, gradeName, gradeColor }: NavbarProps) {
 
                 {/* Logout */}
                 <div className="border-t border-white/5 py-2">
-                  <button 
+                  <button
                     onClick={() => signOut({ callbackUrl: '/' })}
                     className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors w-full"
                   >

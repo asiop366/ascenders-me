@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Send, Search, Loader2 } from 'lucide-react'
 
-export default function NewMessagePage() {
+function NewMessageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const toUsername = searchParams.get('to') || ''
@@ -165,5 +165,21 @@ export default function NewMessagePage() {
         </div>
       </div>
     </div>
+  )
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-dark-950 flex items-center justify-center">
+      <Loader2 size={40} className="animate-spin text-primary" />
+    </div>
+  )
+}
+
+export default function NewMessagePage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <NewMessageContent />
+    </Suspense>
   )
 }

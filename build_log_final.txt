@@ -1,0 +1,216 @@
+﻿
+> ascenders-me@0.1.0 build
+> prisma generate && next build
+
+Prisma schema loaded from prisma\schema.prisma
+
+Ô£ö Generated Prisma Client (v5.22.0) to .\node_modules\@prisma\client in 208ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+
+  Ôû▓ Next.js 14.2.35
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/50) ...
+node.exe : Search error: n [Error]: 
+Dynamic server usage: Route 
+/api/users/search couldn't be 
+rendered statically because it used 
+`headers`. See more info here: https:/
+/nextjs.org/docs/messages/dynamic-serv
+er-error
+Au caractère Ligne:1 : 1
++ & "C:\Program 
+Files\nodejs/node.exe" "C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpec 
+   ified: (Search error: n...ic-serv  
+  er-error:String) [], RemoteExcept   
+ ion
+    + FullyQualifiedErrorId : NativeC 
+   ommandError
+ 
+    at l (C:\Users\aegis\anti\ascender
+s-me\ascenders-me\.next\server\chunks\
+9276.js:1:37220)
+    at u (C:\Users\aegis\anti\ascender
+s-me\ascenders-me\.next\server\chunks\
+2857.js:25:120454)
+    at s (C:\Users\aegis\anti\ascender
+s-me\ascenders-me\.next\server\chunks\
+2857.js:25:19584)
+    at p (C:\Users\aegis\anti\ascender
+s-me\ascenders-me\.next\server\app\api
+\users\search\route.js:1:1306)
+    at C:\Users\aegis\anti\ascenders-m
+e\ascenders-me\node_modules\next\dist\
+compiled\next-server\app-route.runtime
+.prod.js:6:38417
+    at C:\Users\aegis\anti\ascenders-m
+e\ascenders-me\node_modules\next\dist\
+server\lib\trace\tracer.js:140:36
+    at NoopContextManager.with (C:\Use
+rs\aegis\anti\ascenders-me\ascenders-m
+e\node_modules\next\dist\compiled\@ope
+ntelemetry\api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\aegis
+\anti\ascenders-me\ascenders-me\node_m
+odules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:518)
+    at NoopTracer.startActiveSpan (C:\
+Users\aegis\anti\ascenders-me\ascender
+s-me\node_modules\next\dist\compiled\@
+opentelemetry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:
+\Users\aegis\anti\ascenders-me\ascende
+rs-me\node_modules\next\dist\compiled\
+@opentelemetry\api\index.js:1:18854) {
+  description: "Route 
+/api/users/search couldn't be 
+rendered statically because it used 
+`headers`. See more info here: https:/
+/nextjs.org/docs/messages/dynamic-serv
+er-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error fetching channels: 
+PrismaClientInitializationError: 
+Invalid `prisma.channel.findMany()` 
+invocation:
+
+
+error: Environment variable not 
+found: DATABASE_URL.
+  -->  schema.prisma:7
+   | 
+ 6 |   provider = "postgresql"
+ 7 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at $n.handleRequestError (C:\Users
+\aegis\anti\ascenders-me\ascenders-me\
+node_modules\@prisma\client\runtime\li
+brary.js:121:7615)
+    at $n.handleAndLogRequestError (C:
+\Users\aegis\anti\ascenders-me\ascende
+rs-me\node_modules\@prisma\client\runt
+ime\library.js:121:6623)
+    at $n.request (C:\Users\aegis\anti
+\ascenders-me\ascenders-me\node_module
+s\@prisma\client\runtime\library.js:12
+1:6307)
+    at async l (C:\Users\aegis\anti\as
+cenders-me\ascenders-me\node_modules\@
+prisma\client\runtime\library.js:130:9
+633)
+    at async p (C:\Users\aegis\anti\as
+cenders-me\ascenders-me\.next\server\a
+pp\api\channels\route.js:1:579)
+    at async C:\Users\aegis\anti\ascen
+ders-me\ascenders-me\node_modules\next
+\dist\compiled\next-server\app-route.r
+untime.prod.js:6:38411
+    at async e_.execute (C:\Users\aegi
+s\anti\ascenders-me\ascenders-me\node_
+modules\next\dist\compiled\next-server
+\app-route.runtime.prod.js:6:27880)
+    at async e_.handle (C:\Users\aegis
+\anti\ascenders-me\ascenders-me\node_m
+odules\next\dist\compiled\next-server\
+app-route.runtime.prod.js:6:39943)
+    at async exportAppRoute (C:\Users\
+aegis\anti\ascenders-me\ascenders-me\n
+ode_modules\next\dist\export\routes\ap
+p-route.js:77:26)
+    at async exportPageImpl (C:\Users\
+aegis\anti\ascenders-me\ascenders-me\n
+ode_modules\next\dist\export\worker.js
+:175:20) {
+  clientVersion: '5.22.0',
+  errorCode: undefined
+}
+   Generating static pages (12/50) 
+   Generating static pages (24/50) 
+   Generating static pages (37/50) 
+ Ô£ô Generating static pages (50/50)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+Ôöî Ôùï /                                    4.66 kB         106 kB
+Ôö£ Ôùï /_not-found                          178 B          87.5 kB
+Ôö£ Ôùï /about                               230 B          96.3 kB
+Ôö£ ãÆ /admin                               178 B          87.5 kB
+Ôö£ ãÆ /admin/reports                       190 B           101 kB
+Ôö£ ãÆ /admin/reports/grades                178 B          87.5 kB
+Ôö£ Ôùï /admin/users                         178 B          87.5 kB
+Ôö£ ãÆ /api/admin/reports                   0 B                0 B
+Ôö£ ãÆ /api/admin/users                     0 B                0 B
+Ôö£ ãÆ /api/auth/[...nextauth]              0 B                0 B
+Ôö£ ãÆ /api/auth/register                   0 B                0 B
+Ôö£ ãÆ /api/channels                        0 B                0 B
+Ôö£ ãÆ /api/follow                          0 B                0 B
+Ôö£ ãÆ /api/messages                        0 B                0 B
+Ôö£ ãÆ /api/payments/checkout               0 B                0 B
+Ôö£ ãÆ /api/payments/webhook                0 B                0 B
+Ôö£ ãÆ /api/posts                           0 B                0 B
+Ôö£ ãÆ /api/reactions                       0 B                0 B
+Ôö£ ãÆ /api/threads                         0 B                0 B
+Ôö£ ãÆ /api/threads/[threadId]/react        0 B                0 B
+Ôö£ ãÆ /api/threads/[threadId]/reply        0 B                0 B
+Ôö£ ãÆ /api/threads/create                  0 B                0 B
+Ôö£ ãÆ /api/users/search                    0 B                0 B
+Ôö£ ãÆ /app                                 4.13 kB         115 kB
+Ôö£ ãÆ /app/[spaceSlug]                     230 B          96.3 kB
+Ôö£ ãÆ /app/[spaceSlug]/[channelSlug]       230 B          96.3 kB
+Ôö£ ãÆ /app/[spaceSlug]/new/channel         229 B          96.3 kB
+Ôö£ Ôùï /app/admin                           179 B          87.5 kB
+Ôö£ Ôùï /app/admin/analytics                 178 B          87.5 kB
+Ôö£ Ôùï /app/admin/settings                  178 B          87.5 kB
+Ôö£ Ôùï /app/admin/spaces                    178 B          87.5 kB
+Ôö£ ãÆ /app/bookmarks                       230 B          96.3 kB
+Ôö£ ãÆ /app/messages                        230 B          96.3 kB
+Ôö£ ãÆ /app/messages/[username]             1.54 kB        97.6 kB
+Ôö£ Ôùï /app/messages/new                    2.52 kB        98.5 kB
+Ôö£ ãÆ /app/new                             3.06 kB        99.1 kB
+Ôö£ Ôùï /app/new-thread                      4.23 kB         110 kB
+Ôö£ Ôùï /app/new/space                       230 B          96.3 kB
+Ôö£ Ôùï /app/new/thread                      230 B          96.3 kB
+Ôö£ ãÆ /app/notifications                   230 B          96.3 kB
+Ôö£ ãÆ /app/search                          230 B          96.3 kB
+Ôö£ ãÆ /app/settings                        230 B          96.3 kB
+Ôö£ Ôùï /app/settings/account                178 B          87.5 kB
+Ôö£ Ôùï /app/settings/appearance             178 B          87.5 kB
+Ôö£ Ôùï /app/settings/billing                229 B          96.3 kB
+Ôö£ Ôùï /app/settings/notifications          179 B          87.5 kB
+Ôö£ ãÆ /app/settings/profile                179 B          87.5 kB
+Ôö£ Ôùï /app/settings/security               178 B          87.5 kB
+Ôö£ ãÆ /app/thread/[threadId]               2.34 kB        98.4 kB
+Ôö£ ãÆ /app/topics                          230 B          96.3 kB
+Ôö£ ãÆ /app/topics/[slug]                   229 B          96.3 kB
+Ôö£ ãÆ /app/trending                        230 B          96.3 kB
+Ôö£ ãÆ /app/u/[username]                    230 B          96.3 kB
+Ôö£ Ôùï /login                               2.49 kB         114 kB
+Ôö£ Ôùï /pricing                             229 B          96.3 kB
+Ôö£ Ôùï /privacy                             1.46 kB        97.5 kB
+Ôö£ Ôùï /register                            3.13 kB         114 kB
+Ôö£ Ôùï /terms                               1.53 kB        97.6 kB
+Ôö£ ãÆ /thread/[id]                         3.44 kB         109 kB
+Ôöö ãÆ /u/[username]                        296 B          92.8 kB
++ First Load JS shared by all            87.3 kB
+  Ôö£ chunks/2117-5e55c6bcf4cf1827.js      31.7 kB
+  Ôö£ chunks/fd9d1056-06ef08fb100c6e8b.js  53.6 kB
+  Ôöö other shared chunks (total)          1.95 kB
+
+
+Ôùï  (Static)   prerendered as static content
+ãÆ  (Dynamic)  server-rendered on demand
+

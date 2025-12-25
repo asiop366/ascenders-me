@@ -19,7 +19,7 @@ export const routes = {
   
   // User
   user: (username: string) => `/u/${username}`,
-  settings: '/settings',
+  settings: '/app/settings',
   
   // Topics
   topics: '/app/topics',

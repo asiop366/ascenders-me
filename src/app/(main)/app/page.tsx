@@ -10,32 +10,32 @@ export const dynamic = 'force-dynamic'
 // Filter/Sort options component
 function FilterBar() {
   return (
-    <div className="flex items-center justify-between gap-4 mb-6">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2">
-        <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/20 to-secondary/10 border border-primary/30 rounded-xl text-sm font-medium text-white transition-all">
-          <Flame size={16} className="text-primary" />
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-hide w-full sm:w-auto">
+        <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/20 to-secondary/10 border border-primary/30 rounded-xl text-sm font-bold text-white transition-all shadow-glow whitespace-nowrap">
+          <Flame size={16} className="text-primary animate-pulse" />
           All
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 bg-dark-800/50 border border-white/5 rounded-xl text-sm font-medium text-dark-300 hover:bg-dark-800 hover:text-white hover:border-white/10 transition-all">
+        <button className="flex items-center gap-2 px-4 py-2 bg-dark-800/50 border border-white/5 rounded-xl text-sm font-medium text-dark-300 hover:bg-dark-800 hover:text-white hover:border-white/10 transition-all whitespace-nowrap">
           <TrendingUp size={16} />
           Trending
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 bg-dark-800/50 border border-white/5 rounded-xl text-sm font-medium text-dark-300 hover:bg-dark-800 hover:text-white hover:border-white/10 transition-all">
+        <button className="flex items-center gap-2 px-4 py-2 bg-dark-800/50 border border-white/5 rounded-xl text-sm font-medium text-dark-300 hover:bg-dark-800 hover:text-white hover:border-white/10 transition-all whitespace-nowrap">
           <Clock size={16} />
           Recent
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 bg-dark-800/50 border border-white/5 rounded-xl text-sm font-medium text-dark-300 hover:bg-dark-800 hover:text-white hover:border-white/10 transition-all">
+        <button className="flex items-center gap-2 px-4 py-2 bg-dark-800/50 border border-white/5 rounded-xl text-sm font-medium text-dark-400 hover:bg-dark-800 hover:text-white hover:border-white/10 transition-all whitespace-nowrap">
           <MessageSquare size={16} />
           Discussions
         </button>
       </div>
 
       {/* Sort Dropdown */}
-      <div className="flex items-center gap-3">
-        <button className="flex items-center gap-2 px-4 py-2 bg-dark-800/50 border border-white/5 rounded-xl text-sm text-dark-300 hover:bg-dark-800 hover:text-white transition-all">
+      <div className="flex items-center gap-3 w-full sm:w-auto">
+        <button className="flex items-center gap-2 w-full sm:w-auto px-4 py-2 bg-dark-800/50 border border-white/5 rounded-xl text-sm text-dark-300 hover:bg-dark-800 hover:text-white transition-all">
           <SlidersHorizontal size={16} />
-          Sort by: Recent
+          <span className="flex-1 text-left">Sort by: Recent</span>
         </button>
       </div>
     </div>
@@ -45,24 +45,24 @@ function FilterBar() {
 // Stats Bar
 function StatsBar({ threadCount, userCount }: { threadCount: number; userCount: number }) {
   return (
-    <div className="grid grid-cols-3 gap-4 mb-8">
-      <div className="bg-dark-800/30 border border-white/5 rounded-2xl p-4 text-center">
-        <p className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="gradient-border p-4 text-center hover:translate-y-[-2px]">
+        <p className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent shadow-glow">
           {threadCount.toLocaleString()}
         </p>
-        <p className="text-sm text-dark-400 mt-1">Total Threads</p>
+        <p className="text-xs font-semibold text-dark-400 uppercase tracking-widest mt-1">Total Threads</p>
       </div>
-      <div className="bg-dark-800/30 border border-white/5 rounded-2xl p-4 text-center">
+      <div className="gradient-border p-4 text-center hover:translate-y-[-2px]">
         <p className="text-3xl font-bold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
           {userCount.toLocaleString()}
         </p>
-        <p className="text-sm text-dark-400 mt-1">Active Members</p>
+        <p className="text-xs font-semibold text-dark-400 uppercase tracking-widest mt-1">Active Members</p>
       </div>
-      <div className="bg-dark-800/30 border border-white/5 rounded-2xl p-4 text-center">
-        <p className="text-3xl font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">
+      <div className="gradient-border p-4 text-center hover:translate-y-[-2px]">
+        <p className="text-3xl font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent animate-pulse">
           24/7
         </p>
-        <p className="text-sm text-dark-400 mt-1">Community Active</p>
+        <p className="text-xs font-semibold text-dark-400 uppercase tracking-widest mt-1">Community Active</p>
       </div>
     </div>
   )
@@ -113,12 +113,12 @@ export default async function HomePage() {
               </h1>
               <p className="text-dark-400 mt-1">Discover the latest discussions and level up yourself</p>
             </div>
-            
+
             <Link
               href="/app/new-thread"
               className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-xl text-white font-semibold hover:shadow-lg hover:shadow-primary/25 hover:scale-105 transition-all duration-300"
             >
-              <Plus size={20} /> 
+              <Plus size={20} />
               CREATE THREAD
             </Link>
           </div>
@@ -158,8 +158,8 @@ export default async function HomePage() {
               <p className="text-dark-400 mb-8 max-w-md mx-auto">
                 Be the first to start a discussion! Share your knowledge or ask questions to the community.
               </p>
-              <Link 
-                href="/app/new-thread" 
+              <Link
+                href="/app/new-thread"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-secondary rounded-xl text-white font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all"
               >
                 <Plus size={20} />
@@ -168,14 +168,14 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {threads.map((thread) => (
-                <ThreadCard 
-                  key={thread.id} 
-                  thread={thread} 
+              {threads.map((thread: any) => (
+                <ThreadCard
+                  key={thread.id}
+                  thread={thread}
                   currentUserId={session?.user?.id}
                 />
               ))}
-              
+
               {/* Load More */}
               {threads.length >= 50 && (
                 <div className="text-center pt-8">

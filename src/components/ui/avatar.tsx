@@ -29,7 +29,7 @@ export function Avatar({ src, alt = 'User avatar', size = 'md', className }: Ava
   return (
     <div
       className={clsx(
-        'relative rounded-full overflow-hidden bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center font-semibold text-white',
+        'relative rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-white shadow-lg',
         sizes[size],
         className
       )}
@@ -39,10 +39,10 @@ export function Avatar({ src, alt = 'User avatar', size = 'md', className }: Ava
           src={src}
           alt={alt}
           fill
-          className="object-cover"
+          className="object-cover group-hover:scale-110 transition-transform duration-300"
         />
       ) : (
-        <span>{getInitials(alt)}</span>
+        <span className="drop-shadow-md">{getInitials(alt)}</span>
       )}
     </div>
   )
