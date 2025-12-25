@@ -53,53 +53,18 @@ interface SidebarProps {
   } | null
   isOpen?: boolean
   onClose?: () => void
+  unreadCount?: number
 }
 
-const mainNavItems = [
-  {
-    label: 'Home',
-    href: '/app',
-    icon: Home,
-    exact: true
-  },
-  {
-    label: 'Topics',
-    href: '/app/topics',
-    icon: Compass
-  },
-  {
-    label: 'Trending',
-    href: '/app/trending',
-    icon: TrendingUp
-  },
-  {
-    label: 'Messages',
-    href: '/app/messages',
-    icon: Mail
-  },
-  {
-    label: 'Bookmarks',
-    href: '/app/bookmarks',
-    icon: Bookmark
-  },
-  {
-    label: 'Notifications',
-    href: '/app/notifications',
-    icon: Bell,
-    badge: 3
-  },
-]
-
-const defaultTopTopics = [
-  { name: 'Fitness', slug: 'fitness', count: 1234, color: '#FF6B6B' },
-  { name: 'Skincare', slug: 'skincare', count: 892, color: '#4ECDC4' },
-  { name: 'Style', slug: 'style', count: 756, color: '#95E1D3' },
-  { name: 'Nutrition', slug: 'nutrition', count: 623, color: '#FFE66D' },
-  { name: 'Grooming', slug: 'grooming', count: 512, color: '#C7CEEA' },
-]
-
-export function Sidebar({ spaces = [], topTopics = defaultTopTopics, userGrade, isOpen, onClose }: SidebarProps) {
-  const { t, language, setLanguage } = useLanguage()
+export function Sidebar({
+  spaces = [],
+  topTopics = [],
+  userGrade,
+  isOpen,
+  onClose,
+  unreadCount = 0
+}: SidebarProps) {
+  const { t } = useLanguage()
   const pathname = usePathname()
   const router = useRouter()
   const { data: session } = useSession()
@@ -138,7 +103,7 @@ export function Sidebar({ spaces = [], topTopics = defaultTopTopics, userGrade, 
       label: t('nav.notifications'),
       href: '/app/notifications',
       icon: Bell,
-      badge: 3
+      badge: unreadCount
     },
   ]
 
@@ -207,40 +172,7 @@ export function Sidebar({ spaces = [], topTopics = defaultTopTopics, userGrade, 
           </Link>
         </div>
 
-        {/* Language Switcher */}
-        <div className="px-4 mb-3">
-          <div className="flex items-center bg-dark-800/50 border border-white/5 rounded-xl p-1">
-            <button
-              onClick={() => setLanguage('fr')}
-              className={cn(
-                "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
-                language === 'fr' ? "bg-primary text-white shadow-glow" : "text-dark-400 hover:text-white"
-              )}
-            >
-              FR
-            </button>
-            <button
-              onClick={() => setLanguage('en')}
-              className={cn(
-                "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
-                language === 'en' ? "bg-primary text-white shadow-glow" : "text-dark-400 hover:text-white"
-              )}
-            >
-              EN
-            </button>
-          </div>
-        </div>
 
-        {/* Create Thread Button */}
-        <div className="px-4 pb-4">
-          <Link
-            href="/app/new-thread"
-            className="flex items-center justify-center gap-2 w-full py-3 btn-primary text-white font-semibold hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.02] transition-all duration-300"
-          >
-            <Plus size={20} />
-            {t('forum.create_thread')}
-          </Link>
-        </div>
 
         {/* Main Navigation */}
         <nav className="px-3 pb-4 border-b border-white/5 overflow-y-auto scrollbar-hide">

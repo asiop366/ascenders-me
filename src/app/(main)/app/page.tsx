@@ -105,44 +105,44 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-dark-950">
       {/* Premium Header */}
-      <div className="bg-dark-900/80 backdrop-blur-xl border-b border-white/5 px-8 py-6 sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-3xl font-bold text-white tracking-tight">
+      <div className="bg-dark-900/80 backdrop-blur-xl border-b border-white/5 px-6 lg:px-8 py-6 sticky top-0 z-30">
+        <div className="max-w-5xl mx-auto flex flex-col gap-6">
+          <div className="flex items-center justify-between">
+            <div className="min-w-0">
+              <h1 className="text-2xl lg:text-3xl font-bold text-white tracking-tight truncate">
                 Welcome back{session?.user?.username ? `, ${session.user.username}` : ''}! 👋
               </h1>
-              <p className="text-dark-400 mt-1">Discover the latest discussions and level up yourself</p>
+              <p className="text-dark-400 mt-1 text-sm lg:text-base truncate">Discover the latest discussions and level up yourself</p>
             </div>
 
             <Link
               href="/app/new-thread"
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-xl text-white font-semibold hover:shadow-lg hover:shadow-primary/25 hover:scale-105 transition-all duration-300"
+              className="shrink-0 flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-secondary rounded-xl text-white font-semibold hover:shadow-lg hover:shadow-primary/25 hover:scale-105 transition-all duration-300 text-sm"
             >
-              <Plus size={20} />
+              <Plus size={18} />
               CREATE THREAD
             </Link>
           </div>
 
           {/* Search Bar */}
-          <div className="relative max-w-2xl">
-            <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-400" />
+          <div className="relative w-full lg:max-w-xl">
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-400" />
             <input
               type="text"
               placeholder="Search threads, topics, users..."
-              className="w-full bg-dark-800/50 border border-white/5 rounded-2xl pl-12 pr-4 py-3.5 text-white placeholder-dark-400 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
+              className="w-full bg-dark-800/50 border border-white/5 rounded-2xl pl-11 pr-4 py-2.5 text-white text-sm placeholder-dark-400 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-dark-500">
-              <kbd className="px-2 py-1 bg-dark-700 rounded">⌘</kbd>
-              <kbd className="px-2 py-1 bg-dark-700 rounded">K</kbd>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[10px] text-dark-500">
+              <kbd className="px-1.5 py-0.5 bg-dark-700 rounded decoration-none border-none">⌘</kbd>
+              <kbd className="px-1.5 py-0.5 bg-dark-700 rounded decoration-none border-none">K</kbd>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="p-8">
-        <div className="max-w-6xl mx-auto">
+      <div className="p-6">
+        <div className="max-w-5xl mx-auto">
           {/* Stats */}
           <StatsBar threadCount={threadCount} userCount={userCount} />
 
@@ -151,19 +151,19 @@ export default async function HomePage() {
 
           {/* Thread List */}
           {threads.length === 0 ? (
-            <div className="text-center py-32 bg-dark-800/20 border border-white/5 rounded-3xl">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 mb-6">
-                <Plus className="text-primary" size={32} />
+            <div className="text-center py-24 bg-dark-800/20 border border-white/5 rounded-3xl">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 mb-6">
+                <Plus className="text-primary" size={28} />
               </div>
               <h2 className="text-2xl font-bold text-white mb-2">No threads yet</h2>
-              <p className="text-dark-400 mb-8 max-w-md mx-auto">
+              <p className="text-dark-400 mb-8 max-w-md mx-auto text-sm">
                 Be the first to start a discussion! Share your knowledge or ask questions to the community.
               </p>
               <Link
                 href="/app/new-thread"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-secondary rounded-xl text-white font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-xl text-white font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all"
               >
-                <Plus size={20} />
+                <Plus size={18} />
                 Create First Thread
               </Link>
             </div>
@@ -180,7 +180,7 @@ export default async function HomePage() {
               {/* Load More */}
               {threads.length >= 50 && (
                 <div className="text-center pt-8">
-                  <button className="px-8 py-3 bg-dark-800/50 border border-white/10 rounded-xl text-dark-300 hover:bg-dark-800 hover:text-white hover:border-white/20 transition-all">
+                  <button className="px-8 py-3 bg-dark-800/50 border border-white/10 rounded-xl text-dark-300 hover:bg-dark-800 hover:text-white hover:border-white/20 transition-all font-medium">
                     Load More Threads
                   </button>
                 </div>
