@@ -1,7 +1,17 @@
-import { User, Grade, Space, Channel, Thread, Post } from '@prisma/client'
+import { User, Grade, ForumCategory, Topic, Thread, Post } from '@prisma/client'
 
 export type UserWithGrade = User & {
   grade: Grade | null
+}
+
+export type CategoryWithTopics = ForumCategory & {
+  topics: Topic[]
+}
+
+export type TopicWithCount = Topic & {
+  _count: {
+    threads: number
+  }
 }
 
 export type ThreadWithAuthor = Thread & {
@@ -14,8 +24,3 @@ export type ThreadWithAuthor = Thread & {
 export type PostWithAuthor = Post & {
   author: UserWithGrade
 }
-
-export type ChannelWithSpace = Channel & {
-  space: Space
-}
-

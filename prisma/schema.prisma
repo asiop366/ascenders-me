@@ -118,7 +118,6 @@ model Grade {
   permissions Json    @default("{}")
 
   users       User[]
-  channels    Channel[]
   subscriptions Subscription[]
 
   @@index([position])
@@ -126,57 +125,40 @@ model Grade {
   @@index([priceMonthly])
 }
 
-model Space {
+model ForumCategory {
   id        String   @id @default(cuid())
   name      String   @unique
   slug      String   @unique
-  icon      String?
   position  Int      @default(0)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  channels  Channel[]
+  topics    Topic[]
 
   @@index([slug])
   @@index([position])
 }
 
 model Topic {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  slug      String   @unique
-  icon      String?
-  color     String?
-  position  Int      @default(0)
-  createdAt DateTime @default(now())
-  threads   Thread[]
+  id              String         @id @default(cuid())
+  categoryId      String?
+  name            String         @unique
+  slug            String         @unique
+  description     String?        @db.Text
+  icon            String?
+  color           String?
+  position        Int            @default(0)
+  createdAt       DateTime       @default(now())
+  
+  category        ForumCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  threads         Thread[]
 
   @@index([slug])
   @@index([position])
+  @@index([categoryId])
 }
 
-model Channel {
-  id          String   @id @default(cuid())
-  spaceId     String
-  name        String
-  slug        String   @unique
-  type        ChannelType @default(FORUM)
-  minGradeId  String?
-  position    Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  space      Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-  minGrade   Grade?   @relation(fields: [minGradeId], references: [id], onDelete: SetNull)
-  threads    Thread[]
-
-  @@index([spaceId])
-  @@index([slug])
-  @@index([position])
-}
 
 model Thread {
   id         String   @id @default(cuid())
-  channelId  String?
   topicId    String?
   authorId   String
   title      String
@@ -188,7 +170,6 @@ model Thread {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  channel    Channel?  @relation(fields: [channelId], references: [id], onDelete: Cascade)
   topic      Topic?    @relation(fields: [topicId], references: [id], onDelete: SetNull)
   author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   posts      Post[]
@@ -196,7 +177,6 @@ model Thread {
   reports    Report[]
   bookmarks  Bookmark[]
 
-  @@index([channelId])
   @@index([topicId])
   @@index([authorId])
   @@index([createdAt])

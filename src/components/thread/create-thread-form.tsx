@@ -4,11 +4,10 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { X, Loader2, Image, Link as LinkIcon, Bold, Italic, List } from 'lucide-react'
 
-interface Space {
+interface Category {
   id: string
   name: string
-  slug: string
-  channels: {
+  topics: {
     id: string
     name: string
     slug: string
@@ -16,17 +15,17 @@ interface Space {
 }
 
 interface CreateThreadFormProps {
-  spaces: Space[]
+  categories: Category[]
   userId: string
 }
 
-export function CreateThreadForm({ spaces, userId }: CreateThreadFormProps) {
+export function CreateThreadForm({ categories, userId }: CreateThreadFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  
-  const [selectedSpace, setSelectedSpace] = useState('')
-  const [selectedChannel, setSelectedChannel] = useState('')
+
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [selectedTopic, setSelectedTopic] = useState('')
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [tags, setTags] = useState<string[]>([])
@@ -34,7 +33,7 @@ export function CreateThreadForm({ spaces, userId }: CreateThreadFormProps) {
   const [notifyReplies, setNotifyReplies] = useState(true)
   const [allowReplies, setAllowReplies] = useState(true)
 
-  const currentSpace = spaces.find(s => s.id === selectedSpace)
+  const currentCategory = categories.find(c => c.id === selectedCategory)
 
   const addTag = () => {
     if (tagInput.trim() && tags.length < 5 && !tags.includes(tagInput.trim())) {
@@ -51,7 +50,7 @@ export function CreateThreadForm({ spaces, userId }: CreateThreadFormProps) {
     e.preventDefault()
     setError('')
 
-    if (!selectedChannel) {
+    if (!selectedTopic) {
       setError('Please select a topic')
       return
     }
@@ -71,7 +70,7 @@ export function CreateThreadForm({ spaces, userId }: CreateThreadFormProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          channelId: selectedChannel,
+          topicId: selectedTopic,
           title: title.trim(),
           content: content.trim(),
           tags,
@@ -103,31 +102,31 @@ export function CreateThreadForm({ spaces, userId }: CreateThreadFormProps) {
       {/* Topic Selection */}
       <div>
         <label className="block text-sm font-medium text-asc-text mb-2">
-          Topic <span className="text-red-400">*</span>
+          Category & Topic <span className="text-red-400">*</span>
         </label>
         <div className="grid grid-cols-2 gap-3">
           <select
-            value={selectedSpace}
+            value={selectedCategory}
             onChange={(e) => {
-              setSelectedSpace(e.target.value)
-              setSelectedChannel('')
+              setSelectedCategory(e.target.value)
+              setSelectedTopic('')
             }}
             className="input"
           >
-            <option value="">Select Space</option>
-            {spaces.map(space => (
-              <option key={space.id} value={space.id}>{space.name}</option>
+            <option value="">Select Category</option>
+            {categories.map(category => (
+              <option key={category.id} value={category.id}>{category.name}</option>
             ))}
           </select>
           <select
-            value={selectedChannel}
-            onChange={(e) => setSelectedChannel(e.target.value)}
+            value={selectedTopic}
+            onChange={(e) => setSelectedTopic(e.target.value)}
             className="input"
-            disabled={!selectedSpace}
+            disabled={!selectedCategory}
           >
-            <option value="">Select Channel</option>
-            {currentSpace?.channels.map(channel => (
-              <option key={channel.id} value={channel.id}>{channel.name}</option>
+            <option value="">Select Topic</option>
+            {currentCategory?.topics.map(topic => (
+              <option key={topic.id} value={topic.id}>{topic.name}</option>
             ))}
           </select>
         </div>
@@ -154,7 +153,7 @@ export function CreateThreadForm({ spaces, userId }: CreateThreadFormProps) {
         <label className="block text-sm font-medium text-asc-text mb-2">
           Content <span className="text-red-400">*</span>
         </label>
-        
+
         {/* Toolbar */}
         <div className="flex items-center gap-1 p-2 bg-asc-surface border border-asc-border border-b-0 rounded-t-asc">
           <button type="button" className="p-2 hover:bg-asc-hover rounded transition-colors" title="Bold">
@@ -193,8 +192,8 @@ export function CreateThreadForm({ spaces, userId }: CreateThreadFormProps) {
           {tags.map(tag => (
             <span key={tag} className="tag flex items-center gap-1">
               #{tag}
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => removeTag(tag)}
                 className="hover:text-asc-text"
               >
@@ -218,7 +217,7 @@ export function CreateThreadForm({ spaces, userId }: CreateThreadFormProps) {
             className="input flex-1"
             disabled={tags.length >= 5}
           />
-          <button 
+          <button
             type="button"
             onClick={addTag}
             className="btn-secondary"
@@ -232,7 +231,7 @@ export function CreateThreadForm({ spaces, userId }: CreateThreadFormProps) {
       {/* Options */}
       <div className="p-4 bg-asc-surface border border-asc-border rounded-asc space-y-3">
         <h3 className="text-sm font-medium text-asc-text mb-3">Options</h3>
-        
+
         <label className="flex items-center gap-3 cursor-pointer">
           <input
             type="checkbox"
@@ -260,15 +259,15 @@ export function CreateThreadForm({ spaces, userId }: CreateThreadFormProps) {
           Save as draft
         </button>
         <div className="flex items-center gap-3">
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={() => router.back()}
             className="btn-secondary"
           >
             Cancel
           </button>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn-primary flex items-center gap-2"
             disabled={loading}
           >

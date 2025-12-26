@@ -7,18 +7,18 @@ import { threadSchema } from '@/lib/validations'
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const channelId = searchParams.get('channelId')
+    const topicId = searchParams.get('topicId')
     const limit = parseInt(searchParams.get('limit') || '20')
     const cursor = searchParams.get('cursor')
 
     const threads = await prisma.thread.findMany({
-      where: channelId ? { channelId } : undefined,
+      where: topicId ? { topicId } : undefined,
       include: {
         author: {
           select: { id: true, username: true, image: true, role: true }
         },
-        channel: {
-          include: { space: true }
+        topic: {
+          include: { category: true }
         },
         _count: {
           select: { posts: true, reactions: true }
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    
+
     // Validate
     const validationResult = threadSchema.safeParse(body)
     if (!validationResult.success) {
@@ -59,21 +59,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { channelId, title, content } = validationResult.data
+    const { topicId, title, content } = validationResult.data
 
-    // Verify channel exists
-    const channel = await prisma.channel.findUnique({
-      where: { id: channelId }
+    // Verify topic exists
+    const topic = await prisma.topic.findUnique({
+      where: { id: topicId }
     })
 
-    if (!channel) {
-      return NextResponse.json({ error: 'Channel not found' }, { status: 404 })
+    if (!topic) {
+      return NextResponse.json({ error: 'Topic not found' }, { status: 404 })
     }
 
     // Create thread
     const thread = await prisma.thread.create({
       data: {
-        channelId,
+        topicId,
         authorId: session.user.id,
         title: title.trim(),
         content: content.trim(),
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
         author: {
           select: { id: true, username: true, image: true }
         },
-        channel: true,
+        topic: true,
       }
     })
 

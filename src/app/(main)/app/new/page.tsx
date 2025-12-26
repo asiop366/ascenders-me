@@ -13,10 +13,10 @@ export default async function CreateThreadPage() {
     redirect('/login')
   }
 
-  // Fetch spaces and channels for topic selection
-  const spaces = await prisma.space.findMany({
+  // Fetch categories and topics for selection
+  const categories = await prisma.forumCategory.findMany({
     include: {
-      channels: {
+      topics: {
         orderBy: { position: 'asc' }
       }
     },
@@ -29,8 +29,8 @@ export default async function CreateThreadPage() {
       <header className="sticky top-0 z-10 bg-asc-bg border-b border-asc-border">
         <div className="px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link 
-              href="/app" 
+            <Link
+              href="/app"
               className="p-2 hover:bg-asc-hover rounded-asc transition-colors"
               aria-label="Go back"
             >
@@ -47,7 +47,7 @@ export default async function CreateThreadPage() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-3xl mx-auto p-6">
-          <CreateThreadForm spaces={spaces} userId={session.user.id} />
+          <CreateThreadForm categories={categories as any} userId={session.user.id} />
         </div>
       </div>
     </div>

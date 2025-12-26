@@ -30,7 +30,6 @@ export default async function ReportsPage() {
       thread: {
         include: {
           author: { include: { grade: true } },
-          channel: true,
         }
       }
     },
@@ -101,8 +100,8 @@ export default async function ReportsPage() {
             </div>
           ) : (
             reports.map((report) => (
-              <article 
-                key={report.id} 
+              <article
+                key={report.id}
                 className="bg-asc-surface border border-asc-border rounded-asc-lg p-6"
               >
                 <div className="flex items-start justify-between mb-4">
@@ -112,18 +111,18 @@ export default async function ReportsPage() {
                     </Link>
                     <div>
                       <div className="flex items-center gap-2">
-                        <Link 
+                        <Link
                           href={`/app/u/${report.user.username}`}
                           className="font-medium text-asc-text hover:underline"
                         >
                           {report.user.username}
                         </Link>
                         {report.user.grade && (
-                          <Badge 
+                          <Badge
                             size="sm"
-                            style={{ 
-                              backgroundColor: report.user.grade.color + '20', 
-                              color: report.user.grade.color 
+                            style={{
+                              backgroundColor: report.user.grade.color + '20',
+                              color: report.user.grade.color
                             }}
                           >
                             {report.user.grade.name}
@@ -135,7 +134,7 @@ export default async function ReportsPage() {
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusColor(report.status)}`}>
                       {getStatusIcon(report.status)}
@@ -156,7 +155,7 @@ export default async function ReportsPage() {
                     <div>
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-xs font-semibold text-asc-muted">THREAD</span>
-                        <Link 
+                        <Link
                           href={`/app/thread/${report.thread.id}`}
                           className="text-sm text-asc-text hover:underline font-medium"
                         >
@@ -167,10 +166,10 @@ export default async function ReportsPage() {
                         {report.thread.content}
                       </p>
                       <div className="flex items-center gap-2 mt-2">
-                        <Avatar 
-                          src={report.thread.author.image} 
-                          alt={report.thread.author.username} 
-                          size="xs" 
+                        <Avatar
+                          src={report.thread.author.image}
+                          alt={report.thread.author.username}
+                          size="xs"
                         />
                         <span className="text-xs text-asc-muted">
                           by {report.thread.author.username}
@@ -183,7 +182,7 @@ export default async function ReportsPage() {
                     <div>
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-xs font-semibold text-asc-muted">POST</span>
-                        <Link 
+                        <Link
                           href={`/app/thread/${report.post.thread.id}`}
                           className="text-sm text-asc-text hover:underline"
                         >
@@ -193,12 +192,12 @@ export default async function ReportsPage() {
                       <p className="text-sm text-asc-secondary line-clamp-2">
                         {report.post.content}
                       </p>
-                      
+
                       <div className="flex items-center gap-2 mt-2">
-                        <Avatar 
-                          src={report.post.author.image} 
-                          alt={report.post.author.username} 
-                          size="xs" 
+                        <Avatar
+                          src={report.post.author.image}
+                          alt={report.post.author.username}
+                          size="xs"
                         />
                         <span className="text-xs text-asc-muted">
                           by {report.post.author.username}
@@ -226,7 +225,7 @@ export default async function ReportsPage() {
                       </button>
                     </>
                   )}
-                  
+
                   {report.status === 'REVIEWED' && (
                     <>
                       <button className="btn-secondary text-sm text-green-400 border-green-500/20 hover:bg-green-500/10">

@@ -25,11 +25,8 @@ export default async function ThreadPage({ params }: { params: { id: string } })
           grade: true,
         },
       },
-      topic: true,
-      channel: {
-        include: {
-          space: true,
-        },
+      topic: {
+        include: { category: true }
       },
       posts: {
         include: {
@@ -77,19 +74,17 @@ export default async function ThreadPage({ params }: { params: { id: string } })
           <div className="flex items-center gap-3 text-sm text-dark-300">
             {thread.topic ? (
               <>
-                <Link href="/app/topics" className="hover:text-primary transition-colors">
-                  Topics
+                {thread.topic.category && (
+                  <>
+                    <span className="text-dark-400">
+                      {thread.topic.category.name}
+                    </span>
+                    <span>/</span>
+                  </>
+                )}
+                <Link href={`/app/topics/${thread.topic.slug}`} className="text-primary hover:underline transition-colors">
+                  {thread.topic.name}
                 </Link>
-                <span>/</span>
-                <span className="text-primary">{thread.topic.name}</span>
-              </>
-            ) : thread.channel ? (
-              <>
-                <Link href="/app" className="hover:text-primary transition-colors">
-                  {thread.channel.space.name}
-                </Link>
-                <span>/</span>
-                <span className="text-dark-200">{thread.channel.name}</span>
               </>
             ) : (
               <span className="text-dark-200">General</span>

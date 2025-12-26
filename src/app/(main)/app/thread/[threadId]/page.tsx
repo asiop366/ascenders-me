@@ -3,12 +3,12 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { 
-  ArrowLeft, 
-  Pin, 
-  Lock, 
-  Heart, 
-  MessageSquare, 
+import {
+  ArrowLeft,
+  Pin,
+  Lock,
+  Heart,
+  MessageSquare,
   Eye,
   Share2,
   Bookmark,
@@ -30,8 +30,8 @@ export default async function ThreadPage({
     where: { id: params.threadId },
     include: {
       author: true,
-      channel: {
-        include: { space: true }
+      topic: {
+        include: { category: true }
       },
       posts: {
         include: {
@@ -69,24 +69,21 @@ export default async function ThreadPage({
               Home
             </Link>
             <ChevronRight size={14} />
-            {thread.channel?.space && (
+            {thread.topic?.category && (
               <>
-                <Link 
-                  href={`/app/topics/${thread.channel.space.slug}`}
-                  className="hover:text-asc-text transition-colors"
-                >
-                  {thread.channel.space.name}
-                </Link>
+                <span className="hover:text-asc-text transition-colors">
+                  {thread.topic.category.name}
+                </span>
                 <ChevronRight size={14} />
               </>
             )}
-            {thread.channel && (
+            {thread.topic && (
               <>
-                <Link 
-                  href={`/app/${thread.channel.space?.slug}/${thread.channel.slug}`}
+                <Link
+                  href={`/app/topics/${thread.topic.slug}`}
                   className="hover:text-asc-text transition-colors"
                 >
-                  {thread.channel.name}
+                  {thread.topic.name}
                 </Link>
                 <ChevronRight size={14} />
               </>
@@ -142,7 +139,7 @@ export default async function ThreadPage({
                   {thread.author.username[0].toUpperCase()}
                 </div>
                 <div>
-                  <Link 
+                  <Link
                     href={`/app/u/${thread.author.username}`}
                     className="font-medium text-asc-text hover:underline"
                   >
@@ -244,7 +241,7 @@ function ReplyCard({ post, index }: { post: any; index: number }) {
             {post.author.username[0].toUpperCase()}
           </div>
           <div>
-            <Link 
+            <Link
               href={`/app/u/${post.author.username}`}
               className="font-medium text-asc-text hover:underline text-sm"
             >
@@ -282,11 +279,11 @@ function ReplyCard({ post, index }: { post: any; index: number }) {
 
 function getTimeAgo(date: Date): string {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)
-  
+
   if (seconds < 60) return 'just now'
   if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`
   if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`
   if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`
-  
+
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }

@@ -7,30 +7,6 @@ async function main() {
   console.log('🌱 Seeding database...')
 
   // Create grades
-  const freeGrade = await prisma.grade.upsert({
-    where: { slug: 'free' },
-    update: {},
-    create: {
-      name: 'Free',
-      slug: 'free',
-      color: '#6B7280',
-      position: 0,
-      priceMonthly: 0,
-    },
-  })
-
-  const proGrade = await prisma.grade.upsert({
-    where: { slug: 'pro' },
-    update: {},
-    create: {
-      name: 'Pro',
-      slug: 'pro',
-      color: '#3B82F6',
-      position: 1,
-      priceMonthly: 999,
-    },
-  })
-
   const eliteGrade = await prisma.grade.upsert({
     where: { slug: 'elite' },
     update: {},
@@ -57,120 +33,44 @@ async function main() {
     },
   })
 
-  // Create spaces
-  const generalSpace = await prisma.space.upsert({
-    where: { slug: 'general' },
+  // 1. Create Categories
+  const infoCat = await prisma.forumCategory.upsert({
+    where: { slug: 'information' },
     update: {},
-    create: {
-      name: 'General',
-      slug: 'general',
-      icon: '💬',
-      position: 0,
-    },
+    create: { name: 'Information', slug: 'information', position: 0 }
   })
 
-  const resourcesSpace = await prisma.space.upsert({
-    where: { slug: 'resources' },
+  const selfImpCat = await prisma.forumCategory.upsert({
+    where: { slug: 'self-improvement' },
     update: {},
-    create: {
-      name: 'Resources',
-      slug: 'resources',
-      icon: '📚',
-      position: 1,
-    },
+    create: { name: 'Self-Improvement', slug: 'self-improvement', position: 1 }
   })
 
-  // Create channels
-  const announcementsChannel = await prisma.channel.upsert({
-    where: { slug: 'announcements' },
+  const offTopicCat = await prisma.forumCategory.upsert({
+    where: { slug: 'off-topic' },
     update: {},
-    create: {
-      name: 'Announcements',
-      slug: 'announcements',
-      spaceId: generalSpace.id,
-      type: 'FORUM',
-      position: 0,
-    },
+    create: { name: 'Off Topic', slug: 'off-topic', position: 2 }
   })
 
-  const introductionsChannel = await prisma.channel.upsert({
-    where: { slug: 'introductions' },
-    update: {},
-    create: {
-      name: 'Introductions',
-      slug: 'introductions',
-      spaceId: generalSpace.id,
-      type: 'FORUM',
-      position: 1,
-    },
-  })
+  // 2. Create Topics under Categories
+  const topics = [
+    { name: 'News & Announcements', slug: 'news', categoryId: infoCat.id, description: 'Stay informed with essential updates and insightful news.', icon: '📢', color: '#3B82F6', position: 0 },
+    { name: 'Rules', slug: 'rules', categoryId: infoCat.id, description: 'The official forum rules and guidelines.', icon: '⚖️', color: '#EF4444', position: 1 },
 
-  const discussionsChannel = await prisma.channel.upsert({
-    where: { slug: 'discussions' },
-    update: {},
-    create: {
-      name: 'Discussions',
-      slug: 'discussions',
-      spaceId: generalSpace.id,
-      type: 'FORUM',
-      position: 2,
-    },
-  })
+    { name: 'Looksmaxing', slug: 'looksmaxing', categoryId: selfImpCat.id, description: 'Discuss the many aspects of men\'s self improvement.', icon: '🧬', color: '#10B981', position: 0 },
+    { name: 'Moneymaxing & Status', slug: 'moneymaxing', categoryId: selfImpCat.id, description: 'Unlock strategies to level up your life: wealth building, personal growth.', icon: '💰', color: '#F59E0B', position: 1 },
 
-  const tutorialsChannel = await prisma.channel.upsert({
-    where: { slug: 'tutorials' },
-    update: {},
-    create: {
-      name: 'Tutorials',
-      slug: 'tutorials',
-      spaceId: resourcesSpace.id,
-      type: 'FORUM',
-      position: 0,
-    },
-  })
-
-  // Create Topics (New Model)
-  const topicsData = [
-    { name: 'General Discussion', slug: 'general', icon: '💬', color: '#6366F1' },
-    { name: 'Showcase', slug: 'showcase', icon: '✨', color: '#EC4899' },
-    { name: 'Questions & Help', slug: 'help', icon: '❓', color: '#F59E0B' },
-    { name: 'Tutorials', slug: 'tutorials', icon: '📖', color: '#10B981' },
-    { name: 'Feedback', slug: 'feedback', icon: '💡', color: '#8B5CF6' },
+    { name: 'General Discussion', slug: 'general', categoryId: offTopicCat.id, description: 'Talk about anything and everything.', icon: '💬', color: '#6366F1', position: 0 },
+    { name: 'Showcase', slug: 'showcase', categoryId: offTopicCat.id, description: 'Show your progress and results.', icon: '✨', color: '#EC4899', position: 1 },
   ]
 
-  const createdTopics = await Promise.all(
-    topicsData.map(topic =>
-      prisma.topic.upsert({
-        where: { slug: topic.slug },
-        update: {},
-        create: topic
-      })
-    )
-  )
-
-  // Create welcome thread
-  await prisma.thread.upsert({
-    where: { id: 'welcome-thread' },
-    update: {},
-    create: {
-      id: 'welcome-thread',
-      topicId: createdTopics[0].id,
-      authorId: admin.id,
-      title: 'Welcome to Ascenders! 👋',
-      content: `Welcome to our community! We're excited to have you here.
-
-This is a place where you can:
-- Share your knowledge and experiences
-- Ask questions and get help
-- Connect with like-minded people
-- Grow together as a community
-
-Please take a moment to introduce yourself.
-
-Enjoy your stay! 🚀`,
-      pinned: true,
-    },
-  })
+  for (const t of topics) {
+    await prisma.topic.upsert({
+      where: { slug: t.slug },
+      update: {},
+      create: t
+    })
+  }
 
   console.log('✅ Database seeded successfully!')
 }
@@ -183,4 +83,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect()
   })
-

@@ -2,10 +2,10 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { 
-  Search, 
-  MessageSquare, 
-  User, 
+import {
+  Search,
+  MessageSquare,
+  User,
   Folder,
   Eye,
   Heart,
@@ -39,7 +39,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         },
         include: {
           author: true,
-          channel: { include: { space: true } },
+          topic: true,
           _count: { select: { posts: true, reactions: true } },
         },
         orderBy: { createdAt: 'desc' },
@@ -91,13 +91,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 type="text"
                 name="q"
                 defaultValue={query}
-                placeholder="Search threads, topics, @users..."
+                placeholder="Search..."
                 className="input pl-11"
                 autoFocus
               />
               {query && (
-                <Link 
-                  href="/app/search" 
+                <Link
+                  href="/app/search"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-asc-muted hover:text-asc-text"
                 >
                   <X size={18} />
@@ -112,20 +112,20 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
         {/* Filters */}
         <div className="flex items-center gap-2 mb-6 border-b border-asc-border">
-          <Link 
+          <Link
             href={`/app/search?q=${query}`}
             className={`px-4 py-3 text-sm ${type === 'all' ? 'font-medium text-asc-text border-b-2 border-asc-text' : 'text-asc-muted hover:text-asc-text'}`}
           >
             All ({totalResults})
           </Link>
-          <Link 
+          <Link
             href={`/app/search?q=${query}&type=threads`}
             className={`px-4 py-3 text-sm flex items-center gap-1 ${type === 'threads' ? 'font-medium text-asc-text border-b-2 border-asc-text' : 'text-asc-muted hover:text-asc-text'}`}
           >
             <MessageSquare size={14} />
             Threads ({threads.length})
           </Link>
-          <Link 
+          <Link
             href={`/app/search?q=${query}&type=users`}
             className={`px-4 py-3 text-sm flex items-center gap-1 ${type === 'users' ? 'font-medium text-asc-text border-b-2 border-asc-text' : 'text-asc-muted hover:text-asc-text'}`}
           >
@@ -141,7 +141,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               <Search size={32} className="text-asc-muted" />
             </div>
             <h2 className="text-lg font-semibold text-asc-text mb-2">Search Ascenders</h2>
-            <p className="text-asc-muted">Find threads, topics, and users</p>
+            <p className="text-asc-muted">Find threads and users</p>
           </div>
         ) : totalResults === 0 ? (
           <div className="text-center py-20">
@@ -151,7 +151,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <h2 className="text-lg font-semibold text-asc-text mb-2">No results found</h2>
             <p className="text-asc-muted mb-4">Try different keywords or check your spelling</p>
             <Link href="/app" className="btn-secondary">
-              Browse all threads
+              Browse Home
             </Link>
           </div>
         ) : (
@@ -200,7 +200,7 @@ function ThreadResult({ thread, query }: { thread: any; query: string }) {
   const timeAgo = getTimeAgo(new Date(thread.createdAt))
 
   return (
-    <Link href={`/app/thread/${thread.id}`} className="card block">
+    <Link href={`/app/threads/${thread.id}`} className="card block">
       <h3 className="font-semibold text-asc-text mb-1 hover:underline">
         <HighlightText text={thread.title} query={query} />
       </h3>
@@ -208,7 +208,7 @@ function ThreadResult({ thread, query }: { thread: any; query: string }) {
         <HighlightText text={thread.content} query={query} />
       </p>
       <div className="flex items-center gap-4 text-xs text-asc-muted">
-        {thread.channel && <span className="tag">{thread.channel.name}</span>}
+        {thread.topic && <span className="tag">{thread.topic.name}</span>}
         <span>by {thread.author.username}</span>
         <span className="flex items-center gap-1"><Clock size={12} />{timeAgo}</span>
         <span className="flex items-center gap-1 ml-auto"><MessageSquare size={12} />{thread._count.posts}</span>
@@ -242,12 +242,12 @@ function UserResult({ user }: { user: any }) {
 
 function HighlightText({ text, query }: { text: string; query: string }) {
   if (!query) return <>{text}</>
-  
+
   const parts = text.split(new RegExp(`(${query})`, 'gi'))
-  
+
   return (
     <>
-      {parts.map((part, i) => 
+      {parts.map((part, i) =>
         part.toLowerCase() === query.toLowerCase() ? (
           <mark key={i} className="bg-asc-text/20 text-asc-text px-0.5 rounded">
             {part}

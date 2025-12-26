@@ -2,10 +2,10 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { 
-  TrendingUp, 
-  MessageSquare, 
-  Eye, 
+import {
+  TrendingUp,
+  MessageSquare,
+  Eye,
   Heart,
   Flame,
   Clock,
@@ -25,9 +25,7 @@ export default async function TrendingPage() {
     },
     include: {
       author: true,
-      channel: {
-        include: { space: true }
-      },
+      topic: true,
       _count: {
         select: { posts: true, reactions: true }
       }
@@ -80,8 +78,8 @@ export default async function TrendingPage() {
             </div>
             <h2 className="text-lg font-semibold text-asc-text mb-2">No trending threads</h2>
             <p className="text-asc-muted mb-4">Start some discussions to see them here!</p>
-            <Link href="/app/new" className="btn-primary">
-              Create Thread
+            <Link href="/app" className="btn-primary">
+              Browse Home
             </Link>
           </div>
         ) : (
@@ -105,11 +103,10 @@ function TrendingCard({ thread, rank }: { thread: any; rank: number }) {
         {/* Rank */}
         <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
           {rank <= 3 ? (
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-              rank === 1 ? 'bg-yellow-500/20 text-yellow-500' :
-              rank === 2 ? 'bg-gray-400/20 text-gray-400' :
-              'bg-orange-500/20 text-orange-500'
-            }`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${rank === 1 ? 'bg-yellow-500/20 text-yellow-500' :
+                rank === 2 ? 'bg-gray-400/20 text-gray-400' :
+                  'bg-orange-500/20 text-orange-500'
+              }`}>
               {rank === 1 ? <Award size={18} /> : rank}
             </div>
           ) : (
@@ -121,13 +118,13 @@ function TrendingCard({ thread, rank }: { thread: any; rank: number }) {
         <div className="flex-1 min-w-0">
           {/* Title */}
           <div className="flex items-start justify-between gap-3 mb-1">
-            <Link 
-              href={`/app/thread/${thread.id}`}
+            <Link
+              href={`/app/threads/${thread.id}`}
               className="text-base font-semibold text-asc-text hover:underline line-clamp-1"
             >
               {thread.title}
             </Link>
-            
+
             {/* Hot badge for top 3 */}
             {rank <= 3 && (
               <span className="badge badge-pinned flex items-center gap-1">
@@ -144,9 +141,9 @@ function TrendingCard({ thread, rank }: { thread: any; rank: number }) {
 
           {/* Meta row */}
           <div className="flex items-center gap-4 text-xs text-asc-muted">
-            {/* Channel */}
-            {thread.channel && (
-              <span className="tag">{thread.channel.name}</span>
+            {/* Topic */}
+            {thread.topic && (
+              <span className="tag">{thread.topic.name}</span>
             )}
 
             {/* Author & Time */}
@@ -184,11 +181,11 @@ function TrendingCard({ thread, rank }: { thread: any; rank: number }) {
 
 function getTimeAgo(date: Date): string {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)
-  
+
   if (seconds < 60) return 'just now'
   if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`
   if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`
   if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`
-  
+
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
