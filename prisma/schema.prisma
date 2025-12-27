@@ -7,7 +7,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// SQLite compatibility adjustments: Enums removed and replaced by Strings in models
+// Enums restored for PostgreSQL
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+  OWNER
+}
+
+enum ChannelType {
+  PUBLIC
+  PRIVATE
+  ANNOUNCEMENT
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+  DISMISSED
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  CANCELED
+  EXPIRED
+  PAST_DUE
+}
 
 model Account {
   id                 String   @id @default(cuid())
@@ -56,7 +82,7 @@ model User {
   hashedPassword     String?
   image              String? 
   bio                String? 
-  role               String   @default("USER")
+  role               Role     @default(USER)
   gradeId            String?
   emailVerified      DateTime?
   createdAt          DateTime @default(now())
@@ -119,7 +145,7 @@ model Topic {
   categoryId      String?
   name            String         @unique
   slug            String         @unique
-  description     String?       
+  description     String?        @db.Text
   icon            String?
   color           String?
   position        Int            @default(0)
@@ -139,7 +165,7 @@ model Thread {
   topicId    String?
   authorId   String
   title      String
-  content    String  
+  content    String   @db.Text
   imageUrl   String? 
   locked     Boolean  @default(false)
   pinned     Boolean  @default(false)
@@ -165,7 +191,7 @@ model Post {
   threadId   String
   authorId   String
   parentId   String?
-  content    String  
+  content    String   @db.Text
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -206,7 +232,7 @@ model Report {
   threadId   String?
   postId     String?
   reason     String  
-  status     String @default("PENDING")
+  status     ReportStatus @default(PENDING)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -223,7 +249,7 @@ model Subscription {
   id         String   @id @default(cuid())
   userId     String
   gradeId    String
-  status     String @default("PENDING")
+  status     SubscriptionStatus @default(PENDING)
   startDate  DateTime @default(now())
   endDate    DateTime?
   createdAt  DateTime @default(now())
@@ -256,7 +282,7 @@ model Notification {
   userId     String
   type       String
   title      String
-  message    String  
+  message    String         @db.Text
   read       Boolean  @default(false)
   link       String?
   createdAt  DateTime @default(now())
@@ -286,7 +312,7 @@ model Message {
   id         String   @id @default(cuid())
   senderId   String
   receiverId String
-  content    String  
+  content    String         @db.Text
   read       Boolean  @default(false)
   createdAt  DateTime @default(now())
 
