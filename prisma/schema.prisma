@@ -23,6 +23,7 @@ enum ChannelType {
 
 enum ReportStatus {
   PENDING
+  REVIEWED
   RESOLVED
   DISMISSED
 }

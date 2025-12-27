@@ -9,18 +9,18 @@ import { ReplyComposer } from './reply-composer'
 interface Post {
     id: string
     content: string
-    createdAt: string
+    createdAt: Date | string
     author: {
         id: string
         username: string
-        image?: string
-        role: string
+        image: string | null
+        role: any
     }
     _count: {
         reactions: number
         replies: number
     }
-    replies?: Post[]
+    replies?: Post[] | null
 }
 
 interface ThreadRepliesProps {

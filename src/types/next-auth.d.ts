@@ -5,11 +5,11 @@ declare module 'next-auth' {
     user: {
       id: string
       username: string
-      displayName?: string | null
-      role: string
+      displayName: string | null
+      role: any
       gradeId: string | null
-      usernameChangedAt?: Date | null
-      bio?: string | null
+      usernameChangedAt: Date | null
+      bio: string | null
     } & DefaultSession['user']
   }
 
