@@ -329,21 +329,32 @@ export function Sidebar({
                 <p className="font-semibold text-white text-sm truncate">
                   {session?.user?.username || 'Guest'}
                 </p>
-                {userGrade ? (
-                  <Badge
-                    size="sm"
-                    style={{
-                      backgroundColor: userGrade.color + '20',
-                      color: userGrade.color,
-                      borderColor: userGrade.color + '40'
-                    }}
-                    className="mt-1"
-                  >
-                    {userGrade.name}
-                  </Badge>
-                ) : (
-                  <p className="text-[10px] text-dark-500 truncate">{session?.user?.email || 'Not signed in'}</p>
-                )}
+                <div className="flex flex-col gap-1 mt-1">
+                  {session?.user?.role === 'OWNER' && (
+                    <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50 shadow-[0_0_10px_rgba(234,179,8,0.2)]">
+                      Owner
+                    </Badge>
+                  )}
+                  {session?.user?.role === 'ADMIN' && (
+                    <Badge size="sm" className="bg-red-500/20 text-red-400 border-red-500/40">
+                      Admin
+                    </Badge>
+                  )}
+                  {userGrade ? (
+                    <Badge
+                      size="sm"
+                      style={{
+                        backgroundColor: userGrade.color + '20',
+                        color: userGrade.color,
+                        borderColor: userGrade.color + '40'
+                      }}
+                    >
+                      {userGrade.name}
+                    </Badge>
+                  ) : (
+                    <p className="text-[10px] text-dark-500 truncate">{session?.user?.email || 'Not signed in'}</p>
+                  )}
+                </div>
               </div>
               <ChevronDown
                 size={18}

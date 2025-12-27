@@ -115,7 +115,7 @@ function ReplyCard({ post, index, threadId, isLocked, isAuthenticated, depth }: 
                             </Link>
                             <div className="flex items-center gap-2 ml-2">
                                 {post.author.role === 'OWNER' && (
-                                    <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/40">
+                                    <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50 shadow-[0_0_10px_rgba(234,179,8,0.2)]">
                                         Owner
                                     </Badge>
                                 )}
