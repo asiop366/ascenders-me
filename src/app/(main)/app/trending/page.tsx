@@ -104,8 +104,8 @@ function TrendingCard({ thread, rank }: { thread: any; rank: number }) {
         <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
           {rank <= 3 ? (
             <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${rank === 1 ? 'bg-yellow-500/20 text-yellow-500' :
-                rank === 2 ? 'bg-gray-400/20 text-gray-400' :
-                  'bg-orange-500/20 text-orange-500'
+              rank === 2 ? 'bg-gray-400/20 text-gray-400' :
+                'bg-orange-500/20 text-orange-500'
               }`}>
               {rank === 1 ? <Award size={18} /> : rank}
             </div>
@@ -119,7 +119,7 @@ function TrendingCard({ thread, rank }: { thread: any; rank: number }) {
           {/* Title */}
           <div className="flex items-start justify-between gap-3 mb-1">
             <Link
-              href={`/app/threads/${thread.id}`}
+              href={`/app/thread/${thread.id}`}
               className="text-base font-semibold text-asc-text hover:underline line-clamp-1"
             >
               {thread.title}

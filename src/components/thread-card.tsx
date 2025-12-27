@@ -134,12 +134,12 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
         {(thread.pinned || thread.locked) && (
           <div className="absolute top-4 right-4 flex items-center gap-2">
             {thread.pinned && (
-              <div className="p-1.5 bg-primary/20 rounded-lg" title={t('nav.pinned')}>
+              <div className="p-1.5 bg-primary/20 rounded-lg" title={t('forum.pinned')}>
                 <Pin size={14} className="text-primary" />
               </div>
             )}
             {thread.locked && (
-              <div className="p-1.5 bg-yellow-500/20 rounded-lg" title={t('nav.locked')}>
+              <div className="p-1.5 bg-yellow-500/20 rounded-lg" title={t('forum.locked')}>
                 <Lock size={14} className="text-yellow-500" />
               </div>
             )}
@@ -185,6 +185,12 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
                 </Badge>
               )}
 
+              {thread.author.role === 'OWNER' && (
+                <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/40">
+                  Owner
+                </Badge>
+              )}
+
               {thread.author.role === 'ADMIN' && (
                 <Badge size="sm" className="bg-red-500/20 text-red-400 border-red-500/40">
                   Admin
@@ -223,7 +229,7 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
                 ) : thread.channel ? (
                   `${thread.channel.space.name} / ${thread.channel.name}`
                 ) : (
-                  t('nav.general')
+                  t('forum.general')
                 )}
               </span>
             </div>
@@ -269,16 +275,14 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
                     ? 'text-primary bg-primary/10'
                     : 'text-dark-400 hover:text-primary hover:bg-white/5'
                     }`}
-                  title={isBookmarked ? t('nav.remove_bookmark') : t('nav.bookmark')}
+                  title={isBookmarked ? t('forum.remove_bookmark') : t('forum.bookmark')}
                 >
                   <Bookmark size={18} className={isBookmarked ? 'fill-current' : ''} />
                 </button>
-
-                {/* Share */}
                 <button
                   onClick={handleShare}
                   className="p-2 rounded-lg text-dark-400 hover:text-white hover:bg-white/5 transition-all duration-200"
-                  title={t('nav.share')}
+                  title={t('forum.share')}
                 >
                   <Share2 size={18} />
                 </button>
@@ -317,7 +321,7 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
                           }}
                         >
                           <Share2 size={16} />
-                          {t('nav.copy_link')}
+                          {t('forum.copy_link')}
                         </button>
                         <button
                           className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
@@ -333,7 +337,7 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
                           }}
                         >
                           <Flag size={16} />
-                          {t('nav.report')}
+                          {t('forum.report')}
                         </button>
                       </div>
                     </>

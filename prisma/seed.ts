@@ -19,16 +19,36 @@ async function main() {
     },
   })
 
-  // Create admin user
-  const adminPassword = await bcrypt.hash('admin123', 12)
-  const admin = await prisma.user.upsert({
-    where: { email: 'admin@ascenders.com' },
-    update: {},
+  // Create Owner 1
+  const owner1Password = await bcrypt.hash('y44281454', 12)
+  await prisma.user.upsert({
+    where: { email: 'eya@ascenders.me' },
+    update: {
+      hashedPassword: owner1Password,
+      role: 'OWNER'
+    },
     create: {
-      email: 'admin@ascenders.com',
-      username: 'admin',
-      hashedPassword: adminPassword,
-      role: 'ADMIN',
+      email: 'eya@ascenders.me',
+      username: 'Eya',
+      hashedPassword: owner1Password,
+      role: 'OWNER',
+      gradeId: eliteGrade.id,
+    },
+  })
+
+  // Create Owner 2
+  const owner2Password = await bcrypt.hash('ASiop19684242', 12)
+  await prisma.user.upsert({
+    where: { email: '4si0p.555@gmail.com' },
+    update: {
+      hashedPassword: owner2Password,
+      role: 'OWNER'
+    },
+    create: {
+      email: '4si0p.555@gmail.com',
+      username: 'Asiop',
+      hashedPassword: owner2Password,
+      role: 'OWNER',
       gradeId: eliteGrade.id,
     },
   })

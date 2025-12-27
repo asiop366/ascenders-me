@@ -294,8 +294,8 @@ export function Sidebar({
           )}
         </nav>
 
-        {/* Admin Link (if admin) */}
-        {session?.user?.role === 'ADMIN' && (
+        {/* Admin Link (if admin or owner) */}
+        {(session?.user?.role === 'ADMIN' || session?.user?.role === 'OWNER') && (
           <div className="px-3 py-2 border-t border-white/5">
             <Link
               href="/app/admin"
@@ -363,7 +363,7 @@ export function Sidebar({
                 />
                 <div className="absolute bottom-full left-0 right-0 mb-2 bg-dark-800 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
                   <Link
-                    href={`/u/${session?.user?.username || 'profile'}`}
+                    href={`/app/u/${session?.user?.username || 'profile'}`}
                     className="flex items-center gap-3 px-4 py-3 text-sm text-dark-200 hover:bg-white/5 hover:text-white transition-colors"
                     onClick={() => {
                       setShowUserMenu(false)

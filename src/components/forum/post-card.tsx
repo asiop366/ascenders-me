@@ -20,6 +20,7 @@ interface PostCardProps {
       id: string
       username: string
       image: string | null
+      role?: string
       grade?: { name: string; color: string } | null
     }
     _count: {
@@ -67,6 +68,16 @@ export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
                   {post.author.grade.name}
                 </Badge>
               )}
+              {post.author.role === 'OWNER' && (
+                <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/40">
+                  Owner
+                </Badge>
+              )}
+              {post.author.role === 'ADMIN' && (
+                <Badge size="sm" className="bg-red-500/20 text-red-400 border-red-500/40">
+                  Admin
+                </Badge>
+              )}
               <span className="text-sm text-dark-300">
                 {getTimeAgo(new Date(post.createdAt))}
               </span>
@@ -82,10 +93,10 @@ export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
               {isAuthor && (
                 <>
                   <DropdownItem onClick={() => { }}>
-                    <Edit size={14} className="mr-2" /> {t('nav.edit')}
+                    <Edit size={14} className="mr-2" /> {t('forum.edit')}
                   </DropdownItem>
                   <DropdownItem onClick={() => onDelete?.(post.id)} danger>
-                    <Trash2 size={14} className="mr-2" /> {t('nav.delete')}
+                    <Trash2 size={14} className="mr-2" /> {t('forum.delete')}
                   </DropdownItem>
                 </>
               )}
@@ -96,7 +107,7 @@ export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
                 }
                 setIsReportModalOpen(true)
               }}>
-                <Flag size={14} className="mr-2" /> {t('nav.report')}
+                <Flag size={14} className="mr-2" /> {t('forum.report')}
               </DropdownItem>
             </Dropdown>
           </div>

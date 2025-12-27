@@ -7,30 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  MODERATOR
-  ADMIN
-}
-
-enum ChannelType {
-  FORUM
-  CHAT
-}
-
-enum ReportStatus {
-  PENDING
-  REVIEWED
-  RESOLVED
-  DISMISSED
-}
-
-enum SubscriptionStatus {
-  ACTIVE
-  CANCELED
-  PAST_DUE
-  PENDING
-}
+// SQLite compatibility adjustments: Enums removed and replaced by Strings in models
 
 model Account {
   id                 String   @id @default(cuid())
@@ -38,12 +15,12 @@ model Account {
   type               String
   provider           String
   providerAccountId  String
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
+  refresh_token      String?
+  access_token       String?
   expires_at         Int?
   token_type         String?
   scope              String?
-  id_token           String? @db.Text
+  id_token           String?
   session_state      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -77,9 +54,9 @@ model User {
   displayName        String?
   usernameChangedAt  DateTime?
   hashedPassword     String?
-  image              String?  @db.Text
-  bio                String?  @db.Text
-  role               Role     @default(USER)
+  image              String? 
+  bio                String? 
+  role               String   @default("USER")
   gradeId            String?
   emailVerified      DateTime?
   createdAt          DateTime @default(now())
@@ -115,7 +92,7 @@ model Grade {
   icon        String?
   priceMonthly Int     @default(0)
   position    Int      @default(0)
-  permissions Json    @default("{}")
+  permissions String    @default("{}")
 
   users       User[]
   subscriptions Subscription[]
@@ -142,7 +119,7 @@ model Topic {
   categoryId      String?
   name            String         @unique
   slug            String         @unique
-  description     String?        @db.Text
+  description     String?       
   icon            String?
   color           String?
   position        Int            @default(0)
@@ -162,8 +139,8 @@ model Thread {
   topicId    String?
   authorId   String
   title      String
-  content    String   @db.Text
-  imageUrl   String?  @db.Text
+  content    String  
+  imageUrl   String? 
   locked     Boolean  @default(false)
   pinned     Boolean  @default(false)
   viewCount  Int      @default(0)
@@ -187,17 +164,21 @@ model Post {
   id         String   @id @default(cuid())
   threadId   String
   authorId   String
-  content    String   @db.Text
+  parentId   String?
+  content    String  
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   thread     Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
   author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent     Post?    @relation("PostReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies    Post[]   @relation("PostReplies")
   reactions  Reaction[]
   reports    Report[]
 
   @@index([threadId])
   @@index([authorId])
+  @@index([parentId])
   @@index([createdAt])
 }
 
@@ -224,8 +205,8 @@ model Report {
   userId     String
   threadId   String?
   postId     String?
-  reason     String   @db.Text
-  status     ReportStatus @default(PENDING)
+  reason     String  
+  status     String @default("PENDING")
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -242,7 +223,7 @@ model Subscription {
   id         String   @id @default(cuid())
   userId     String
   gradeId    String
-  status     SubscriptionStatus @default(PENDING)
+  status     String @default("PENDING")
   startDate  DateTime @default(now())
   endDate    DateTime?
   createdAt  DateTime @default(now())
@@ -275,7 +256,7 @@ model Notification {
   userId     String
   type       String
   title      String
-  message    String   @db.Text
+  message    String  
   read       Boolean  @default(false)
   link       String?
   createdAt  DateTime @default(now())
@@ -305,7 +286,7 @@ model Message {
   id         String   @id @default(cuid())
   senderId   String
   receiverId String
-  content    String   @db.Text
+  content    String  
   read       Boolean  @default(false)
   createdAt  DateTime @default(now())
 

@@ -12,14 +12,40 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Thread ID required' }, { status: 400 })
     }
 
+    // Only fetch top-level posts (no parent)
     const posts = await prisma.post.findMany({
-      where: { threadId },
+      where: {
+        threadId,
+        parentId: null
+      },
       include: {
         author: {
           select: { id: true, username: true, image: true, role: true }
         },
         _count: {
-          select: { reactions: true }
+          select: { reactions: true, replies: true }
+        },
+        replies: {
+          include: {
+            author: {
+              select: { id: true, username: true, image: true, role: true }
+            },
+            _count: {
+              select: { reactions: true, replies: true }
+            },
+            replies: {
+              include: {
+                author: {
+                  select: { id: true, username: true, image: true, role: true }
+                },
+                _count: {
+                  select: { reactions: true, replies: true }
+                }
+              },
+              orderBy: { createdAt: 'asc' }
+            }
+          },
+          orderBy: { createdAt: 'asc' }
         }
       },
       orderBy: { createdAt: 'asc' }
@@ -41,7 +67,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { threadId, content } = body
+    const { threadId, content, parentId } = body
 
     if (!threadId || !content) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -60,11 +86,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Thread is locked' }, { status: 403 })
     }
 
+    // If parentId is provided, verify parent post exists
+    if (parentId) {
+      const parentPost = await prisma.post.findUnique({
+        where: { id: parentId }
+      })
+      if (!parentPost) {
+        return NextResponse.json({ error: 'Parent post not found' }, { status: 404 })
+      }
+    }
+
     const post = await prisma.post.create({
       data: {
         threadId,
         authorId: session.user.id,
         content: content.trim(),
+        parentId: parentId || null,
       },
       include: {
         author: {
@@ -79,3 +116,4 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to create post' }, { status: 500 })
   }
 }
+

@@ -17,7 +17,8 @@ import {
   ChevronRight,
   Clock
 } from 'lucide-react'
-import { ReplyComposer } from '@/components/thread/reply-composer'
+import { Badge } from '@/components/ui/badge'
+import { ThreadReplies } from '@/components/thread/thread-replies'
 
 export default async function ThreadPage({
   params,
@@ -34,9 +35,24 @@ export default async function ThreadPage({
         include: { category: true }
       },
       posts: {
+        where: { parentId: null },
         include: {
           author: true,
-          _count: { select: { reactions: true } }
+          _count: { select: { reactions: true, replies: true } },
+          replies: {
+            include: {
+              author: true,
+              _count: { select: { reactions: true, replies: true } },
+              replies: {
+                include: {
+                  author: true,
+                  _count: { select: { reactions: true, replies: true } }
+                },
+                orderBy: { createdAt: 'asc' }
+              }
+            },
+            orderBy: { createdAt: 'asc' }
+          }
         },
         orderBy: { createdAt: 'asc' }
       },
@@ -135,8 +151,12 @@ export default async function ThreadPage({
             {/* Post Header */}
             <div className="flex items-center justify-between p-4 border-b border-asc-border">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-asc-text text-asc-bg rounded-full flex items-center justify-center font-semibold">
-                  {thread.author.username[0].toUpperCase()}
+                <div className="w-10 h-10 bg-asc-text text-asc-bg rounded-full flex items-center justify-center font-semibold overflow-hidden">
+                  {thread.author.image ? (
+                    <img src={thread.author.image} alt={thread.author.username} className="w-full h-full object-cover" />
+                  ) : (
+                    thread.author.username[0].toUpperCase()
+                  )}
                 </div>
                 <div>
                   <Link
@@ -145,10 +165,18 @@ export default async function ThreadPage({
                   >
                     {thread.author.username}
                   </Link>
-                  <div className="flex items-center gap-2 text-xs text-asc-muted">
-                    <span>{thread.author.role}</span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
+                  <div className="flex items-center gap-2 mt-1">
+                    {thread.author.role === 'OWNER' && (
+                      <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/40">
+                        Owner
+                      </Badge>
+                    )}
+                    {thread.author.role === 'ADMIN' && (
+                      <Badge size="sm" className="bg-red-500/20 text-red-400 border-red-500/40">
+                        Admin
+                      </Badge>
+                    )}
+                    <span className="text-xs text-asc-muted flex items-center gap-1">
                       <Clock size={12} />
                       {timeAgo}
                     </span>
@@ -159,6 +187,17 @@ export default async function ThreadPage({
                 <MoreHorizontal size={16} className="text-asc-muted" />
               </button>
             </div>
+
+            {/* Thread Image */}
+            {thread.imageUrl && (
+              <div className="border-b border-asc-border">
+                <img
+                  src={thread.imageUrl}
+                  alt="Thread image"
+                  className="w-full max-h-96 object-cover"
+                />
+              </div>
+            )}
 
             {/* Post Content */}
             <div className="p-4">
@@ -190,90 +229,16 @@ export default async function ThreadPage({
             </div>
           </article>
 
-          {/* Replies Section */}
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold text-asc-text mb-4 flex items-center gap-2">
-              <MessageSquare size={20} />
-              Replies ({thread._count.posts})
-            </h2>
-
-            {thread.posts.length === 0 ? (
-              <div className="text-center py-12 bg-asc-surface border border-asc-border rounded-asc">
-                <MessageSquare size={32} className="text-asc-muted mx-auto mb-3" />
-                <p className="text-asc-secondary mb-1">No replies yet</p>
-                <p className="text-sm text-asc-muted">Be the first to share your thoughts!</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {thread.posts.map((post, index) => (
-                  <ReplyCard key={post.id} post={post} index={index + 1} />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Reply Composer */}
-          {!thread.locked && session && (
-            <ReplyComposer threadId={thread.id} />
-          )}
-
-          {thread.locked && (
-            <div className="p-4 bg-asc-surface border border-asc-border rounded-asc text-center">
-              <Lock size={20} className="text-asc-muted mx-auto mb-2" />
-              <p className="text-asc-muted">This thread has been locked. No new replies allowed.</p>
-            </div>
-          )}
+          {/* Replies Section - Client Component */}
+          <ThreadReplies
+            threadId={thread.id}
+            posts={thread.posts}
+            isLocked={thread.locked}
+            isAuthenticated={!!session}
+          />
         </div>
       </div>
     </div>
-  )
-}
-
-function ReplyCard({ post, index }: { post: any; index: number }) {
-  const timeAgo = getTimeAgo(new Date(post.createdAt))
-
-  return (
-    <article className="bg-asc-surface border border-asc-border rounded-asc">
-      {/* Reply Header */}
-      <div className="flex items-center justify-between p-4 border-b border-asc-border">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-asc-text text-asc-bg rounded-full flex items-center justify-center font-semibold text-sm">
-            {post.author.username[0].toUpperCase()}
-          </div>
-          <div>
-            <Link
-              href={`/app/u/${post.author.username}`}
-              className="font-medium text-asc-text hover:underline text-sm"
-            >
-              {post.author.username}
-            </Link>
-            <span className="text-xs text-asc-muted ml-2">
-              {timeAgo}
-            </span>
-          </div>
-        </div>
-        <span className="text-xs text-asc-muted">#{index}</span>
-      </div>
-
-      {/* Reply Content */}
-      <div className="p-4">
-        <p className="text-asc-secondary text-sm leading-relaxed">{post.content}</p>
-      </div>
-
-      {/* Reply Footer */}
-      <div className="flex items-center gap-4 px-4 pb-3">
-        <button className="flex items-center gap-1 text-xs text-asc-muted hover:text-asc-text transition-colors">
-          <Heart size={14} />
-          <span>{post._count.reactions}</span>
-        </button>
-        <button className="text-xs text-asc-muted hover:text-asc-text transition-colors">
-          Quote
-        </button>
-        <button className="text-xs text-asc-muted hover:text-red-400 transition-colors">
-          Report
-        </button>
-      </div>
-    </article>
   )
 }
 

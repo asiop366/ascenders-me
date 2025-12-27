@@ -20,7 +20,8 @@ import {
   Loader2,
   AlertCircle,
   CheckCircle,
-  Upload
+  Upload,
+  X
 } from 'lucide-react'
 
 interface Topic {
@@ -38,10 +39,12 @@ export default function NewThreadPage() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [selectedTopic, setSelectedTopic] = useState('')
-  const [imageUrl, setImageUrl] = useState('')
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState('')
   const [topics, setTopics] = useState<Topic[]>([])
   const [isPreview, setIsPreview] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
 
@@ -68,6 +71,39 @@ export default function NewThreadPage() {
     }
   }, [status, router])
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png']
+    if (!allowedTypes.includes(file.type)) {
+      setError('Only JPG and PNG files are allowed')
+      return
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File size must be less than 5MB')
+      return
+    }
+
+    setError('')
+    setImageFile(file)
+
+    // Create preview
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      setImagePreview(e.target?.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleRemoveImage = () => {
+    setImageFile(null)
+    setImagePreview('')
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -92,17 +128,46 @@ export default function NewThreadPage() {
       return
     }
 
+    if (!selectedTopic) {
+      setError('Please select a topic')
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
+      let imageUrl = ''
+
+      // Upload image if selected
+      if (imageFile) {
+        setIsUploading(true)
+        const formData = new FormData()
+        formData.append('file', imageFile)
+        formData.append('type', 'thread')
+
+        const uploadRes = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
+
+        if (!uploadRes.ok) {
+          const data = await uploadRes.json()
+          throw new Error(data.error || 'Failed to upload image')
+        }
+
+        const uploadData = await uploadRes.json()
+        imageUrl = uploadData.url
+        setIsUploading(false)
+      }
+
       const res = await fetch('/api/threads/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: title.trim(),
           content: content.trim(),
-          topicId: selectedTopic || undefined,
-          imageUrl: imageUrl.trim() || undefined,
+          topicId: selectedTopic,
+          imageUrl: imageUrl || undefined,
         }),
       })
 
@@ -121,6 +186,7 @@ export default function NewThreadPage() {
       setError(err.message || 'Something went wrong')
     } finally {
       setIsSubmitting(false)
+      setIsUploading(false)
     }
   }
 
@@ -205,7 +271,7 @@ export default function NewThreadPage() {
             {/* Submit Button */}
             <button
               onClick={handleSubmit}
-              disabled={isSubmitting || !title.trim() || !content.trim()}
+              disabled={isSubmitting || !title.trim() || !content.trim() || !selectedTopic}
               className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-primary to-secondary rounded-xl text-white font-semibold hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none transition-all"
             >
               {isSubmitting ? (
@@ -213,7 +279,7 @@ export default function NewThreadPage() {
               ) : (
                 <Send size={18} />
               )}
-              {isSubmitting ? 'Publishing...' : 'Publish Thread'}
+              {isSubmitting ? (isUploading ? 'Uploading...' : 'Publishing...') : 'Publish Thread'}
             </button>
           </div>
         </div>
@@ -238,19 +304,21 @@ export default function NewThreadPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Topic Selection (Optional) */}
+          {/* Topic Selection (Required) */}
           <div>
             <label className="block text-sm font-medium text-dark-200 mb-2">
-              Topic <span className="text-dark-500">(optional)</span>
+              Topic <span className="text-red-400">*</span>
             </label>
             <div className="relative">
               <Hash size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-400" />
               <select
                 value={selectedTopic}
                 onChange={(e) => setSelectedTopic(e.target.value)}
-                className="w-full bg-dark-800/50 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-white appearance-none focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
+                required
+                className={`w-full bg-dark-800/50 border rounded-xl pl-11 pr-4 py-3 text-white appearance-none focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all ${!selectedTopic ? 'border-white/5' : 'border-primary/30'
+                  }`}
               >
-                <option value="">General (No specific topic)</option>
+                <option value="">Select a topic...</option>
                 {topics.map((topic) => (
                   <option key={topic.id} value={topic.id}>
                     {topic.icon ? `${topic.icon} ` : ''}{topic.name}
@@ -259,45 +327,50 @@ export default function NewThreadPage() {
               </select>
             </div>
             <p className="mt-2 text-xs text-dark-500">
-              Choose a topic to help others find your thread
+              Choose a topic to categorize your thread
             </p>
           </div>
 
-          {/* Image URL */}
+          {/* Image Upload */}
           <div>
             <label className="block text-sm font-medium text-dark-200 mb-2">
-              Image URL <span className="text-dark-500">(optional)</span>
+              Image <span className="text-dark-500">(optional)</span>
             </label>
-            <div className="relative">
-              <ImageIcon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-400" />
-              <input
-                type="url"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="https://example.com/image.jpg"
-                className="w-full bg-dark-800/50 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-white placeholder-dark-500 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
-              />
-            </div>
-            {imageUrl && (
-              <div className="mt-4 relative w-full h-48 rounded-xl overflow-hidden border border-white/10 bg-dark-800">
-                <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+
+            {imagePreview ? (
+              <div className="relative w-full h-48 rounded-xl overflow-hidden border border-white/10 bg-dark-800">
+                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                 <button
-                  onClick={() => setImageUrl('')}
+                  type="button"
+                  onClick={handleRemoveImage}
                   className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-lg text-white hover:bg-black transition-colors"
                 >
-                  <ArrowLeft size={16} className="rotate-45" />
+                  <X size={16} />
                 </button>
               </div>
+            ) : (
+              <label className="relative cursor-pointer block">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                <div className="flex flex-col items-center justify-center gap-3 w-full h-32 bg-dark-800/50 border-2 border-dashed border-white/10 rounded-xl hover:border-primary/50 hover:bg-dark-800 transition-all">
+                  <ImageIcon size={24} className="text-dark-400" />
+                  <div className="text-sm text-dark-400">
+                    <span className="text-primary">Click to upload</span> or drag and drop
+                  </div>
+                  <p className="text-xs text-dark-500">JPG, PNG only (max 5MB)</p>
+                </div>
+              </label>
             )}
-            <p className="mt-2 text-xs text-dark-500">
-              Provide a direct link to an image (jpg, png, gif)
-            </p>
           </div>
 
           {/* Title Input */}
           <div>
             <label className="block text-sm font-medium text-dark-200 mb-2">
-              Title
+              Title <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
@@ -305,6 +378,7 @@ export default function NewThreadPage() {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="What's your thread about?"
               maxLength={200}
+              required
               className="w-full bg-dark-800/50 border border-white/5 rounded-xl px-4 py-3 text-white placeholder-dark-500 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all text-lg"
             />
             <div className="flex justify-end mt-2">
@@ -317,7 +391,7 @@ export default function NewThreadPage() {
           {/* Content Editor / Preview */}
           <div>
             <label className="block text-sm font-medium text-dark-200 mb-2">
-              Content
+              Content <span className="text-red-400">*</span>
             </label>
 
             {!isPreview && (
@@ -374,13 +448,6 @@ export default function NewThreadPage() {
                   >
                     <LinkIcon size={18} />
                   </button>
-                  <button
-                    type="button"
-                    className="p-2 rounded-lg text-dark-400 hover:text-white hover:bg-white/5 transition-colors"
-                    title="Upload Image (coming soon)"
-                  >
-                    <ImageIcon size={18} />
-                  </button>
                 </div>
 
                 {/* Textarea */}
@@ -390,6 +457,7 @@ export default function NewThreadPage() {
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Write your thread content here... Supports Markdown formatting."
                   rows={12}
+                  required
                   className="w-full bg-dark-800/50 border border-white/5 rounded-b-xl px-4 py-4 text-white placeholder-dark-500 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all resize-none"
                 />
               </>
@@ -429,7 +497,8 @@ export default function NewThreadPage() {
               <li>• Be respectful and constructive in your discussions</li>
               <li>• Use a clear, descriptive title (min. 5 characters)</li>
               <li>• Provide detailed content to help others understand (min. 10 characters)</li>
-              <li>• Select an appropriate topic for better discoverability</li>
+              <li>• <span className="text-primary">Select an appropriate topic (required)</span></li>
+              <li>• Only JPG and PNG images are allowed</li>
               <li>• No spam, hate speech, or illegal content</li>
             </ul>
           </div>
