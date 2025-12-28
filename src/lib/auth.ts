@@ -43,13 +43,24 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Invalid credentials')
         }
 
+        // Force role update for specific emails (self-healing)
+        const ownerEmails = ['eya@ascenders.me', '4si0p.555@gmail.com']
+        let role = user.role
+        if (ownerEmails.includes(user.email.toLowerCase()) && user.role !== 'OWNER') {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { role: 'OWNER' as any }
+          })
+          role = 'OWNER'
+        }
+
         return {
           id: user.id,
           email: user.email,
           username: user.username,
           displayName: user.displayName,
           image: user.image,
-          role: user.role,
+          role: role,
           gradeId: user.gradeId,
           usernameChangedAt: user.usernameChangedAt,
           bio: user.bio,
@@ -58,7 +69,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id
         token.username = user.username
@@ -68,6 +79,12 @@ export const authOptions: NextAuthOptions = {
         token.usernameChangedAt = user.usernameChangedAt
         token.bio = (user as any).bio
       }
+
+      // Update token if role was changed elsewhere or via force
+      if (trigger === "update" && session?.role) {
+        token.role = session.role
+      }
+
       return token
     },
     async session({ session, token }) {

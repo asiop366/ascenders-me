@@ -107,7 +107,25 @@ export function ProfileContent({
                             <h1 className="text-2xl font-display font-bold text-white mb-1">
                                 {user.displayName || user.username}
                             </h1>
-                            <p className="text-dark-400 font-medium mb-6">@{user.username}</p>
+                            <p className="text-dark-400 font-medium mb-2">@{user.username}</p>
+
+                            <div className="flex flex-wrap justify-center gap-2 mb-6">
+                                {user.role === 'OWNER' && (
+                                    <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.25)] font-bold px-3 py-1">
+                                        Owner
+                                    </Badge>
+                                )}
+                                {user.role === 'ADMIN' && (
+                                    <Badge size="sm" className="bg-red-500/20 text-red-400 border-red-500/40 font-bold px-3 py-1">
+                                        Admin
+                                    </Badge>
+                                )}
+                                {user.role === 'MODERATOR' && (
+                                    <Badge size="sm" className="bg-blue-500/20 text-blue-400 border-blue-500/40 font-bold px-3 py-1">
+                                        Moderator
+                                    </Badge>
+                                )}
+                            </div>
 
                             {!isOwnProfile && session?.user && (
                                 <div className="flex flex-col gap-3 mb-6">
