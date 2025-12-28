@@ -140,7 +140,7 @@ export default async function HomePage() {
                               />
                               <div className="min-w-0">
                                 <Link
-                                  href={`/app/threads/${lastThread.id}`}
+                                  href={`/app/thread/${lastThread.id}`}
                                   className="text-[11px] font-bold text-white hover:text-primary transition-colors line-clamp-1 block"
                                 >
                                   {lastThread.title}

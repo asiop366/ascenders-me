@@ -3,11 +3,38 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+// Enums for PostgreSQL
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+  OWNER
+}
 
+enum ChannelType {
+  PUBLIC
+  PRIVATE
+  ANNOUNCEMENT
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  CANCELED
+  EXPIRED
+  PAST_DUE
+}
 
 model Account {
   id                 String   @id @default(cuid())
@@ -15,12 +42,12 @@ model Account {
   type               String
   provider           String
   providerAccountId  String
-  refresh_token      String?
-  access_token       String?
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
   expires_at         Int?
   token_type         String?
   scope              String?
-  id_token           String?
+  id_token           String?  @db.Text
   session_state      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -55,11 +82,11 @@ model User {
   usernameChangedAt  DateTime?
   hashedPassword     String?
   image              String? 
-  bio                String? 
-  role               String   @default("USER")
+  bio                String?  @db.Text
+  role               Role     @default(USER)
   gradeId            String?
   isBanned           Boolean  @default(false)
-  banReason          String?
+  banReason          String?  @db.Text
   emailVerified      DateTime?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
@@ -94,7 +121,7 @@ model Grade {
   icon        String?
   priceMonthly Int     @default(0)
   position    Int      @default(0)
-  permissions String    @default("{}")
+  permissions String   @default("{}") @db.Text
 
   users       User[]
   subscriptions Subscription[]
@@ -121,7 +148,7 @@ model Topic {
   categoryId      String?
   name            String         @unique
   slug            String         @unique
-  description     String?  
+  description     String?        @db.Text
   icon            String?
   color           String?
   position        Int            @default(0)
@@ -135,13 +162,12 @@ model Topic {
   @@index([categoryId])
 }
 
-
 model Thread {
   id         String   @id @default(cuid())
   topicId    String?
   authorId   String
   title      String
-  content    String  
+  content    String   @db.Text
   imageUrl   String? 
   locked     Boolean  @default(false)
   pinned     Boolean  @default(false)
@@ -167,7 +193,7 @@ model Post {
   threadId   String
   authorId   String
   parentId   String?
-  content    String  
+  content    String   @db.Text
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -207,8 +233,8 @@ model Report {
   userId     String
   threadId   String?
   postId     String?
-  reason     String  
-  status     String   @default("PENDING")
+  reason     String   @db.Text
+  status     ReportStatus @default(PENDING)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -225,7 +251,7 @@ model Subscription {
   id         String   @id @default(cuid())
   userId     String
   gradeId    String
-  status     String   @default("PENDING")
+  status     SubscriptionStatus @default(PENDING)
   startDate  DateTime @default(now())
   endDate    DateTime?
   createdAt  DateTime @default(now())
@@ -258,7 +284,7 @@ model Notification {
   userId     String
   type       String
   title      String
-  message    String  
+  message    String   @db.Text
   read       Boolean  @default(false)
   link       String?
   createdAt  DateTime @default(now())
@@ -288,7 +314,7 @@ model Message {
   id         String   @id @default(cuid())
   senderId   String
   receiverId String
-  content    String  
+  content    String   @db.Text
   read       Boolean  @default(false)
   createdAt  DateTime @default(now())
 
@@ -303,10 +329,10 @@ model Message {
 model Badge {
   id          String   @id @default(cuid())
   name        String   @unique
-  description String?
+  description String?  @db.Text
   icon        String
   color       String
-  condition   String
+  condition   String   @db.Text
   createdAt   DateTime @default(now())
 
   users       UserBadge[]

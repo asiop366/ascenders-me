@@ -34,7 +34,7 @@ export async function NewThreadsSidebar() {
                             />
                             <div className="flex-1 min-w-0">
                                 <Link
-                                    href={`/app/threads/${thread.id}`}
+                                    href={`/app/thread/${thread.id}`}
                                     className="text-sm font-semibold text-white group-hover:text-primary transition-colors line-clamp-1 block"
                                 >
                                     {thread.title}

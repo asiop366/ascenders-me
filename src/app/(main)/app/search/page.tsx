@@ -200,7 +200,7 @@ function ThreadResult({ thread, query }: { thread: any; query: string }) {
   const timeAgo = getTimeAgo(new Date(thread.createdAt))
 
   return (
-    <Link href={`/app/threads/${thread.id}`} className="card block">
+    <Link href={`/app/thread/${thread.id}`} className="card block">
       <h3 className="font-semibold text-asc-text mb-1 hover:underline">
         <HighlightText text={thread.title} query={query} />
       </h3>
