@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { ThreadReplies } from '@/components/thread/thread-replies'
+import { ThreadActions } from '@/components/thread/thread-actions'
 
 export default async function ThreadPage({
   params,
@@ -128,17 +129,13 @@ export default async function ThreadPage({
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-2">
-              <button className="btn-ghost p-2" title="Share">
-                <Share2 size={18} />
-              </button>
-              <button className="btn-ghost p-2" title="Bookmark">
-                <Bookmark size={18} />
-              </button>
-              <button className="btn-ghost p-2" title="More">
-                <MoreHorizontal size={18} />
-              </button>
-            </div>
+            <ThreadActions
+              threadId={thread.id}
+              threadTitle={thread.title}
+              authorId={thread.authorId}
+              currentUserId={session?.user?.id}
+              currentUserRole={session?.user?.role}
+            />
           </div>
         </div>
       </header>
@@ -183,9 +180,13 @@ export default async function ThreadPage({
                   </div>
                 </div>
               </div>
-              <button className="p-2 hover:bg-asc-hover rounded-asc transition-colors">
-                <MoreHorizontal size={16} className="text-asc-muted" />
-              </button>
+              <ThreadActions
+                threadId={thread.id}
+                threadTitle={thread.title}
+                authorId={thread.authorId}
+                currentUserId={session?.user?.id}
+                currentUserRole={session?.user?.role}
+              />
             </div>
 
             {/* Thread Image */}
@@ -235,6 +236,8 @@ export default async function ThreadPage({
             posts={thread.posts}
             isLocked={thread.locked}
             isAuthenticated={!!session}
+            userId={session?.user?.id}
+            userRole={session?.user?.role}
           />
         </div>
       </div>

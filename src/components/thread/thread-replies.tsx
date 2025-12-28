@@ -2,7 +2,9 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Heart, MessageSquare, Flag, Clock, CornerDownRight, ChevronDown, ChevronUp, Lock } from 'lucide-react'
+import { Heart, MessageSquare, Flag, Clock, CornerDownRight, ChevronDown, ChevronUp, Lock, Trash2, MoreHorizontal } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { canModerate } from '@/lib/permissions'
 import { Badge } from '@/components/ui/badge'
 import { ReplyComposer } from './reply-composer'
 
@@ -28,9 +30,11 @@ interface ThreadRepliesProps {
     posts: Post[]
     isLocked: boolean
     isAuthenticated: boolean
+    userId?: string
+    userRole?: string
 }
 
-export function ThreadReplies({ threadId, posts, isLocked, isAuthenticated }: ThreadRepliesProps) {
+export function ThreadReplies({ threadId, posts, isLocked, isAuthenticated, userId, userRole }: ThreadRepliesProps) {
     return (
         <div className="mb-6">
             <h2 className="text-lg font-semibold text-asc-text mb-4 flex items-center gap-2">
@@ -54,6 +58,8 @@ export function ThreadReplies({ threadId, posts, isLocked, isAuthenticated }: Th
                             threadId={threadId}
                             isLocked={isLocked}
                             isAuthenticated={isAuthenticated}
+                            userId={userId}
+                            userRole={userRole}
                             depth={0}
                         />
                     ))}
@@ -83,10 +89,14 @@ interface ReplyCardProps {
     threadId: string
     isLocked: boolean
     isAuthenticated: boolean
+    userId?: string
+    userRole?: string
     depth: number
 }
 
-function ReplyCard({ post, index, threadId, isLocked, isAuthenticated, depth }: ReplyCardProps) {
+function ReplyCard({ post, index, threadId, isLocked, isAuthenticated, userId, userRole, depth }: ReplyCardProps) {
+    const router = useRouter()
+    const [isDeleting, setIsDeleting] = useState(false)
     const [showReplyForm, setShowReplyForm] = useState(false)
     const [showReplies, setShowReplies] = useState(true)
     const timeAgo = getTimeAgo(new Date(post.createdAt))
@@ -130,7 +140,31 @@ function ReplyCard({ post, index, threadId, isLocked, isAuthenticated, depth }: 
                             </div>
                         </div>
                     </div>
-                    {depth === 0 && <span className="text-xs text-asc-muted">#{index}</span>}
+                    <div className="flex items-center gap-2">
+                        {depth === 0 && <span className="text-xs text-asc-muted">#{index}</span>}
+                        {(userId === post.author.id || canModerate(userRole)) && (
+                            <button
+                                onClick={async () => {
+                                    if (!confirm('Delete this reply?')) return
+                                    setIsDeleting(true)
+                                    try {
+                                        const res = await fetch(`/api/posts/${post.id}`, { method: 'DELETE' })
+                                        if (res.ok) router.refresh()
+                                        else alert('Failed to delete reply')
+                                    } catch (err) {
+                                        alert('Error deleting reply')
+                                    } finally {
+                                        setIsDeleting(false)
+                                    }
+                                }}
+                                disabled={isDeleting}
+                                className="p-1.5 text-asc-muted hover:text-red-500 hover:bg-red-500/10 rounded transition-colors disabled:opacity-50"
+                                title="Delete reply"
+                            >
+                                <Trash2 size={14} />
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 {/* Reply Content */}
@@ -197,6 +231,8 @@ function ReplyCard({ post, index, threadId, isLocked, isAuthenticated, depth }: 
                             threadId={threadId}
                             isLocked={isLocked}
                             isAuthenticated={isAuthenticated}
+                            userId={userId}
+                            userRole={userRole}
                             depth={depth + 1}
                         />
                     ))}
