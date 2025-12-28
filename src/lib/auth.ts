@@ -43,6 +43,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Invalid credentials')
         }
 
+        if (user.isBanned) {
+          throw new Error('This account has been banned: ' + (user.banReason || 'No reason provided'))
+        }
+
         // Force role update for specific emails (self-healing)
         const ownerEmails = ['eya@ascenders.me', '4si0p.555@gmail.com']
         let role = user.role

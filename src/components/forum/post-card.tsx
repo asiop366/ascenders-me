@@ -56,28 +56,30 @@ export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
               >
                 {post.author.username}
               </Link>
-              {post.author.grade && (
-                <Badge
-                  size="sm"
-                  style={{
-                    backgroundColor: post.author.grade.color + '20',
-                    color: post.author.grade.color,
-                    border: `1px solid ${post.author.grade.color}40`
-                  }}
-                >
-                  {post.author.grade.name}
-                </Badge>
-              )}
-              {post.author.role === 'OWNER' && (
-                <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50 shadow-[0_0_10px_rgba(234,179,8,0.2)]">
-                  Owner
-                </Badge>
-              )}
-              {post.author.role === 'ADMIN' && (
-                <Badge size="sm" className="bg-red-500/20 text-red-400 border-red-500/40">
-                  Admin
-                </Badge>
-              )}
+              <div className="flex items-center gap-1.5 ml-1">
+                {post.author.grade && (
+                  <Badge
+                    size="sm"
+                    style={{
+                      backgroundColor: post.author.grade.color + '20',
+                      color: post.author.grade.color,
+                      border: `1px solid ${post.author.grade.color}40`
+                    }}
+                  >
+                    {post.author.grade.name}
+                  </Badge>
+                )}
+                {post.author.role === 'OWNER' && (
+                  <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50 shadow-[0_0_10px_rgba(234,179,8,0.2)]">
+                    Owner
+                  </Badge>
+                )}
+                {post.author.role === 'ADMIN' && (
+                  <Badge size="sm" className="bg-red-500/20 text-red-400 border-red-500/40">
+                    Admin
+                  </Badge>
+                )}
+              </div>
               <span className="text-sm text-dark-300">
                 {getTimeAgo(new Date(post.createdAt))}
               </span>

@@ -42,19 +42,26 @@ export async function POST(request: NextRequest) {
 
         // Determine upload directory
         const uploadType = type === 'avatar' ? 'avatars' : 'threads'
-        const publicDir = path.join(process.cwd(), 'public')
-        const uploadDir = path.join(publicDir, 'uploads', uploadType)
+
+        // Use path.resolve(process.cwd(), 'public') to get absolute path
+        const publicDir = path.resolve(process.cwd(), 'public')
+        const uploadsDir = path.join(publicDir, 'uploads')
+        const uploadDir = path.join(uploadsDir, uploadType)
 
         // Ensure directories exist
         try {
-            if (!existsSync(path.join(publicDir, 'uploads'))) {
-                await mkdir(path.join(publicDir, 'uploads'), { recursive: true })
+            if (!existsSync(publicDir)) {
+                console.error('Public directory does not exist:', publicDir)
+            }
+            if (!existsSync(uploadsDir)) {
+                await mkdir(uploadsDir, { recursive: true })
             }
             if (!existsSync(uploadDir)) {
                 await mkdir(uploadDir, { recursive: true })
             }
         } catch (err) {
             console.error('Failed to create directories:', err)
+            // Continue anyway, writeFile might still work if dir exists but existsSync failed (race condition)
         }
 
         // Generate unique filename

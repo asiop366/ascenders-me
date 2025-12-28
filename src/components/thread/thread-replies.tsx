@@ -107,25 +107,25 @@ function ReplyCard({ post, index, threadId, isLocked, isAuthenticated, depth }: 
                             )}
                         </div>
                         <div>
-                            <Link
-                                href={`/app/u/${post.author.username}`}
-                                className="font-medium text-asc-text hover:underline text-sm"
-                            >
-                                {post.author.username}
-                            </Link>
-                            <div className="flex items-center gap-2 ml-2">
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <Link
+                                    href={`/app/u/${post.author.username}`}
+                                    className="font-bold text-white hover:text-primary transition-colors text-sm"
+                                >
+                                    {post.author.username}
+                                </Link>
                                 {post.author.role === 'OWNER' && (
-                                    <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50 shadow-[0_0_10px_rgba(234,179,8,0.2)]">
+                                    <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50 shadow-[0_0_10px_rgba(234,179,8,0.2)] font-bold">
                                         Owner
                                     </Badge>
                                 )}
                                 {post.author.role === 'ADMIN' && (
-                                    <Badge size="sm" className="bg-red-500/20 text-red-400 border-red-500/40">
+                                    <Badge size="sm" className="bg-red-500/20 text-red-400 border-red-500/40 font-bold">
                                         Admin
                                     </Badge>
                                 )}
-                                <span className="text-xs text-asc-muted">
-                                    {timeAgo}
+                                <span className="text-xs text-dark-500">
+                                    • {timeAgo}
                                 </span>
                             </div>
                         </div>

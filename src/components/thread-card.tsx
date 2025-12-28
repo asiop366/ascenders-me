@@ -172,38 +172,40 @@ export function ThreadCard({ thread, currentUserId }: ThreadCardProps) {
                 {thread.author.displayName || thread.author.username}
               </Link>
 
-              {thread.author.grade && (
-                <Badge
-                  size="sm"
-                  style={{
-                    backgroundColor: thread.author.grade.color + '20',
-                    color: thread.author.grade.color,
-                    borderColor: thread.author.grade.color + '40'
-                  }}
-                >
-                  {thread.author.grade.name}
-                </Badge>
-              )}
+              <div className="flex items-center gap-1.5 ml-1 flex-wrap">
+                {thread.author.grade && (
+                  <Badge
+                    size="sm"
+                    style={{
+                      backgroundColor: thread.author.grade.color + '20',
+                      color: thread.author.grade.color,
+                      borderColor: thread.author.grade.color + '40'
+                    }}
+                  >
+                    {thread.author.grade.name}
+                  </Badge>
+                )}
 
-              {thread.author.role === 'OWNER' && (
-                <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50 shadow-[0_0_10px_rgba(234,179,8,0.2)]">
-                  Owner
-                </Badge>
-              )}
+                {thread.author.role === 'OWNER' && (
+                  <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50 shadow-[0_0_10px_rgba(234,179,8,0.2)] font-bold">
+                    Owner
+                  </Badge>
+                )}
 
-              {thread.author.role === 'ADMIN' && (
-                <Badge size="sm" className="bg-red-500/20 text-red-400 border-red-500/40">
-                  Admin
-                </Badge>
-              )}
+                {thread.author.role === 'ADMIN' && (
+                  <Badge size="sm" className="bg-red-500/20 text-red-400 border-red-500/40 font-bold">
+                    Admin
+                  </Badge>
+                )}
 
-              {thread.author.role === 'MODERATOR' && (
-                <Badge size="sm" className="bg-blue-500/20 text-blue-400 border-blue-500/40">
-                  Mod
-                </Badge>
-              )}
+                {thread.author.role === 'MODERATOR' && (
+                  <Badge size="sm" className="bg-blue-500/20 text-blue-400 border-blue-500/40 font-bold">
+                    Mod
+                  </Badge>
+                )}
+              </div>
 
-              <span className="text-sm text-dark-400">
+              <span className="text-sm text-dark-400 whitespace-nowrap">
                 • {getTimeAgo(new Date(thread.createdAt))}
               </span>
             </div>

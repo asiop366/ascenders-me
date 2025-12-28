@@ -3,38 +3,11 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-// Enums restored for PostgreSQL
-enum Role {
-  USER
-  MODERATOR
-  ADMIN
-  OWNER
-}
 
-enum ChannelType {
-  PUBLIC
-  PRIVATE
-  ANNOUNCEMENT
-}
-
-enum ReportStatus {
-  PENDING
-  REVIEWED
-  RESOLVED
-  DISMISSED
-}
-
-enum SubscriptionStatus {
-  PENDING
-  ACTIVE
-  CANCELED
-  EXPIRED
-  PAST_DUE
-}
 
 model Account {
   id                 String   @id @default(cuid())
@@ -83,8 +56,10 @@ model User {
   hashedPassword     String?
   image              String? 
   bio                String? 
-  role               Role     @default(USER)
+  role               String   @default("USER")
   gradeId            String?
+  isBanned           Boolean  @default(false)
+  banReason          String?
   emailVerified      DateTime?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
@@ -146,7 +121,7 @@ model Topic {
   categoryId      String?
   name            String         @unique
   slug            String         @unique
-  description     String?        @db.Text
+  description     String?  
   icon            String?
   color           String?
   position        Int            @default(0)
@@ -166,7 +141,7 @@ model Thread {
   topicId    String?
   authorId   String
   title      String
-  content    String   @db.Text
+  content    String  
   imageUrl   String? 
   locked     Boolean  @default(false)
   pinned     Boolean  @default(false)
@@ -192,7 +167,7 @@ model Post {
   threadId   String
   authorId   String
   parentId   String?
-  content    String   @db.Text
+  content    String  
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -233,7 +208,7 @@ model Report {
   threadId   String?
   postId     String?
   reason     String  
-  status     ReportStatus @default(PENDING)
+  status     String   @default("PENDING")
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -250,7 +225,7 @@ model Subscription {
   id         String   @id @default(cuid())
   userId     String
   gradeId    String
-  status     SubscriptionStatus @default(PENDING)
+  status     String   @default("PENDING")
   startDate  DateTime @default(now())
   endDate    DateTime?
   createdAt  DateTime @default(now())
@@ -283,7 +258,7 @@ model Notification {
   userId     String
   type       String
   title      String
-  message    String         @db.Text
+  message    String  
   read       Boolean  @default(false)
   link       String?
   createdAt  DateTime @default(now())
@@ -313,7 +288,7 @@ model Message {
   id         String   @id @default(cuid())
   senderId   String
   receiverId String
-  content    String         @db.Text
+  content    String  
   read       Boolean  @default(false)
   createdAt  DateTime @default(now())
 

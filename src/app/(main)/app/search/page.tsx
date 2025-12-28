@@ -33,8 +33,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       threads = await prisma.thread.findMany({
         where: {
           OR: [
-            { title: { contains: query, mode: 'insensitive' } },
-            { content: { contains: query, mode: 'insensitive' } },
+            { title: { contains: query } },
+            { content: { contains: query } },
           ],
         },
         include: {
@@ -52,8 +52,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       users = await prisma.user.findMany({
         where: {
           OR: [
-            { username: { contains: query, mode: 'insensitive' } },
-            { bio: { contains: query, mode: 'insensitive' } },
+            { username: { contains: query } },
+            { bio: { contains: query } },
           ],
         },
         select: {
