@@ -21,7 +21,9 @@ export const authOptions: NextAuthOptions = {
         rememberMe: { label: 'Remember Me', type: 'checkbox' },
       },
       async authorize(credentials) {
+        console.log('Login attempt for:', credentials?.email)
         if (!credentials?.email || !credentials?.password) {
+          console.log('Missing email or password')
           throw new Error('Invalid credentials')
         }
 
@@ -30,7 +32,13 @@ export const authOptions: NextAuthOptions = {
           include: { grade: true },
         })
 
-        if (!user || !user.hashedPassword) {
+        if (!user) {
+          console.log('User not found in DB:', credentials.email)
+          throw new Error('Invalid credentials')
+        }
+
+        if (!user.hashedPassword) {
+          console.log('User has no hashedPassword:', user.email)
           throw new Error('Invalid credentials')
         }
 
@@ -40,17 +48,22 @@ export const authOptions: NextAuthOptions = {
         )
 
         if (!isPasswordValid) {
+          console.log('Invalid password for user:', user.email)
           throw new Error('Invalid credentials')
         }
 
         if (user.isBanned) {
+          console.log('User is banned:', user.email)
           throw new Error('This account has been banned: ' + (user.banReason || 'No reason provided'))
         }
+
+        console.log('Successful login for:', user.email)
 
         // Force role update for specific emails (self-healing)
         const ownerEmails = ['eya@ascenders.me', '4si0p.555@gmail.com']
         let role = user.role
         if (ownerEmails.includes(user.email.toLowerCase()) && user.role !== 'OWNER') {
+          console.log('Forcing role update to OWNER for:', user.email)
           await prisma.user.update({
             where: { id: user.id },
             data: { role: 'OWNER' as any }
