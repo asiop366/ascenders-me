@@ -62,7 +62,14 @@ export async function POST(request: NextRequest) {
     })
 
     // Send verification email
-    await sendVerificationEmail(email, verificationToken, username)
+    console.log(`Attempting to send verification email to ${email} from ${process.env.FROM_EMAIL || 'default'}`);
+    const emailResult = await sendVerificationEmail(email, verificationToken, username)
+    console.log('Email sending result:', JSON.stringify(emailResult, null, 2));
+
+    if (!emailResult.success) {
+      console.error('Failed to send verification email:', emailResult.error);
+      // NOTE: We do not block registration but we should know about it
+    }
 
     return NextResponse.json(
       {

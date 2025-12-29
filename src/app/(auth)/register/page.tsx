@@ -20,6 +20,9 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
+  // Success state
+  const [isSuccess, setIsSuccess] = useState(false)
+
   const passwordStrong = formData.password.length >= 6
   const passwordsMatch = formData.password === formData.confirmPassword && formData.confirmPassword.length > 0
 
@@ -57,14 +60,65 @@ export default function RegisterPage() {
         throw new Error(data.error || 'Registration failed')
       }
 
-      // Show success message and redirect to login
-      alert(data.message || 'Registration successful! Please check your email to verify your account.')
-      router.push('/login')
+      // Show success state
+      setIsSuccess(true)
     } catch (err: any) {
       setError(err.message || 'Something went wrong')
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen bg-dark-950 flex items-center justify-center p-6 relative overflow-hidden">
+        {/* Background Effects */}
+        <div className="fixed inset-0 bg-gradient-mesh opacity-30 pointer-events-none" />
+
+        <div className="w-full max-w-md relative z-10">
+          <div className="text-center mb-10">
+            <Link href="/" className="inline-flex items-center gap-4 mb-8 group">
+              <div className="relative">
+                <Image
+                  src="/logo.png"
+                  alt="Ascenders Logo"
+                  width={56}
+                  height={56}
+                  className="rounded-2xl group-hover:scale-110 transition-transform"
+                />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-primary opacity-0 group-hover:opacity-30 blur-xl transition-opacity" />
+              </div>
+              <span className="text-3xl font-display font-bold text-white">Ascenders</span>
+            </Link>
+          </div>
+
+          <div className="glass rounded-2xl p-8 shadow-card text-center space-y-6">
+            <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Mail className="text-green-500" size={32} />
+            </div>
+
+            <h2 className="text-2xl font-bold text-white">Check your email</h2>
+
+            <p className="text-dark-200">
+              We've sent a verification link to <span className="text-white font-medium">{formData.email}</span>.
+            </p>
+
+            <div className="bg-dark-900/50 rounded-lg p-4 text-sm text-dark-300">
+              <p>Click the link in the email to activate your account and start your journey.</p>
+            </div>
+
+            <div className="pt-4 border-t border-white/5">
+              <p className="text-sm text-dark-300 mb-4">
+                Did not receive the email? Check your spam folder or
+              </p>
+              <Link href="/login" className="btn-primary w-full flex items-center justify-center">
+                Return to Login
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

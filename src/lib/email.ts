@@ -6,26 +6,60 @@ let resendInstance: Resend | null = null
 function getResend() {
   if (!resendInstance) {
     const apiKey = process.env.RESEND_API_KEY
+    if (!apiKey) {
+      console.warn('[EMAIL] WARNING: RESEND_API_KEY is missing. Email sending will fail.')
+    }
     resendInstance = new Resend(apiKey || 're_dummy_key_for_build')
   }
   return resendInstance
 }
 
 async function sendEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
+  // Default to Resend's testing domain if no custom FROM_EMAIL is set
+  // This is critical for free tier users who haven't verified a domain yet
   const from = process.env.FROM_EMAIL || 'Ascenders <onboarding@resend.dev>'
   const resend = getResend()
 
+  console.log(`[EMAIL] Attempting to send email to '${to}' from '${from}'`)
+
   try {
     const data = await resend.emails.send({ from, to, subject, html })
+    console.log('[EMAIL] Sent successfully:', data)
     return { success: true, data }
   } catch (error) {
-    console.error('Email sending failed:', error)
-    throw error
+    console.error('[EMAIL] FAILED to send email:', error)
+    // Common Resend error: "showing sending to unverified email"
+    return { success: false, error }
   }
 }
 
 export async function sendVerificationEmail(email: string, token: string, username: string) {
-  const verificationUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${token}`
+  // Determine base URL with priority: NEXTAUTH_URL > VERCEL_URL > APP_URL > localhost
+  let baseUrl = process.env.NEXTAUTH_URL
+
+  if (!baseUrl) {
+    if (process.env.VERCEL_URL) {
+      baseUrl = `https://${process.env.VERCEL_URL}`
+    } else if (process.env.APP_URL) {
+      baseUrl = process.env.APP_URL
+    } else {
+      baseUrl = 'http://localhost:3000'
+    }
+  }
+
+  // Remove trailing slash if present
+  if (baseUrl.endsWith('/')) {
+    baseUrl = baseUrl.slice(0, -1)
+  }
+
+  const verificationUrl = `${baseUrl}/verify-email?token=${token}`
+
+  // CRITICAL: Log this for the user so they can manually verify if email fails
+  console.log('=================================================================')
+  console.log('🔐 VERIFICATION LINK (Copy this if email does not arrive):')
+  console.log(verificationUrl)
+  console.log('=================================================================')
+
   const subject = '✨ Verify your Ascenders account'
   const html = `
         <!DOCTYPE html>
