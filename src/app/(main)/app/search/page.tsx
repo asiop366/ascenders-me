@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Search, Loader2, MessageSquare, Heart, User, TrendingUp, Clock } from 'lucide-react'
+import { Search, Loader2, MessageSquare, Heart, User } from 'lucide-react'
 import { Avatar } from '@/components/ui/avatar'
 import { getTimeAgo } from '@/lib/utils'
 
-export default function SearchPage() {
+function SearchContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get('q') || ''
@@ -211,5 +211,17 @@ function HighlightText({ text, query }: { text: string; query: string }) {
         )
       )}
     </>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-dark-950 flex items-center justify-center">
+        <Loader2 className="text-primary animate-spin" size={48} />
+      </div>
+    }>
+      <SearchContent />
+    </Suspense>
   )
 }
