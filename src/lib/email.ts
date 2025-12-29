@@ -1,29 +1,33 @@
 import { Resend } from 'resend'
 
-// Global resend instance, initialized only when needed to avoid errors during build time
+// Global resend instance
 let resendInstance: Resend | null = null
 
 function getResend() {
   if (!resendInstance) {
     const apiKey = process.env.RESEND_API_KEY
-    if (!apiKey && process.env.NODE_ENV === 'production') {
-      console.warn('RESEND_API_KEY is missing in production environment')
-    }
     resendInstance = new Resend(apiKey || 're_dummy_key_for_build')
   }
   return resendInstance
 }
 
-export async function sendVerificationEmail(email: string, token: string, username: string) {
-  const verificationUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${token}`
+async function sendEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
+  const from = process.env.FROM_EMAIL || 'Ascenders <onboarding@resend.dev>'
   const resend = getResend()
 
   try {
-    await resend.emails.send({
-      from: process.env.FROM_EMAIL || 'Ascenders <onboarding@resend.dev>',
-      to: email,
-      subject: '✨ Verify your Ascenders account',
-      html: `
+    const data = await resend.emails.send({ from, to, subject, html })
+    return { success: true, data }
+  } catch (error) {
+    console.error('Email sending failed:', error)
+    throw error
+  }
+}
+
+export async function sendVerificationEmail(email: string, token: string, username: string) {
+  const verificationUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${token}`
+  const subject = '✨ Verify your Ascenders account'
+  const html = `
         <!DOCTYPE html>
         <html>
           <head>
@@ -47,39 +51,32 @@ export async function sendVerificationEmail(email: string, token: string, userna
               </div>
               <div class="content">
                 <p>Hey <span class="highlight">${username}</span>,</p>
-                <p>Welcome to the premier looksmaxxing community! We're excited to have you join us on your transformation journey.</p>
                 <p>To get started, please verify your email address by clicking the button below:</p>
                 <div style="text-align: center;">
                   <a href="${verificationUrl}" class="button">Verify Email Address</a>
                 </div>
                 <p style="font-size: 14px; color: #888;">If the button doesn't work, copy and paste this link into your browser:</p>
                 <p style="font-size: 12px; color: #666; word-break: break-all;">${verificationUrl}</p>
-                <p style="margin-top: 30px;">This link will expire in 24 hours for security reasons.</p>
               </div>
               <div class="footer">
-                <p>If you didn't create an account on Ascenders, you can safely ignore this email.</p>
                 <p>© ${new Date().getFullYear()} Ascenders. All rights reserved.</p>
               </div>
             </div>
           </body>
         </html>
-      `,
-    })
+    `
+
+  try {
+    await sendEmail({ to: email, subject, html })
     return { success: true }
   } catch (error) {
-    console.error('Failed to send verification email:', error)
     return { success: false, error }
   }
 }
 
 export async function sendWelcomeEmail(email: string, username: string) {
-  const resend = getResend()
-  try {
-    await resend.emails.send({
-      from: process.env.FROM_EMAIL || 'Ascenders <onboarding@resend.dev>',
-      to: email,
-      subject: '🎉 Welcome to Ascenders - Your Journey Begins!',
-      html: `
+  const subject = '🎉 Welcome to Ascenders - Your Journey Begins!'
+  const html = `
         <!DOCTYPE html>
         <html>
           <head>
@@ -101,15 +98,7 @@ export async function sendWelcomeEmail(email: string, username: string) {
               </div>
               <div class="content">
                 <p>Welcome aboard, <span class="highlight">${username}</span>!</p>
-                <p>Your email has been verified and your account is now active. You're ready to start your transformation journey with the Ascenders community.</p>
-                <p><strong>Here's what you can do next:</strong></p>
-                <ul style="line-height: 2; color: #e5e5e5;">
-                  <li>📝 Create your first thread and share your journey</li>
-                  <li>👥 Connect with like-minded individuals</li>
-                  <li>💬 Join discussions in various topics</li>
-                  <li>⭐ React and engage with the community</li>
-                </ul>
-                <p style="margin-top: 30px;">Let's ascend together! 🚀</p>
+                <p>Your email has been verified and your account is now active. Let's ascend together! 🚀</p>
               </div>
               <div class="footer">
                 <p>© ${new Date().getFullYear()} Ascenders. All rights reserved.</p>
@@ -117,11 +106,11 @@ export async function sendWelcomeEmail(email: string, username: string) {
             </div>
           </body>
         </html>
-      `,
-    })
+    `
+  try {
+    await sendEmail({ to: email, subject, html })
     return { success: true }
   } catch (error) {
-    console.error('Failed to send welcome email:', error)
     return { success: false, error }
   }
 }
