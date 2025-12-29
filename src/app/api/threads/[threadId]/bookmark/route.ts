@@ -4,36 +4,33 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export async function POST(
-    req: NextRequest,
-    { params }: { params: { id: string } }
+    request: NextRequest,
+    { params }: { params: { threadId: string } }
 ) {
     try {
         const session = await getServerSession(authOptions)
 
-        if (!session?.user?.id) {
+        if (!session?.user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        const threadId = params.id
+        const { threadId } = params
 
         // Check if already bookmarked
-        const existingBookmark = await prisma.bookmark.findUnique({
+        const existing = await prisma.bookmark.findUnique({
             where: {
                 userId_threadId: {
                     userId: session.user.id,
-                    threadId,
+                    threadId: threadId,
                 },
             },
         })
 
-        if (existingBookmark) {
+        if (existing) {
             // Remove bookmark
             await prisma.bookmark.delete({
                 where: {
-                    userId_threadId: {
-                        userId: session.user.id,
-                        threadId,
-                    },
+                    id: existing.id,
                 },
             })
             return NextResponse.json({ bookmarked: false })
@@ -42,13 +39,13 @@ export async function POST(
             await prisma.bookmark.create({
                 data: {
                     userId: session.user.id,
-                    threadId,
+                    threadId: threadId,
                 },
             })
             return NextResponse.json({ bookmarked: true })
         }
-    } catch (error) {
+    } catch (error: any) {
         console.error('Bookmark error:', error)
-        return NextResponse.json({ error: 'Failed to toggle bookmark' }, { status: 500 })
+        return NextResponse.json({ error: error.message }, { status: 500 })
     }
 }

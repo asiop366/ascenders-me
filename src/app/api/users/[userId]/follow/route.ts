@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma'
 
 export async function POST(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: { userId: string } }
 ) {
     try {
         const session = await getServerSession(authOptions)
@@ -14,7 +14,7 @@ export async function POST(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        const targetUserId = params.id
+        const targetUserId = params.userId
 
         if (targetUserId === session.user.id) {
             return NextResponse.json({ error: 'Cannot follow yourself' }, { status: 400 })

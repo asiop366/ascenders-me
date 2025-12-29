@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { CheckCircle, XCircle, Alert Triangle, Clock, Loader2, Trash2 } from 'lucide-react'
+import { CheckCircle, XCircle, AlertTriangle, Clock, Loader2, Trash2 } from 'lucide-react'
 import { toast } from '@/components/ui/toast'
 
 interface ReportCardProps {

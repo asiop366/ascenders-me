@@ -6,7 +6,7 @@ import { canAdmin } from '@/lib/permissions'
 
 export async function PATCH(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: { reportId: string } }
 ) {
     try {
         const session = await getServerSession(authOptions)
@@ -22,7 +22,7 @@ export async function PATCH(
         }
 
         const report = await prisma.report.update({
-            where: { id: params.id },
+            where: { id: params.reportId },
             data: { status },
         })
 
@@ -35,7 +35,7 @@ export async function PATCH(
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: { reportId: string } }
 ) {
     try {
         const session = await getServerSession(authOptions)
@@ -45,7 +45,7 @@ export async function DELETE(
         }
 
         const report = await prisma.report.findUnique({
-            where: { id: params.id },
+            where: { id: params.reportId },
             select: { threadId: true, postId: true },
         })
 
@@ -62,7 +62,7 @@ export async function DELETE(
 
         // Mark report as resolved
         await prisma.report.update({
-            where: { id: params.id },
+            where: { id: params.reportId },
             data: { status: 'RESOLVED' },
         })
 

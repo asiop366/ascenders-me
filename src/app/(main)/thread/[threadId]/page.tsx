@@ -8,17 +8,17 @@ import { getTimeAgo } from '@/lib/utils'
 import { ReplyForm } from '@/components/reply-form'
 import { PostCard } from '@/components/forum/post-card'  // ✅ CORRIGÉ
 
-export default async function ThreadPage({ params }: { params: { id: string } }) {
+export default async function ThreadPage({ params }: { params: { threadId: string } }) {
   const session = await getServerSession(authOptions)
 
   // Incrémenter les vues
   await prisma.thread.update({
-    where: { id: params.id },
+    where: { id: params.threadId },
     data: { viewCount: { increment: 1 } },
   }).catch(() => { })
 
   const thread = await prisma.thread.findUnique({
-    where: { id: params.id },
+    where: { id: params.threadId },
     include: {
       author: {
         include: {
