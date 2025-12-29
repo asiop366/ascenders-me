@@ -105,11 +105,11 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id as string
         session.user.username = token.username as string
-        session.user.displayName = token.displayName as string | undefined
+        session.user.displayName = (token.displayName as string | null) ?? null
         session.user.role = token.role as string
         session.user.gradeId = (token.gradeId as string | null) ?? null
-        session.user.usernameChangedAt = token.usernameChangedAt as Date | undefined
-        session.user.bio = token.bio as string | undefined
+        session.user.usernameChangedAt = (token.usernameChangedAt as Date | null) ?? null
+        session.user.bio = (token.bio as string | null) ?? null
       }
       return session
     },

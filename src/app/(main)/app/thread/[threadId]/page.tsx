@@ -68,7 +68,7 @@ export default async function ThreadPage({
         select: { posts: true, reactions: true }
       }
     }
-  })
+  }) as any
 
   if (!thread) {
     notFound()

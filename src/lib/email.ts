@@ -1,16 +1,29 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Global resend instance, initialized only when needed to avoid errors during build time
+let resendInstance: Resend | null = null
+
+function getResend() {
+  if (!resendInstance) {
+    const apiKey = process.env.RESEND_API_KEY
+    if (!apiKey && process.env.NODE_ENV === 'production') {
+      console.warn('RESEND_API_KEY is missing in production environment')
+    }
+    resendInstance = new Resend(apiKey || 're_dummy_key_for_build')
+  }
+  return resendInstance
+}
 
 export async function sendVerificationEmail(email: string, token: string, username: string) {
-    const verificationUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${token}`
+  const verificationUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${token}`
+  const resend = getResend()
 
-    try {
-        await resend.emails.send({
-            from: process.env.FROM_EMAIL || 'Ascenders <onboarding@resend.dev>',
-            to: email,
-            subject: '✨ Verify your Ascenders account',
-            html: `
+  try {
+    await resend.emails.send({
+      from: process.env.FROM_EMAIL || 'Ascenders <onboarding@resend.dev>',
+      to: email,
+      subject: '✨ Verify your Ascenders account',
+      html: `
         <!DOCTYPE html>
         <html>
           <head>
@@ -51,21 +64,22 @@ export async function sendVerificationEmail(email: string, token: string, userna
           </body>
         </html>
       `,
-        })
-        return { success: true }
-    } catch (error) {
-        console.error('Failed to send verification email:', error)
-        return { success: false, error }
-    }
+    })
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to send verification email:', error)
+    return { success: false, error }
+  }
 }
 
 export async function sendWelcomeEmail(email: string, username: string) {
-    try {
-        await resend.emails.send({
-            from: process.env.FROM_EMAIL || 'Ascenders <onboarding@resend.dev>',
-            to: email,
-            subject: '🎉 Welcome to Ascenders - Your Journey Begins!',
-            html: `
+  const resend = getResend()
+  try {
+    await resend.emails.send({
+      from: process.env.FROM_EMAIL || 'Ascenders <onboarding@resend.dev>',
+      to: email,
+      subject: '🎉 Welcome to Ascenders - Your Journey Begins!',
+      html: `
         <!DOCTYPE html>
         <html>
           <head>
@@ -104,10 +118,10 @@ export async function sendWelcomeEmail(email: string, username: string) {
           </body>
         </html>
       `,
-        })
-        return { success: true }
-    } catch (error) {
-        console.error('Failed to send welcome email:', error)
-        return { success: false, error }
-    }
+    })
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to send welcome email:', error)
+    return { success: false, error }
+  }
 }

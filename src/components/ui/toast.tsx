@@ -83,3 +83,7 @@ export function ToastContainer() {
     </div>
   )
 }
+
+export function ToastProvider({ children }: { children: React.ReactNode }) {
+  return <>{children}</>
+}
