@@ -1,23 +1,23 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export async function POST(
-    req: Request,
+    req: NextRequest,
     { params }: { params: { id: string } }
 ) {
     try {
         const session = await getServerSession(authOptions)
 
-        if (!session?.user) {
-            return new NextResponse('Unauthorized', { status: 401 })
+        if (!session?.user?.id) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
         const targetUserId = params.id
 
-        if (session.user.id === targetUserId) {
-            return new NextResponse('You cannot follow yourself', { status: 400 })
+        if (targetUserId === session.user.id) {
+            return NextResponse.json({ error: 'Cannot follow yourself' }, { status: 400 })
         }
 
         // Check if already following
@@ -40,16 +40,6 @@ export async function POST(
                     },
                 },
             })
-
-            // Delete notification
-            await prisma.notification.deleteMany({
-                where: {
-                    userId: targetUserId,
-                    type: 'follow',
-                    link: `/app/u/${session.user.username}`,
-                }
-            })
-
             return NextResponse.json({ following: false })
         } else {
             // Follow
@@ -59,22 +49,10 @@ export async function POST(
                     followingId: targetUserId,
                 },
             })
-
-            // Create notification
-            await prisma.notification.create({
-                data: {
-                    userId: targetUserId,
-                    type: 'follow',
-                    title: 'Nouveau follower',
-                    message: `${session.user.displayName || session.user.username} vous suit désormais`,
-                    link: `/app/u/${session.user.username}`,
-                }
-            })
-
             return NextResponse.json({ following: true })
         }
     } catch (error) {
-        console.error('Error in follow/unfollow:', error)
-        return new NextResponse('Internal Error', { status: 500 })
+        console.error('Follow error:', error)
+        return NextResponse.json({ error: 'Failed to toggle follow' }, { status: 500 })
     }
 }

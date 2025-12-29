@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { StatsSidebar } from '@/components/forum/stats-sidebar'
 import { NewThreadsSidebar } from '@/components/forum/new-threads-sidebar'
+import { TrendingSidebar } from '@/components/forum/trending-sidebar'
 import { Avatar } from '@/components/ui/avatar'
 import { getTimeAgo } from '@/lib/utils'
 
@@ -62,14 +63,21 @@ export default async function HomePage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="relative">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                const query = (e.target as any).querySelector('input').value
+                if (query) window.location.href = `/app/search?q=${encodeURIComponent(query)}`
+              }}
+              className="relative"
+            >
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400" />
               <input
                 type="text"
                 placeholder="Search..."
                 className="bg-dark-800/50 border border-white/5 rounded-xl pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:border-primary/50 w-48 lg:w-64 transition-all"
               />
-            </div>
+            </form>
             <Link
               href="/app/new-thread"
               className="px-4 py-2 bg-primary rounded-xl text-white text-sm font-bold hover:shadow-glow transition-all flex items-center gap-2"
@@ -166,6 +174,7 @@ export default async function HomePage() {
 
           {/* Sidebars */}
           <div className="lg:col-span-4 space-y-8">
+            <TrendingSidebar />
             <NewThreadsSidebar />
             <StatsSidebar />
           </div>

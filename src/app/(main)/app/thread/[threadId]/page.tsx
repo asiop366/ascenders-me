@@ -18,6 +18,8 @@ import {
   Clock
 } from 'lucide-react'
 import { ReplyComposer } from '@/components/thread/reply-composer'
+import { ThreadActions } from '@/components/thread/thread-actions'
+import { DeletePostButton } from '@/components/thread/delete-post-button'
 
 export default async function ThreadPage({
   params,
@@ -25,6 +27,13 @@ export default async function ThreadPage({
   params: { threadId: string }
 }) {
   const session = await getServerSession(authOptions)
+
+  const currentUser = session?.user?.id
+    ? await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { role: true, id: true }
+    })
+    : null
 
   const thread = await prisma.thread.findUnique({
     where: { id: params.threadId },
@@ -119,9 +128,11 @@ export default async function ThreadPage({
               <button className="btn-ghost p-2" title="Bookmark">
                 <Bookmark size={18} />
               </button>
-              <button className="btn-ghost p-2" title="More">
-                <MoreHorizontal size={18} />
-              </button>
+
+              <ThreadActions
+                threadId={thread.id}
+                canDelete={!!currentUser && ['MODERATOR', 'ADMIN', 'OWNER'].includes(currentUser.role)}
+              />
             </div>
           </div>
         </div>
@@ -205,8 +216,13 @@ export default async function ThreadPage({
               </div>
             ) : (
               <div className="space-y-4">
-                {thread.posts.map((post, index) => (
-                  <ReplyCard key={post.id} post={post} index={index + 1} />
+                {thread.posts.map((post: any, index: number) => (
+                  <ReplyCard
+                    key={post.id}
+                    post={post}
+                    index={index + 1}
+                    canDelete={!!currentUser && (['MODERATOR', 'ADMIN', 'OWNER'].includes(currentUser.role) || currentUser.id === post.author.id)}
+                  />
                 ))}
               </div>
             )}
@@ -229,7 +245,7 @@ export default async function ThreadPage({
   )
 }
 
-function ReplyCard({ post, index }: { post: any; index: number }) {
+function ReplyCard({ post, index, canDelete }: { post: any; index: number; canDelete: boolean }) {
   const timeAgo = getTimeAgo(new Date(post.createdAt))
 
   return (
@@ -272,6 +288,9 @@ function ReplyCard({ post, index }: { post: any; index: number }) {
         <button className="text-xs text-asc-muted hover:text-red-400 transition-colors">
           Report
         </button>
+        {canDelete && (
+          <DeletePostButton postId={post.id} />
+        )}
       </div>
     </article>
   )

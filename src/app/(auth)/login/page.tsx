@@ -169,6 +169,7 @@ export default function LoginPage() {
           </Link>
           <h1 className="text-4xl font-display font-bold text-white mb-3">{t('auth.login_title')}</h1>
           <p className="text-dark-200">{t('auth.login_subtitle')}</p>
+          <div id="deployment-canary" className="hidden">v1.0.1-auth-debug</div>
         </div>
 
         {/* Form Card */}

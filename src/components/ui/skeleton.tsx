@@ -1,28 +1,25 @@
-import { cn } from '@/lib/utils'
-
-interface SkeletonProps {
-  className?: string
-}
-
-export function Skeleton({ className }: SkeletonProps) {
-  return (
-    <div className={cn('skeleton', className)} />
-  )
-}
-
 export function ThreadCardSkeleton() {
   return (
-    <div className="card">
-      <div className="flex gap-4">
-        <Skeleton className="w-10 h-10 rounded-full" />
-        <div className="flex-1 space-y-3">
-          <Skeleton className="h-5 w-3/4" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-1/2" />
-          <div className="flex gap-4">
-            <Skeleton className="h-3 w-16" />
-            <Skeleton className="h-3 w-20" />
-            <Skeleton className="h-3 w-12" />
+    <div className="glass rounded-xl border border-white/5 p-6 animate-pulse">
+      <div className="flex items-start gap-4">
+        {/* Avatar */}
+        <div className="w-12 h-12 rounded-full bg-dark-700" />
+
+        <div className="flex-1 min-w-0 space-y-3">
+          {/* Title */}
+          <div className="h-6 bg-dark-700 rounded-lg w-3/4" />
+
+          {/* Content */}
+          <div className="space-y-2">
+            <div className="h-4 bg-dark-700 rounded w-full" />
+            <div className="h-4 bg-dark-700 rounded w-5/6" />
+          </div>
+
+          {/* Meta */}
+          <div className="flex items-center gap-4 pt-2">
+            <div className="h-3 bg-dark-700 rounded w-20" />
+            <div className="h-3 bg-dark-700 rounded w-16" />
+            <div className="h-3 bg-dark-700 rounded w-24" />
           </div>
         </div>
       </div>
@@ -30,53 +27,67 @@ export function ThreadCardSkeleton() {
   )
 }
 
-export function ThreadListSkeleton({ count = 5 }: { count?: number }) {
+export function ProfileCardSkeleton() {
   return (
-    <div className="space-y-3">
-      {Array.from({ length: count }).map((_, i) => (
-        <ThreadCardSkeleton key={i} />
-      ))}
-    </div>
-  )
-}
-
-export function ProfileSkeleton() {
-  return (
-    <div className="bg-asc-surface border border-asc-border rounded-asc-lg p-6">
-      <div className="flex items-start gap-4 mb-6">
-        <Skeleton className="w-20 h-20 rounded-full" />
+    <div className="glass rounded-xl p-6 animate-pulse">
+      <div className="flex items-center gap-4 mb-6">
+        <div className="w-20 h-20 rounded-full bg-dark-700" />
         <div className="flex-1 space-y-2">
-          <Skeleton className="h-6 w-32" />
-          <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-3 w-40" />
+          <div className="h-6 bg-dark-700 rounded w-32" />
+          <div className="h-4 bg-dark-700 rounded w-24" />
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-4">
-        <Skeleton className="h-20 rounded-asc" />
-        <Skeleton className="h-20 rounded-asc" />
-        <Skeleton className="h-20 rounded-asc" />
+
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="text-center space-y-2">
+            <div className="h-8 bg-dark-700 rounded w-full" />
+            <div className="h-3 bg-dark-700 rounded w-16 mx-auto" />
+          </div>
+        ))}
+      </div>
+
+      <div className="h-10 bg-dark-700 rounded" />
+    </div>
+  )
+}
+
+export function DashboardCardSkeleton() {
+  return (
+    <div className="glass rounded-xl p-6 animate-pulse">
+      <div className="flex items-center justify-between mb-4">
+        <div className="w-12 h-12 rounded-xl bg-dark-700" />
+      </div>
+      <div className="h-8 bg-dark-700 rounded w-24 mb-2" />
+      <div className="h-4 bg-dark-700 rounded w-32" />
+    </div>
+  )
+}
+
+export function MessageCardSkeleton() {
+  return (
+    <div className="glass rounded-xl p-4 animate-pulse">
+      <div className="flex items-center gap-4">
+        <div className="w-14 h-14 rounded-full bg-dark-700" />
+        <div className="flex-1 space-y-2">
+          <div className="h-5 bg-dark-700 rounded w-32" />
+          <div className="h-4 bg-dark-700 rounded w-48" />
+        </div>
+        <div className="h-3 bg-dark-700 rounded w-16" />
       </div>
     </div>
   )
 }
 
-export function SidebarSkeleton() {
+export function SmallCardSkeleton() {
   return (
-    <div className="p-3 space-y-2">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Skeleton key={i} className="h-10 w-full rounded-asc" />
-      ))}
-    </div>
-  )
-}
-
-export function NotificationSkeleton() {
-  return (
-    <div className="card flex items-start gap-4">
-      <Skeleton className="w-10 h-10 rounded-full" />
-      <div className="flex-1 space-y-2">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-3 w-24" />
+    <div className="glass rounded-xl p-4 animate-pulse">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-dark-700" />
+        <div className="flex-1 space-y-2">
+          <div className="h-4 bg-dark-700 rounded w-full" />
+          <div className="h-3 bg-dark-700 rounded w-24" />
+        </div>
       </div>
     </div>
   )

@@ -26,6 +26,30 @@ export function ProfileContent({
     const [followersCount, setFollowersCount] = useState(user._count.followers)
     const [isPending, setIsPending] = useState(false)
 
+    const updateRole = async (newRole: string) => {
+        if (!confirm(`Are you sure you want to change this user's role to ${newRole}?`)) return
+
+        setIsPending(true)
+        try {
+            const res = await fetch(`/api/admin/users/${user.id}/role`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role: newRole })
+            })
+
+            if (res.ok) {
+                router.refresh()
+            } else {
+                alert('Failed to update role')
+            }
+        } catch (error) {
+            console.error('Update role error:', error)
+            alert('An error occurred while updating the role')
+        } finally {
+            setIsPending(false)
+        }
+    }
+
     const toggleFollow = async () => {
         if (!session?.user) {
             router.push('/login')
@@ -79,7 +103,7 @@ export function ProfileContent({
                     {/* Sidebar Info */}
                     <div className="w-full md:w-80 flex-shrink-0">
                         <div className="glass rounded-3xl p-8 border border-white/5 text-center shadow-2xl relative overflow-hidden group">
-                            <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
+                            <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 transition-opacity duration-500 pointer-events-none" />
 
                             <div className="mb-6 relative inline-block">
                                 <Avatar
@@ -129,6 +153,41 @@ export function ProfileContent({
                                         <Mail size={18} />
                                         {language === 'fr' ? 'Message' : 'Message'}
                                     </Link>
+
+                                    {session.user.role === 'OWNER' && !['OWNER'].includes(user.role) && (
+                                        <div className="pt-4 border-t border-white/5 mt-2">
+                                            <p className="text-[10px] text-dark-500 uppercase tracking-widest font-bold mb-3 text-left px-2">Role Management</p>
+                                            <div className="flex flex-col gap-2">
+                                                <button
+                                                    onClick={() => updateRole('ADMIN')}
+                                                    className={cn(
+                                                        "w-full py-2 text-xs font-bold rounded-xl border transition-all",
+                                                        user.role === 'ADMIN' ? "bg-primary/20 border-primary text-primary" : "bg-dark-800 border-white/5 text-dark-400 hover:border-primary/50"
+                                                    )}
+                                                >
+                                                    Set as ADMIN
+                                                </button>
+                                                <button
+                                                    onClick={() => updateRole('MODERATOR')}
+                                                    className={cn(
+                                                        "w-full py-2 text-xs font-bold rounded-xl border transition-all",
+                                                        user.role === 'MODERATOR' ? "bg-primary/20 border-primary text-primary" : "bg-dark-800 border-white/5 text-dark-400 hover:border-primary/50"
+                                                    )}
+                                                >
+                                                    Set as MODERATOR
+                                                </button>
+                                                <button
+                                                    onClick={() => updateRole('USER')}
+                                                    className={cn(
+                                                        "w-full py-2 text-xs font-bold rounded-xl border transition-all",
+                                                        user.role === 'USER' ? "bg-primary/20 border-primary text-primary" : "bg-dark-800 border-white/5 text-dark-400 hover:border-primary/50"
+                                                    )}
+                                                >
+                                                    Set as USER
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
@@ -144,11 +203,11 @@ export function ProfileContent({
                             </div>
 
                             <div className="grid grid-cols-2 gap-4 pt-6">
-                                <Link href={`/u/${user.username}/followers`} className="hover:bg-white/5 p-2 rounded-xl transition-all">
+                                <Link href={`/app/u/${user.username}/followers`} className="hover:bg-white/5 p-2 rounded-xl transition-all">
                                     <div className="text-xl font-bold text-white">{followersCount}</div>
                                     <div className="text-[10px] text-dark-500 uppercase tracking-wider font-bold">Followers</div>
                                 </Link>
-                                <Link href={`/u/${user.username}/following`} className="hover:bg-white/5 p-2 rounded-xl transition-all">
+                                <Link href={`/app/u/${user.username}/following`} className="hover:bg-white/5 p-2 rounded-xl transition-all">
                                     <div className="text-xl font-bold text-white">{user._count.following}</div>
                                     <div className="text-[10px] text-dark-500 uppercase tracking-wider font-bold">Following</div>
                                 </Link>

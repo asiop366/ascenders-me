@@ -7,46 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  MODERATOR
-  ADMIN
-}
-
-enum ChannelType {
-  FORUM
-  CHAT
-}
-
-enum ReportStatus {
-  PENDING
-  REVIEWED
-  RESOLVED
-  DISMISSED
-}
-
-enum SubscriptionStatus {
-  ACTIVE
-  CANCELED
-  PAST_DUE
-  PENDING
-}
-
 model Account {
-  id                 String   @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? @db.Text
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -71,35 +45,34 @@ model VerificationToken {
 }
 
 model User {
-  id                 String   @id @default(cuid())
-  email              String   @unique
-  username           String   @unique
-  displayName        String?
-  usernameChangedAt  DateTime?
-  hashedPassword     String?
-  image              String?  @db.Text
-  bio                String?  @db.Text
-  role               Role     @default(USER)
-  gradeId            String?
-  emailVerified      DateTime?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-
-  grade            Grade?         @relation(fields: [gradeId], references: [id])
-  threads          Thread[]
-  posts            Post[]
-  reactions        Reaction[]
-  reports          Report[]
-  subscriptions    Subscription[]
-  accounts         Account[]
-  sessions         Session[]
-  bookmarks        Bookmark[]
-  notifications    Notification[]
-  followers        Follow[]       @relation("Following")
-  following        Follow[]       @relation("Followers")
-  sentMessages     Message[]      @relation("SentMessages")
-  receivedMessages Message[]      @relation("ReceivedMessages")
-  badges           UserBadge[]
+  id                String         @id @default(cuid())
+  email             String         @unique
+  username          String         @unique
+  hashedPassword    String?
+  image             String?
+  bio               String?
+  role              Role           @default(USER)
+  gradeId           String?
+  emailVerified     DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  displayName       String?
+  usernameChangedAt DateTime?
+  accounts          Account[]
+  bookmarks         Bookmark[]
+  following         Follow[]       @relation("Followers")
+  followers         Follow[]       @relation("Following")
+  receivedMessages  Message[]      @relation("ReceivedMessages")
+  sentMessages      Message[]      @relation("SentMessages")
+  notifications     Notification[]
+  posts             Post[]
+  reactions         Reaction[]
+  reports           Report[]
+  sessions          Session[]
+  subscriptions     Subscription[]
+  threads           Thread[]
+  grade             Grade?         @relation(fields: [gradeId], references: [id])
+  badges            UserBadge[]
 
   @@index([username])
   @@index([gradeId])
@@ -108,17 +81,16 @@ model User {
 }
 
 model Grade {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  slug        String   @unique
-  color       String
-  icon        String?
-  priceMonthly Int     @default(0)
-  position    Int      @default(0)
-  permissions Json    @default("{}")
-
-  users       User[]
+  id            String         @id @default(cuid())
+  name          String         @unique
+  slug          String         @unique
+  color         String
+  icon          String?
+  priceMonthly  Int            @default(0)
+  position      Int            @default(0)
+  permissions   Json           @default("{}")
   subscriptions Subscription[]
+  users         User[]
 
   @@index([position])
   @@index([slug])
@@ -138,44 +110,41 @@ model ForumCategory {
 }
 
 model Topic {
-  id              String         @id @default(cuid())
-  categoryId      String?
-  name            String         @unique
-  slug            String         @unique
-  description     String?        @db.Text
-  icon            String?
-  color           String?
-  position        Int            @default(0)
-  createdAt       DateTime       @default(now())
-  
-  category        ForumCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  threads         Thread[]
+  id          String         @id @default(cuid())
+  name        String         @unique
+  slug        String         @unique
+  icon        String?
+  color       String?
+  position    Int            @default(0)
+  createdAt   DateTime       @default(now())
+  categoryId  String?
+  description String?
+  threads     Thread[]
+  category    ForumCategory? @relation(fields: [categoryId], references: [id])
 
   @@index([slug])
   @@index([position])
   @@index([categoryId])
 }
 
-
 model Thread {
-  id         String   @id @default(cuid())
-  topicId    String?
-  authorId   String
-  title      String
-  content    String   @db.Text
-  imageUrl   String?  @db.Text
-  locked     Boolean  @default(false)
-  pinned     Boolean  @default(false)
-  viewCount  Int      @default(0)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  topic      Topic?    @relation(fields: [topicId], references: [id], onDelete: SetNull)
-  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  posts      Post[]
-  reactions  Reaction[]
-  reports    Report[]
-  bookmarks  Bookmark[]
+  id        String     @id @default(cuid())
+  authorId  String
+  title     String
+  content   String
+  pinned    Boolean    @default(false)
+  locked    Boolean    @default(false)
+  viewCount Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  imageUrl  String?
+  topicId   String?
+  bookmarks Bookmark[]
+  posts     Post[]
+  reactions Reaction[]
+  reports   Report[]
+  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  topic     Topic?     @relation(fields: [topicId], references: [id])
 
   @@index([topicId])
   @@index([authorId])
@@ -184,17 +153,16 @@ model Thread {
 }
 
 model Post {
-  id         String   @id @default(cuid())
-  threadId   String
-  authorId   String
-  content    String   @db.Text
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  thread     Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
-  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  reactions  Reaction[]
-  reports    Report[]
+  id        String     @id @default(cuid())
+  threadId  String
+  authorId  String
+  content   String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  thread    Thread     @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  reactions Reaction[]
+  reports   Report[]
 
   @@index([threadId])
   @@index([authorId])
@@ -202,16 +170,15 @@ model Post {
 }
 
 model Reaction {
-  id         String   @id @default(cuid())
-  userId     String
-  threadId   String?
-  postId     String?
-  type       String   @default("like")
-  createdAt  DateTime @default(now())
-
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  thread     Thread?  @relation(fields: [threadId], references: [id], onDelete: Cascade)
-  post       Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  userId    String
+  threadId  String?
+  postId    String?
+  type      String   @default("like")
+  createdAt DateTime @default(now())
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  thread    Thread?  @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, threadId, postId, type])
   @@index([userId])
@@ -220,18 +187,17 @@ model Reaction {
 }
 
 model Report {
-  id         String   @id @default(cuid())
-  userId     String
-  threadId   String?
-  postId     String?
-  reason     String   @db.Text
-  status     ReportStatus @default(PENDING)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  thread     Thread?  @relation(fields: [threadId], references: [id], onDelete: Cascade)
-  post       Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  id        String       @id @default(cuid())
+  postId    String?
+  reason    String
+  status    ReportStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  threadId  String?
+  userId    String
+  post      Post?        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  thread    Thread?      @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([status])
@@ -239,17 +205,16 @@ model Report {
 }
 
 model Subscription {
-  id         String   @id @default(cuid())
-  userId     String
-  gradeId    String
-  status     SubscriptionStatus @default(PENDING)
-  startDate  DateTime @default(now())
-  endDate    DateTime?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  grade      Grade    @relation(fields: [gradeId], references: [id])
+  id        String             @id @default(cuid())
+  userId    String
+  gradeId   String
+  status    SubscriptionStatus @default(PENDING)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  endDate   DateTime?
+  startDate DateTime           @default(now())
+  grade     Grade              @relation(fields: [gradeId], references: [id])
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([gradeId])
@@ -257,13 +222,12 @@ model Subscription {
 }
 
 model Bookmark {
-  id         String   @id @default(cuid())
-  userId     String
-  threadId   String
-  createdAt  DateTime @default(now())
-
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  thread     Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  userId    String
+  threadId  String
+  createdAt DateTime @default(now())
+  thread    Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, threadId])
   @@index([userId])
@@ -271,16 +235,15 @@ model Bookmark {
 }
 
 model Notification {
-  id         String   @id @default(cuid())
-  userId     String
-  type       String
-  title      String
-  message    String   @db.Text
-  read       Boolean  @default(false)
-  link       String?
-  createdAt  DateTime @default(now())
-
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([read])
@@ -292,7 +255,6 @@ model Follow {
   followerId  String
   followingId String
   createdAt   DateTime @default(now())
-
   follower    User     @relation("Followers", fields: [followerId], references: [id], onDelete: Cascade)
   following   User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
 
@@ -305,12 +267,11 @@ model Message {
   id         String   @id @default(cuid())
   senderId   String
   receiverId String
-  content    String   @db.Text
+  content    String
   read       Boolean  @default(false)
   createdAt  DateTime @default(now())
-
-  sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
   receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([senderId])
   @@index([receiverId])
@@ -318,27 +279,51 @@ model Message {
 }
 
 model Badge {
-  id          String   @id @default(cuid())
-  name        String   @unique
+  id          String      @id @default(cuid())
+  name        String      @unique
   description String?
   icon        String
   color       String
   condition   String
-  createdAt   DateTime @default(now())
-
+  createdAt   DateTime    @default(now())
   users       UserBadge[]
 }
 
 model UserBadge {
-  id        String   @id @default(cuid())
-  userId    String
-  badgeId   String
-  earnedAt  DateTime @default(now())
-
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  id       String   @id @default(cuid())
+  userId   String
+  badgeId  String
+  earnedAt DateTime @default(now())
+  badge    Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, badgeId])
   @@index([userId])
   @@index([badgeId])
+}
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+  OWNER
+}
+
+enum ChannelType {
+  FORUM
+  CHAT
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  PENDING
 }

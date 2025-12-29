@@ -21,40 +21,71 @@ export const authOptions: NextAuthOptions = {
         rememberMe: { label: 'Remember Me', type: 'checkbox' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        const email = credentials?.email?.toLowerCase().trim()
+        console.log(`[AUTH-DEBUG] Login attempt for: '${email}'`)
+
+        if (!email || !credentials?.password) {
+          console.log('[AUTH-DEBUG] Missing credentials')
           throw new Error('Invalid credentials')
         }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email.toLowerCase() },
+          where: { email },
           include: { grade: true },
         })
 
-        if (!user || !user.hashedPassword) {
-          throw new Error('Invalid credentials')
+        const authorizeUser = async (u: any, p: string) => {
+          if (!u.hashedPassword) {
+            console.log('[AUTH-DEBUG] No password set')
+            throw new Error('Invalid credentials')
+          }
+
+          const isPasswordValid = await bcrypt.compare(p, u.hashedPassword)
+          console.log(`[AUTH-DEBUG] Pwd match result for ${u.email}: ${isPasswordValid}`)
+
+          if (!isPasswordValid) {
+            console.log('[AUTH-DEBUG] Password mismatch')
+            throw new Error('Invalid credentials')
+          }
+
+          // Check if email is verified
+          if (!u.emailVerified) {
+            console.log('[AUTH-DEBUG] Email not verified')
+            throw new Error('Please verify your email before logging in. Check your inbox for the verification link.')
+          }
+
+          return {
+            id: u.id,
+            email: u.email,
+            username: u.username,
+            displayName: u.displayName,
+            image: u.image,
+            role: u.role,
+            gradeId: u.gradeId,
+            usernameChangedAt: u.usernameChangedAt,
+            bio: u.bio,
+          }
         }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.hashedPassword
-        )
+        if (!user) {
+          console.log(`[AUTH-DEBUG] User NOT found in DB for email: '${email}'`)
+          // Try findFirst as a fallback (some platforms have weird behavior with findUnique)
+          const fallbackUser = await prisma.user.findFirst({
+            where: { email: { equals: email, mode: 'insensitive' } }
+          })
 
-        if (!isPasswordValid) {
-          throw new Error('Invalid credentials')
+          if (!fallbackUser) {
+            throw new Error('Invalid credentials')
+          }
+          // If we found a fallback user, let's continue with it
+          console.log(`[AUTH-DEBUG] Fallback found user: ${fallbackUser.id}`)
+          return authorizeUser(fallbackUser, credentials.password)
         }
 
-        return {
-          id: user.id,
-          email: user.email,
-          username: user.username,
-          displayName: user.displayName,
-          image: user.image,
-          role: user.role,
-          gradeId: user.gradeId,
-          usernameChangedAt: user.usernameChangedAt,
-          bio: user.bio,
-        }
+        return authorizeUser(user, credentials.password)
       },
+
+
     }),
   ],
   callbacks: {

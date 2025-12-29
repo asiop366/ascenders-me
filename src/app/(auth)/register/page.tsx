@@ -57,17 +57,9 @@ export default function RegisterPage() {
         throw new Error(data.error || 'Registration failed')
       }
 
-      const result = await signIn('credentials', {
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
-      })
-
-      if (result?.ok) {
-        router.push('/app')
-      } else {
-        router.push('/login')
-      }
+      // Show success message and redirect to login
+      alert(data.message || 'Registration successful! Please check your email to verify your account.')
+      router.push('/login')
     } catch (err: any) {
       setError(err.message || 'Something went wrong')
     } finally {
@@ -79,16 +71,16 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-dark-950 flex items-center justify-center p-6 relative overflow-hidden">
       {/* Background Effects */}
       <div className="fixed inset-0 bg-gradient-mesh opacity-30 pointer-events-none" />
-      
+
       <div className="w-full max-w-md relative z-10">
         {/* Header */}
         <div className="text-center mb-10">
           <Link href="/" className="inline-flex items-center gap-4 mb-8 group">
             <div className="relative">
-              <Image 
-                src="/logo.png" 
-                alt="Ascenders Logo" 
-                width={56} 
+              <Image
+                src="/logo.png"
+                alt="Ascenders Logo"
+                width={56}
                 height={56}
                 className="rounded-2xl group-hover:scale-110 transition-transform"
               />
