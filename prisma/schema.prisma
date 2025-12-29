@@ -7,22 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-<<<<<<< HEAD
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-=======
 // Enums for PostgreSQL
 enum Role {
   USER
@@ -35,6 +19,8 @@ enum ChannelType {
   PUBLIC
   PRIVATE
   ANNOUNCEMENT
+  FORUM
+  CHAT
 }
 
 enum ReportStatus {
@@ -67,7 +53,6 @@ model Account {
   session_state      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
->>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -92,36 +77,6 @@ model VerificationToken {
 }
 
 model User {
-<<<<<<< HEAD
-  id                String         @id @default(cuid())
-  email             String         @unique
-  username          String         @unique
-  hashedPassword    String?
-  image             String?
-  bio               String?
-  role              Role           @default(USER)
-  gradeId           String?
-  emailVerified     DateTime?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  displayName       String?
-  usernameChangedAt DateTime?
-  accounts          Account[]
-  bookmarks         Bookmark[]
-  following         Follow[]       @relation("Followers")
-  followers         Follow[]       @relation("Following")
-  receivedMessages  Message[]      @relation("ReceivedMessages")
-  sentMessages      Message[]      @relation("SentMessages")
-  notifications     Notification[]
-  posts             Post[]
-  reactions         Reaction[]
-  reports           Report[]
-  sessions          Session[]
-  subscriptions     Subscription[]
-  threads           Thread[]
-  grade             Grade?         @relation(fields: [gradeId], references: [id])
-  badges            UserBadge[]
-=======
   id                 String   @id @default(cuid())
   email              String   @unique
   username           String   @unique
@@ -153,7 +108,6 @@ model User {
   sentMessages     Message[]      @relation("SentMessages")
   receivedMessages Message[]      @relation("ReceivedMessages")
   badges           UserBadge[]
->>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
 
   @@index([username])
   @@index([gradeId])
@@ -162,7 +116,6 @@ model User {
 }
 
 model Grade {
-<<<<<<< HEAD
   id            String         @id @default(cuid())
   name          String         @unique
   slug          String         @unique
@@ -171,20 +124,9 @@ model Grade {
   priceMonthly  Int            @default(0)
   position      Int            @default(0)
   permissions   Json           @default("{}")
-=======
-  id          String   @id @default(cuid())
-  name        String   @unique
-  slug        String   @unique
-  color       String
-  icon        String?
-  priceMonthly Int     @default(0)
-  position    Int      @default(0)
-  permissions String   @default("{}") @db.Text
 
-  users       User[]
->>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
-  subscriptions Subscription[]
   users         User[]
+  subscriptions Subscription[]
 
   @@index([position])
   @@index([slug])
@@ -222,25 +164,6 @@ model Topic {
 }
 
 model Thread {
-<<<<<<< HEAD
-  id        String     @id @default(cuid())
-  authorId  String
-  title     String
-  content   String
-  pinned    Boolean    @default(false)
-  locked    Boolean    @default(false)
-  viewCount Int        @default(0)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  imageUrl  String?
-  topicId   String?
-  bookmarks Bookmark[]
-  posts     Post[]
-  reactions Reaction[]
-  reports   Report[]
-  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  topic     Topic?     @relation(fields: [topicId], references: [id])
-=======
   id         String   @id @default(cuid())
   topicId    String?
   authorId   String
@@ -259,7 +182,6 @@ model Thread {
   reactions  Reaction[]
   reports    Report[]
   bookmarks  Bookmark[]
->>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
 
   @@index([topicId])
   @@index([authorId])
@@ -268,18 +190,6 @@ model Thread {
 }
 
 model Post {
-<<<<<<< HEAD
-  id        String     @id @default(cuid())
-  threadId  String
-  authorId  String
-  content   String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  thread    Thread     @relation(fields: [threadId], references: [id], onDelete: Cascade)
-  reactions Reaction[]
-  reports   Report[]
-=======
   id         String   @id @default(cuid())
   threadId   String
   authorId   String
@@ -294,7 +204,6 @@ model Post {
   replies    Post[]   @relation("PostReplies")
   reactions  Reaction[]
   reports    Report[]
->>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
 
   @@index([threadId])
   @@index([authorId])
@@ -412,24 +321,13 @@ model Message {
 }
 
 model Badge {
-<<<<<<< HEAD
   id          String      @id @default(cuid())
   name        String      @unique
-  description String?
+  description String?     @db.Text
   icon        String
   color       String
-  condition   String
+  condition   String      @db.Text
   createdAt   DateTime    @default(now())
-=======
-  id          String   @id @default(cuid())
-  name        String   @unique
-  description String?  @db.Text
-  icon        String
-  color       String
-  condition   String   @db.Text
-  createdAt   DateTime @default(now())
-
->>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
   users       UserBadge[]
 }
 
@@ -444,30 +342,4 @@ model UserBadge {
   @@unique([userId, badgeId])
   @@index([userId])
   @@index([badgeId])
-}
-
-enum Role {
-  USER
-  MODERATOR
-  ADMIN
-  OWNER
-}
-
-enum ChannelType {
-  FORUM
-  CHAT
-}
-
-enum ReportStatus {
-  PENDING
-  REVIEWED
-  RESOLVED
-  DISMISSED
-}
-
-enum SubscriptionStatus {
-  ACTIVE
-  CANCELED
-  PAST_DUE
-  PENDING
 }

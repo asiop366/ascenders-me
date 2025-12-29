@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Search, Loader2, MessageSquare, Heart, User, TrendingUp } from 'lucide-react'
+import { Search, Loader2, MessageSquare, Heart, User, TrendingUp, Clock } from 'lucide-react'
 import { Avatar } from '@/components/ui/avatar'
 import { getTimeAgo } from '@/lib/utils'
 
@@ -16,7 +16,6 @@ export default function SearchPage() {
   const [results, setResults] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
 
-<<<<<<< HEAD
   const handleSearch = async (searchQuery: string) => {
     if (searchQuery.length < 2) {
       setResults(null)
@@ -34,52 +33,15 @@ export default function SearchPage() {
       console.error('Search failed:', error)
     } finally {
       setIsLoading(false)
-=======
-  let threads: any[] = []
-  let users: any[] = []
-
-  if (query.length >= 2) {
-    // Search threads
-    if (type === 'all' || type === 'threads') {
-      threads = await prisma.thread.findMany({
-        where: {
-          OR: [
-            { title: { contains: query } },
-            { content: { contains: query } },
-          ],
-        },
-        include: {
-          author: true,
-          topic: true,
-          _count: { select: { posts: true, reactions: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 20,
-      })
-    }
-
-    // Search users
-    if (type === 'all' || type === 'users') {
-      users = await prisma.user.findMany({
-        where: {
-          OR: [
-            { username: { contains: query } },
-            { bio: { contains: query } },
-          ],
-        },
-        select: {
-          id: true,
-          username: true,
-          bio: true,
-          role: true,
-          createdAt: true,
-          _count: { select: { threads: true, posts: true } },
-        },
-        take: 10,
-      })
->>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
     }
   }
+
+  // Initial search if q is in params
+  useEffect(() => {
+    if (initialQuery) {
+      handleSearch(initialQuery)
+    }
+  }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -142,9 +104,11 @@ export default function SearchPage() {
                           <Avatar src={thread.author.image} alt={thread.author.username} size="md" />
                           <div className="flex-1 min-w-0">
                             <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors line-clamp-1">
-                              {thread.title}
+                              <HighlightText text={thread.title} query={query} />
                             </h3>
-                            <p className="text-sm text-dark-300 line-clamp-2 mt-1">{thread.content}</p>
+                            <p className="text-sm text-dark-300 line-clamp-2 mt-1">
+                              <HighlightText text={thread.content} query={query} />
+                            </p>
                             <div className="flex items-center gap-4 mt-3 text-xs text-dark-400">
                               <span className="flex items-center gap-1">
                                 <User size={14} />
@@ -166,7 +130,7 @@ export default function SearchPage() {
                                 <Heart size={14} />
                                 {thread._count.reactions}
                               </span>
-                              <span>{getTimeAgo(thread.createdAt)}</span>
+                              <span>{getTimeAgo(new Date(thread.createdAt))}</span>
                             </div>
                           </div>
                         </div>
@@ -229,52 +193,6 @@ export default function SearchPage() {
     </div>
   )
 }
-<<<<<<< HEAD
-=======
-
-function ThreadResult({ thread, query }: { thread: any; query: string }) {
-  const timeAgo = getTimeAgo(new Date(thread.createdAt))
-
-  return (
-    <Link href={`/app/thread/${thread.id}`} className="card block">
-      <h3 className="font-semibold text-asc-text mb-1 hover:underline">
-        <HighlightText text={thread.title} query={query} />
-      </h3>
-      <p className="text-sm text-asc-secondary line-clamp-2 mb-2">
-        <HighlightText text={thread.content} query={query} />
-      </p>
-      <div className="flex items-center gap-4 text-xs text-asc-muted">
-        {thread.topic && <span className="tag">{thread.topic.name}</span>}
-        <span>by {thread.author.username}</span>
-        <span className="flex items-center gap-1"><Clock size={12} />{timeAgo}</span>
-        <span className="flex items-center gap-1 ml-auto"><MessageSquare size={12} />{thread._count.posts}</span>
-        <span className="flex items-center gap-1"><Heart size={12} />{thread._count.reactions}</span>
-      </div>
-    </Link>
-  )
-}
-
-function UserResult({ user }: { user: any }) {
-  return (
-    <Link href={`/app/u/${user.username}`} className="card flex items-center gap-4">
-      <div className="w-12 h-12 bg-asc-text text-asc-bg rounded-full flex items-center justify-center font-bold text-lg">
-        {user.username[0].toUpperCase()}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <h3 className="font-semibold text-asc-text">@{user.username}</h3>
-          <span className="badge">{user.role}</span>
-        </div>
-        {user.bio && (
-          <p className="text-sm text-asc-secondary truncate">{user.bio}</p>
-        )}
-        <p className="text-xs text-asc-muted mt-1">
-          {user._count.threads} threads • {user._count.posts} posts
-        </p>
-      </div>
-    </Link>
-  )
-}
 
 function HighlightText({ text, query }: { text: string; query: string }) {
   if (!query) return <>{text}</>
@@ -285,7 +203,7 @@ function HighlightText({ text, query }: { text: string; query: string }) {
     <>
       {parts.map((part, i) =>
         part.toLowerCase() === query.toLowerCase() ? (
-          <mark key={i} className="bg-asc-text/20 text-asc-text px-0.5 rounded">
+          <mark key={i} className="bg-primary/20 text-primary px-0.5 rounded">
             {part}
           </mark>
         ) : (
@@ -295,13 +213,3 @@ function HighlightText({ text, query }: { text: string; query: string }) {
     </>
   )
 }
-
-function getTimeAgo(date: Date): string {
-  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)
-  if (seconds < 60) return 'just now'
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`
-  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-}
->>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6

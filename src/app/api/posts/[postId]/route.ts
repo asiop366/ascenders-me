@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
-
-export async function DELETE(
-    request: Request,
-=======
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -15,43 +6,12 @@ import { canModerate } from '@/lib/permissions'
 
 export async function DELETE(
     request: NextRequest,
->>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
     { params }: { params: { postId: string } }
 ) {
     try {
         const session = await getServerSession(authOptions)
 
         if (!session?.user) {
-<<<<<<< HEAD
-            return new NextResponse('Unauthorized', { status: 401 })
-        }
-
-        const user = await prisma.user.findUnique({
-            where: { id: session.user.id },
-            select: { role: true }
-        })
-
-        if (!user || !['MODERATOR', 'ADMIN', 'OWNER'].includes(user.role)) {
-            // Check if they are the author
-            const post = await prisma.post.findUnique({
-                where: { id: params.postId },
-                select: { authorId: true }
-            })
-
-            if (!post || post.authorId !== session.user.id) {
-                return new NextResponse('Forbidden', { status: 403 })
-            }
-        }
-
-        await prisma.post.delete({
-            where: { id: params.postId }
-        })
-
-        return new NextResponse('Deleted', { status: 200 })
-    } catch (error) {
-        console.error('Error deleting post:', error)
-        return new NextResponse('Internal Error', { status: 500 })
-=======
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
@@ -83,6 +43,5 @@ export async function DELETE(
     } catch (error: any) {
         console.error('Delete post error:', error)
         return NextResponse.json({ error: error.message }, { status: 500 })
->>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
     }
 }
