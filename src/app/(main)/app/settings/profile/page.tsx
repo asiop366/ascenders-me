@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { User, Upload, Loader2, Check, AlertCircle, Clock } from 'lucide-react'
+import { User, Upload, Loader2, Check, AlertCircle, Clock, X, ImageIcon } from 'lucide-react'
 
 export default function SettingsProfilePage() {
   const { data: session, update } = useSession()
@@ -14,6 +14,7 @@ export default function SettingsProfilePage() {
   const [bio, setBio] = useState(session?.user?.bio || '')
   const [image, setImage] = useState(session?.user?.image || '')
   const [isLoading, setIsLoading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
@@ -32,6 +33,53 @@ export default function SettingsProfilePage() {
     const now = new Date()
     const diffDays = (now.getTime() - lastChange.getTime()) / (1000 * 60 * 60 * 24)
     return Math.max(0, Math.ceil(7 - diffDays))
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Client-side validation
+    const allowedTypes = ['image/jpeg', 'image/png']
+    if (!allowedTypes.includes(file.type)) {
+      setError('Only JPG and PNG files are allowed')
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File size must be less than 5MB')
+      return
+    }
+
+    setIsUploading(true)
+    setError('')
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('type', 'avatar')
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Failed to upload image')
+      }
+
+      const { url } = await res.json()
+      setImage(url)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  const handleRemoveImage = () => {
+    setImage('')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,23 +144,47 @@ export default function SettingsProfilePage() {
         <div className="gradient-border p-6">
           <h2 className="text-lg font-semibold text-white mb-4">Profile Picture</h2>
           <div className="flex items-center gap-6">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-3xl font-bold text-white overflow-hidden shrink-0 border-2 border-primary/20">
+            <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-3xl font-bold text-white overflow-hidden shrink-0 border-2 border-primary/20">
               {image ? (
-                <img src={image} alt="Profile" className="w-full h-full object-cover" />
+                <>
+                  <img src={image} alt="Profile" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="absolute -top-1 -right-1 p-1 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"
+                  >
+                    <X size={14} />
+                  </button>
+                </>
               ) : (
                 session?.user?.username?.[0]?.toUpperCase() || 'U'
               )}
             </div>
             <div className="flex-1">
-              <input
-                type="url"
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                placeholder="https://example.com/avatar.jpg"
-                className="w-full bg-dark-800/50 border border-white/5 rounded-xl px-4 py-2 text-white placeholder-dark-500 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all text-sm"
-              />
+              <label className="relative cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  disabled={isUploading}
+                />
+                <div className={`flex items-center gap-2 px-4 py-2 bg-dark-800/50 border border-white/5 rounded-xl text-white hover:bg-dark-800 hover:border-white/10 transition-all ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                  {isUploading ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload size={18} />
+                      <span>Upload Photo</span>
+                    </>
+                  )}
+                </div>
+              </label>
               <p className="text-xs text-dark-500 mt-2">
-                Paste a link to an image. JPG, PNG or GIF.
+                Only JPG and PNG files are allowed. Max 5MB.
               </p>
             </div>
           </div>

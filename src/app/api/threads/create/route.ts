@@ -7,8 +7,8 @@ import { z } from 'zod'
 const createThreadSchema = z.object({
   title: z.string().min(5).max(200),
   content: z.string().min(10).max(10000),
-  topicId: z.string().optional(),
-  imageUrl: z.string().url().optional(),
+  topicId: z.string().min(1, "Topic is required"),
+  imageUrl: z.string().url().optional().or(z.literal('')),
 })
 
 export async function POST(request: Request) {

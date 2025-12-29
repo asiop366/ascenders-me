@@ -20,6 +20,7 @@ interface PostCardProps {
       id: string
       username: string
       image: string | null
+      role?: string
       grade?: { name: string; color: string } | null
     }
     _count: {
@@ -55,18 +56,30 @@ export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
               >
                 {post.author.username}
               </Link>
-              {post.author.grade && (
-                <Badge
-                  size="sm"
-                  style={{
-                    backgroundColor: post.author.grade.color + '20',
-                    color: post.author.grade.color,
-                    border: `1px solid ${post.author.grade.color}40`
-                  }}
-                >
-                  {post.author.grade.name}
-                </Badge>
-              )}
+              <div className="flex items-center gap-1.5 ml-1">
+                {post.author.grade && (
+                  <Badge
+                    size="sm"
+                    style={{
+                      backgroundColor: post.author.grade.color + '20',
+                      color: post.author.grade.color,
+                      border: `1px solid ${post.author.grade.color}40`
+                    }}
+                  >
+                    {post.author.grade.name}
+                  </Badge>
+                )}
+                {post.author.role === 'OWNER' && (
+                  <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50 shadow-[0_0_10px_rgba(234,179,8,0.2)]">
+                    Owner
+                  </Badge>
+                )}
+                {post.author.role === 'ADMIN' && (
+                  <Badge size="sm" className="bg-red-500/20 text-red-400 border-red-500/40">
+                    Admin
+                  </Badge>
+                )}
+              </div>
               <span className="text-sm text-dark-300">
                 {getTimeAgo(new Date(post.createdAt))}
               </span>
@@ -82,10 +95,10 @@ export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
               {isAuthor && (
                 <>
                   <DropdownItem onClick={() => { }}>
-                    <Edit size={14} className="mr-2" /> {t('nav.edit')}
+                    <Edit size={14} className="mr-2" /> {t('forum.edit')}
                   </DropdownItem>
                   <DropdownItem onClick={() => onDelete?.(post.id)} danger>
-                    <Trash2 size={14} className="mr-2" /> {t('nav.delete')}
+                    <Trash2 size={14} className="mr-2" /> {t('forum.delete')}
                   </DropdownItem>
                 </>
               )}
@@ -96,7 +109,7 @@ export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
                 }
                 setIsReportModalOpen(true)
               }}>
-                <Flag size={14} className="mr-2" /> {t('nav.report')}
+                <Flag size={14} className="mr-2" /> {t('forum.report')}
               </DropdownItem>
             </Dropdown>
           </div>

@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+<<<<<<< HEAD
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -21,6 +22,52 @@ model Account {
   id_token          String?
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+=======
+// Enums for PostgreSQL
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+  OWNER
+}
+
+enum ChannelType {
+  PUBLIC
+  PRIVATE
+  ANNOUNCEMENT
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  CANCELED
+  EXPIRED
+  PAST_DUE
+}
+
+model Account {
+  id                 String   @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+>>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -45,6 +92,7 @@ model VerificationToken {
 }
 
 model User {
+<<<<<<< HEAD
   id                String         @id @default(cuid())
   email             String         @unique
   username          String         @unique
@@ -73,6 +121,39 @@ model User {
   threads           Thread[]
   grade             Grade?         @relation(fields: [gradeId], references: [id])
   badges            UserBadge[]
+=======
+  id                 String   @id @default(cuid())
+  email              String   @unique
+  username           String   @unique
+  displayName        String?
+  usernameChangedAt  DateTime?
+  hashedPassword     String?
+  image              String? 
+  bio                String?  @db.Text
+  role               Role     @default(USER)
+  gradeId            String?
+  isBanned           Boolean  @default(false)
+  banReason          String?  @db.Text
+  emailVerified      DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  grade            Grade?         @relation(fields: [gradeId], references: [id])
+  threads          Thread[]
+  posts            Post[]
+  reactions        Reaction[]
+  reports          Report[]
+  subscriptions    Subscription[]
+  accounts         Account[]
+  sessions         Session[]
+  bookmarks        Bookmark[]
+  notifications    Notification[]
+  followers        Follow[]       @relation("Following")
+  following        Follow[]       @relation("Followers")
+  sentMessages     Message[]      @relation("SentMessages")
+  receivedMessages Message[]      @relation("ReceivedMessages")
+  badges           UserBadge[]
+>>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
 
   @@index([username])
   @@index([gradeId])
@@ -81,6 +162,7 @@ model User {
 }
 
 model Grade {
+<<<<<<< HEAD
   id            String         @id @default(cuid())
   name          String         @unique
   slug          String         @unique
@@ -89,6 +171,18 @@ model Grade {
   priceMonthly  Int            @default(0)
   position      Int            @default(0)
   permissions   Json           @default("{}")
+=======
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  color       String
+  icon        String?
+  priceMonthly Int     @default(0)
+  position    Int      @default(0)
+  permissions String   @default("{}") @db.Text
+
+  users       User[]
+>>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
   subscriptions Subscription[]
   users         User[]
 
@@ -128,6 +222,7 @@ model Topic {
 }
 
 model Thread {
+<<<<<<< HEAD
   id        String     @id @default(cuid())
   authorId  String
   title     String
@@ -145,6 +240,26 @@ model Thread {
   reports   Report[]
   author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
   topic     Topic?     @relation(fields: [topicId], references: [id])
+=======
+  id         String   @id @default(cuid())
+  topicId    String?
+  authorId   String
+  title      String
+  content    String   @db.Text
+  imageUrl   String? 
+  locked     Boolean  @default(false)
+  pinned     Boolean  @default(false)
+  viewCount  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  topic      Topic?    @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  posts      Post[]
+  reactions  Reaction[]
+  reports    Report[]
+  bookmarks  Bookmark[]
+>>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
 
   @@index([topicId])
   @@index([authorId])
@@ -153,6 +268,7 @@ model Thread {
 }
 
 model Post {
+<<<<<<< HEAD
   id        String     @id @default(cuid())
   threadId  String
   authorId  String
@@ -163,9 +279,26 @@ model Post {
   thread    Thread     @relation(fields: [threadId], references: [id], onDelete: Cascade)
   reactions Reaction[]
   reports   Report[]
+=======
+  id         String   @id @default(cuid())
+  threadId   String
+  authorId   String
+  parentId   String?
+  content    String   @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  thread     Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent     Post?    @relation("PostReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies    Post[]   @relation("PostReplies")
+  reactions  Reaction[]
+  reports    Report[]
+>>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
 
   @@index([threadId])
   @@index([authorId])
+  @@index([parentId])
   @@index([createdAt])
 }
 
@@ -279,6 +412,7 @@ model Message {
 }
 
 model Badge {
+<<<<<<< HEAD
   id          String      @id @default(cuid())
   name        String      @unique
   description String?
@@ -286,6 +420,16 @@ model Badge {
   color       String
   condition   String
   createdAt   DateTime    @default(now())
+=======
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?  @db.Text
+  icon        String
+  color       String
+  condition   String   @db.Text
+  createdAt   DateTime @default(now())
+
+>>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
   users       UserBadge[]
 }
 

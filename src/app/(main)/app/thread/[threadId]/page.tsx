@@ -17,9 +17,15 @@ import {
   ChevronRight,
   Clock
 } from 'lucide-react'
+<<<<<<< HEAD
 import { ReplyComposer } from '@/components/thread/reply-composer'
 import { ThreadActions } from '@/components/thread/thread-actions'
 import { DeletePostButton } from '@/components/thread/delete-post-button'
+=======
+import { Badge } from '@/components/ui/badge'
+import { ThreadReplies } from '@/components/thread/thread-replies'
+import { ThreadActions } from '@/components/thread/thread-actions'
+>>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
 
 export default async function ThreadPage({
   params,
@@ -43,9 +49,24 @@ export default async function ThreadPage({
         include: { category: true }
       },
       posts: {
+        where: { parentId: null },
         include: {
           author: true,
-          _count: { select: { reactions: true } }
+          _count: { select: { reactions: true, replies: true } },
+          replies: {
+            include: {
+              author: true,
+              _count: { select: { reactions: true, replies: true } },
+              replies: {
+                include: {
+                  author: true,
+                  _count: { select: { reactions: true, replies: true } }
+                },
+                orderBy: { createdAt: 'asc' }
+              }
+            },
+            orderBy: { createdAt: 'asc' }
+          }
         },
         orderBy: { createdAt: 'asc' }
       },
@@ -121,6 +142,7 @@ export default async function ThreadPage({
             </div>
 
             {/* Actions */}
+<<<<<<< HEAD
             <div className="flex items-center gap-2">
               <button className="btn-ghost p-2" title="Share">
                 <Share2 size={18} />
@@ -134,6 +156,15 @@ export default async function ThreadPage({
                 canDelete={!!currentUser && ['MODERATOR', 'ADMIN', 'OWNER'].includes(currentUser.role)}
               />
             </div>
+=======
+            <ThreadActions
+              threadId={thread.id}
+              threadTitle={thread.title}
+              authorId={thread.authorId}
+              currentUserId={session?.user?.id}
+              currentUserRole={session?.user?.role}
+            />
+>>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
           </div>
         </div>
       </header>
@@ -146,8 +177,12 @@ export default async function ThreadPage({
             {/* Post Header */}
             <div className="flex items-center justify-between p-4 border-b border-asc-border">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-asc-text text-asc-bg rounded-full flex items-center justify-center font-semibold">
-                  {thread.author.username[0].toUpperCase()}
+                <div className="w-10 h-10 bg-asc-text text-asc-bg rounded-full flex items-center justify-center font-semibold overflow-hidden">
+                  {thread.author.image ? (
+                    <img src={thread.author.image} alt={thread.author.username} className="w-full h-full object-cover" />
+                  ) : (
+                    thread.author.username[0].toUpperCase()
+                  )}
                 </div>
                 <div>
                   <Link
@@ -156,20 +191,43 @@ export default async function ThreadPage({
                   >
                     {thread.author.username}
                   </Link>
-                  <div className="flex items-center gap-2 text-xs text-asc-muted">
-                    <span>{thread.author.role}</span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
+                  <div className="flex items-center gap-2 mt-1">
+                    {thread.author.role === 'OWNER' && (
+                      <Badge size="sm" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/40">
+                        Owner
+                      </Badge>
+                    )}
+                    {thread.author.role === 'ADMIN' && (
+                      <Badge size="sm" className="bg-red-500/20 text-red-400 border-red-500/40">
+                        Admin
+                      </Badge>
+                    )}
+                    <span className="text-xs text-asc-muted flex items-center gap-1">
                       <Clock size={12} />
                       {timeAgo}
                     </span>
                   </div>
                 </div>
               </div>
-              <button className="p-2 hover:bg-asc-hover rounded-asc transition-colors">
-                <MoreHorizontal size={16} className="text-asc-muted" />
-              </button>
+              <ThreadActions
+                threadId={thread.id}
+                threadTitle={thread.title}
+                authorId={thread.authorId}
+                currentUserId={session?.user?.id}
+                currentUserRole={session?.user?.role}
+              />
             </div>
+
+            {/* Thread Image */}
+            {thread.imageUrl && (
+              <div className="border-b border-asc-border">
+                <img
+                  src={thread.imageUrl}
+                  alt="Thread image"
+                  className="w-full max-h-96 object-cover"
+                />
+              </div>
+            )}
 
             {/* Post Content */}
             <div className="p-4">
@@ -201,6 +259,7 @@ export default async function ThreadPage({
             </div>
           </article>
 
+<<<<<<< HEAD
           {/* Replies Section */}
           <div className="mb-6">
             <h2 className="text-lg font-semibold text-asc-text mb-4 flex items-center gap-2">
@@ -239,12 +298,24 @@ export default async function ThreadPage({
               <p className="text-asc-muted">This thread has been locked. No new replies allowed.</p>
             </div>
           )}
+=======
+          {/* Replies Section - Client Component */}
+          <ThreadReplies
+            threadId={thread.id}
+            posts={thread.posts}
+            isLocked={thread.locked}
+            isAuthenticated={!!session}
+            userId={session?.user?.id}
+            userRole={session?.user?.role}
+          />
+>>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
         </div>
       </div>
     </div>
   )
 }
 
+<<<<<<< HEAD
 function ReplyCard({ post, index, canDelete }: { post: any; index: number; canDelete: boolean }) {
   const timeAgo = getTimeAgo(new Date(post.createdAt))
 
@@ -296,6 +367,8 @@ function ReplyCard({ post, index, canDelete }: { post: any; index: number; canDe
   )
 }
 
+=======
+>>>>>>> 95514d72df2b70d50a6dc5e0eeef5d759b59b2c6
 function getTimeAgo(date: Date): string {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)
 

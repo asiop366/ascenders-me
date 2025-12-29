@@ -9,27 +9,27 @@ import { Users, Layers, BarChart3, Settings, Shield } from "lucide-react";
 const adminNav = [
   {
     title: "Overview",
-    href: "/admin",
+    href: "/app/admin",
     icon: BarChart3,
   },
   {
     title: "Users",
-    href: "/admin/users",
+    href: "/app/admin/users",
     icon: Users,
   },
   {
     title: "Spaces",
-    href: "/admin/spaces",
+    href: "/app/admin/spaces",
     icon: Layers,
   },
   {
     title: "Analytics",
-    href: "/admin/analytics",
+    href: "/app/admin/analytics",
     icon: BarChart3,
   },
   {
     title: "Settings",
-    href: "/admin/settings",
+    href: "/app/admin/settings",
     icon: Settings,
   },
 ];
@@ -61,7 +61,7 @@ export default function AdminLayout({
               {adminNav.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
-                
+
                 return (
                   <Link
                     key={item.href}

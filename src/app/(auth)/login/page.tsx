@@ -30,14 +30,14 @@ function LoginForm() {
 
     try {
       const result = await signIn('credentials', {
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password,
         rememberMe: formData.rememberMe ? 'true' : 'false',
         redirect: false,
       })
 
       if (result?.error) {
-        setError('Invalid email or password')
+        setError(result.error === 'CredentialsSignin' ? 'Invalid email or password' : result.error)
       } else if (result?.ok) {
         router.push(callbackUrl)
       }
