@@ -1,75 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import bcrypt from 'bcryptjs'
-import { registerSchema } from '@/lib/validations'
-import { sendVerificationEmail } from '@/lib/email'
-import crypto from 'crypto'
+import { authService } from '@/lib/services/auth-service'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    // Validate input
-    const validationResult = registerSchema.safeParse(body)
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { error: validationResult.error.errors[0].message },
-        { status: 400 }
-      )
-    }
-
-    const { email, username, password } = validationResult.data
-
-    // Check if user exists
-    const existingUser = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { email: email.toLowerCase() },
-          { username: username.toLowerCase() }
-        ]
-      }
-    })
-
-    if (existingUser) {
-      if (existingUser.email === email.toLowerCase()) {
-        return NextResponse.json({ error: 'Email already in use' }, { status: 400 })
-      }
-      return NextResponse.json({ error: 'Username already taken' }, { status: 400 })
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 12)
-
-    // Generate verification token
-    const verificationToken = crypto.randomBytes(32).toString('hex')
-    const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
-
-    const user = await prisma.user.create({
-      data: {
-        email: email.toLowerCase(),
-        username: username.toLowerCase(),
-        hashedPassword,
-        emailVerified: null, // Not verified yet
-      }
-    })
-
-    // Create verification token
-    await prisma.verificationToken.create({
-      data: {
-        identifier: email.toLowerCase(),
-        token: verificationToken,
-        expires: tokenExpiry,
-      }
-    })
-
-    // Send verification email
-    console.log(`Attempting to send verification email to ${email} from ${process.env.FROM_EMAIL || 'default'}`);
-    const emailResult = await sendVerificationEmail(email, verificationToken, username)
-    console.log('Email sending result:', JSON.stringify(emailResult, null, 2));
-
-    if (!emailResult.success) {
-      console.error('Failed to send verification email:', emailResult.error);
-      // NOTE: We do not block registration but we should know about it
-    }
+    // Delegate to service layer
+    const user = await authService.register(body)
 
     return NextResponse.json(
       {
@@ -81,7 +18,14 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     )
   } catch (error: any) {
-    console.error('Registration error:', error)
+    console.error('[API] Registration error:', error.message)
+
+    // Handle specific business logic errors vs generic server errors
+    const knownErrors = ['Email already in use', 'Username already taken']
+    if (knownErrors.includes(error.message) || error.message.includes('must be')) {
+      return NextResponse.json({ error: error.message }, { status: 400 })
+    }
+
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

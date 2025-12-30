@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { sendWelcomeEmail } from '@/lib/email'
+import { emailService } from '@/lib/services/email-service'
 
 export async function POST(request: NextRequest) {
     try {
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
         })
 
         // Send welcome email
-        await sendWelcomeEmail(user.email, user.username)
+        await emailService.sendWelcomeEmail(user.email, user.username)
 
         return NextResponse.json(
             {
